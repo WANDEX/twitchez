@@ -66,7 +66,6 @@ def read_cache(file_name):
     file_path = Path(get_cache_dir(), file_name)
     with open(file_path, "r") as file:
         data = json.load(file)
-    print(data)
     return data
 
 
