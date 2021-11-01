@@ -14,7 +14,7 @@ def project_root(*args) -> Path:
         return Path(Path(__file__).parent.parent, *args)
 
 
-def get_cache_dir():
+def get_cache_dir() -> Path:
     """ check ENV variables, create cache dir and return it's path. """
     dirname = "twitch-following-live"
     if "TWITCH_FL_CACHE_DIR" in environ:
