@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from os import environ
 from pathlib import Path
 import curses
 import json
 import requests
+import utils
 
 FLS_JSON = "followed_live_streams.json"
 
@@ -37,24 +37,9 @@ def get_followed_live_streams():
     return r.json()
 
 
-def get_cache_dir():
-    """ check ENV variables, create cache dir and return it's path. """
-    dirname = "twitch-following-live"
-    if "TWITCH_FL_CACHE_DIR" in environ:
-        cache_home = environ["TWITCH_FL_CACHE_DIR"]
-    elif "XDG_CACHE_HOME" in environ:
-        cache_home = environ["XDG_CACHE_HOME"]
-    else:
-        cache_home = Path(Path.home(), ".cache")
-    cache_dir = Path(cache_home, dirname)
-    # create cache_dir if not exist
-    Path(cache_dir).mkdir(parents=True, exist_ok=True)
-    return cache_dir
-
-
 def update_cache(file_name):
     """ update_cache and return file_path. """
-    file_path = Path(get_cache_dir(), file_name)
+    file_path = Path(utils.get_cache_dir(), file_name)
     data = json.dumps(get_followed_live_streams(), indent=2)
     with open(file_path, "w") as file:
         file.write(data)
@@ -63,7 +48,7 @@ def update_cache(file_name):
 
 def read_cache(file_name):
     """ read_cache and return data. """
-    file_path = Path(get_cache_dir(), file_name)
+    file_path = Path(utils.get_cache_dir(), file_name)
     with open(file_path, "r") as file:
         data = json.load(file)
     return data

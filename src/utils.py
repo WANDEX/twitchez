@@ -3,6 +3,22 @@
 
 from pathlib import Path
 from tempfile import gettempdir
+from os import environ
+
+
+def get_cache_dir():
+    """ check ENV variables, create cache dir and return it's path. """
+    dirname = "twitch-following-live"
+    if "TWITCH_FL_CACHE_DIR" in environ:
+        cache_home = environ["TWITCH_FL_CACHE_DIR"]
+    elif "XDG_CACHE_HOME" in environ:
+        cache_home = environ["XDG_CACHE_HOME"]
+    else:
+        cache_home = Path(Path.home(), ".cache")
+    cache_dir = Path(cache_home, dirname)
+    # create cache_dir if not exist
+    Path(cache_dir).mkdir(parents=True, exist_ok=True)
+    return cache_dir
 
 
 def get_tmp_dir(subdir="") -> Path:
