@@ -5,6 +5,7 @@ from pathlib import Path
 import curses
 import json
 import requests
+import conf
 import utils
 
 FLS_JSON = "followed_live_streams.json"
@@ -94,8 +95,8 @@ def create_sub_windows(parent, rows, cols):
     new_y = 0  # init
     bias_x = 0
     bias_y = 0
-    h = 10
-    w = 30
+    h = int(conf.setting("container_box_height"))
+    w = int(conf.setting("container_box_width"))
     JSON_DATA = read_cache(FLS_JSON)
     # iterate over all streams
     for stream in JSON_DATA["data"]:
