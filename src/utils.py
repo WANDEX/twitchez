@@ -6,6 +6,14 @@ from tempfile import gettempdir
 from os import environ
 
 
+def project_root(*args) -> Path:
+    """ simply return project_root or compose path from args. """
+    if not args:
+        return Path(__file__).parent.parent
+    else:
+        return Path(Path(__file__).parent.parent, *args)
+
+
 def get_cache_dir():
     """ check ENV variables, create cache dir and return it's path. """
     dirname = "twitch-following-live"

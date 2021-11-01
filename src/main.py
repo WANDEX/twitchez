@@ -10,14 +10,11 @@ import utils
 FLS_JSON = "followed_live_streams.json"
 
 
-def get_project_root() -> Path:
-    """ simply return project_root path. """
-    return Path(__file__).parent.parent
 
 
 def get_private_data(key):
     """ get value by the key from .private file. """
-    file_path = Path(get_project_root(), ".private")
+    file_path = utils.project_root(".private")
     with open(file_path, "r") as file:
         data = json.load(file)
     return data[key]
