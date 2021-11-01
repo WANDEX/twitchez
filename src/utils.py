@@ -38,3 +38,14 @@ def get_tmp_dir(subdir="") -> Path:
         tmp_dir_path = Path(gettempdir(), tmp_dir_name, subdir)
     Path(tmp_dir_path).mkdir(parents=True, exist_ok=True)
     return tmp_dir_path
+
+
+def get_user_conf_dir() -> Path:
+    """ check ENV variables, get user config dir and return it's path. """
+    dirname = "twitch-following-live"
+    if "XDG_CONFIG_HOME" in environ:
+        config_home = environ["XDG_CONFIG_HOME"]
+    else:
+        config_home = Path(Path.home(), ".config")
+    config_dir = Path(config_home, dirname)
+    return config_dir
