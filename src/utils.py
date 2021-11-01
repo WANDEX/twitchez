@@ -31,11 +31,11 @@ def get_cache_dir() -> Path:
 
 def get_tmp_dir(subdir="") -> Path:
     """ Return path to tmp dir and create optional subdir if it doesn't already exist. """
-    tmp_dir_name = "twitch_following_live"
+    dirname = "twitch-following-live"
     if not subdir:
-        tmp_dir_path = Path(gettempdir(), tmp_dir_name)
+        tmp_dir_path = Path(gettempdir(), dirname)
     else:
-        tmp_dir_path = Path(gettempdir(), tmp_dir_name, subdir)
+        tmp_dir_path = Path(gettempdir(), dirname, subdir)
     Path(tmp_dir_path).mkdir(parents=True, exist_ok=True)
     return tmp_dir_path
 
