@@ -1,66 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
 import curses
-import json
-import requests
 import conf
+import data
 import utils
-
-FLS_JSON = "followed_live_streams.json"
-
-
-
-
-def get_private_data(key):
-    """ get value by the key from .private file. """
-    file_path = utils.project_root(".private")
-    with open(file_path, "r") as file:
-        data = json.load(file)
-    return data[key]
-
-
-def get_followed_live_streams():
-    """ requests data from twitch API and return json. """
-    u_id = get_private_data("u_id")     # user_id
-    token = get_private_data("token")   # auth token
-    c_id = get_private_data("c_id")     # Client-Id of this program
-    url = f"https://api.twitch.tv/helix/streams/followed?user_id={u_id}"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Client-Id": c_id
-    }
-    r = requests.get(url, headers=headers)
-    return r.json()
-
-
-def update_cache(file_name):
-    """ update_cache and return file_path. """
-    file_path = Path(utils.get_cache_dir(), file_name)
-    data = json.dumps(get_followed_live_streams(), indent=2)
-    with open(file_path, "w") as file:
-        file.write(data)
-    return file_path
-
-
-def read_cache(file_name):
-    """ read_cache and return data. """
-    file_path = Path(utils.get_cache_dir(), file_name)
-    with open(file_path, "r") as file:
-        data = json.load(file)
-    return data
-
-
-def get_entries(json_data, key, root_key='data') -> list:
-    """ parse json data and return list with all entries found by key. """
-    found = []
-    for entry in json_data[root_key]:
-        found.append(entry[key])
-    return found
-
-
-update_cache(FLS_JSON)
 
 
 def container_box(parent, obj, h, w, y, x):
@@ -97,7 +41,7 @@ def create_sub_windows(parent, rows, cols):
     bias_y = 0
     h = int(conf.setting("container_box_height"))
     w = int(conf.setting("container_box_width"))
-    JSON_DATA = read_cache(FLS_JSON)
+    JSON_DATA = data.read_live_streams()
     # iterate over all streams
     for stream in JSON_DATA["data"]:
         prev_y, prev_x = container_box(parent, stream, h, w, new_y, new_x)
@@ -154,6 +98,7 @@ def main():
     functions, and takes a single function to run when
     the initializations have taken place.
     """
+    #  data.update_live_streams()
     curses.wrapper(draw)
 
 
