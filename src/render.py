@@ -14,7 +14,7 @@ class Grid:
         """set key_list -> each key will have (X, Y) values on the Grid."""
         # FIXME: temporary hardcoded
         self.area_cols = 230
-        self.area_rows = 50
+        self.area_rows = 55
         self.key_list = []
         # TODO: update value after pressing scroll key
         #       particularly: set it to total from capacity()
@@ -38,34 +38,30 @@ class Grid:
         else:
             raise ValueError(f"Unsupported argument string: '{string}'")
 
-    def spacing(self, string, cols):  # TODO rows
+    def spacing(self, cols, rows):
         """Calculate even spacing between grid elements.
-        returns spacing based on string: "cols", "rows".
+        returns spacing: cols, rows.
         """
-        if "col" in string:
-            return int((self.area_cols - self.w * cols) / cols)
-        elif "row" in string:
-            return 1  # FIXME: temporary hardcoded
-        else:
-            raise ValueError(f"Unsupported argument string: '{string}'")
+        c = int((self.area_cols - self.w * cols) / cols)
+        r = int((self.area_rows - self.h * rows) / rows)
+        return c, r
 
     def coordinates(self, initial_x=0, initial_y=0) -> dict:  # FIXME: x, y initial values temporary hardcoded
         """Return dict with: tuple(X, Y) values where each key_list element is the key."""
         cols, rows, total = self.capacity()
         total += self.key_start_index  # for scrolling
-        spacing_cols = self.spacing("cols", cols)
-        spacing_rows = self.spacing("rows", rows)
-        x = initial_x
-        y = initial_y
+        scols, srows = self.spacing(cols, rows)
+        x = initial_x + scols
+        y = initial_y + srows
         current_col = 1
         coordinates = {}
         for key in islice(self.key_list, self.key_start_index, total):
             coordinates[key] = (x, y)
             if current_col < cols:
                 current_col += 1
-                x += spacing_cols + self.w
+                x += scols + self.w
             else:
                 current_col = 1
-                x = initial_x
-                y += spacing_rows + self.h
+                x = initial_x + scols
+                y += srows + self.h
         return coordinates
