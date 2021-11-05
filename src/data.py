@@ -75,3 +75,12 @@ def get_entries(json_data, key, root_key='data') -> list:
     for entry in json_data[root_key]:
         found.append(entry[key])
     return found
+
+
+def create_streams_dict(json_data) -> dict:
+    """ create and return streams dict with user_name as a key. """
+    streams = {}
+    user_names = get_entries(json_data, 'user_name')
+    for stream, name in zip(json_data['data'], user_names):
+        streams[name] = stream
+    return streams
