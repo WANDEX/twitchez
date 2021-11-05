@@ -2,7 +2,34 @@
 # coding=utf-8
 
 from itertools import islice
+import curses
 import conf
+
+
+class Box:
+    """Box with info about the stream inside the Grid."""
+    h = int(conf.setting("container_box_height"))
+    w = int(conf.setting("container_box_width"))
+    last = h - 2  # last line before bottom box border
+    lmax = w - 2  # max length of string inside box
+
+    def __init__(self, user, title, category, x, y):
+        self.user = user
+        self.title = title
+        self.category = category
+        self.url = f"https://www.twitch.tv/{user}"
+        self.x = x
+        self.y = y
+
+    def draw(self, parent):
+        """Draw Box."""
+        win = parent.derwin(self.h, self.w, self.y, self.x)
+        win.addnstr(self.last - 2, 1, f"{self.title}\n", self.lmax)
+        win.addnstr(self.last - 1, 1, f"{self.user}\n", self.lmax, curses.A_BOLD)
+        win.addnstr(self.last - 0, 1, f"{self.category}\n", self.lmax)
+        win.box()
+        Y, X = win.getparyx()
+        win.addnstr(0, 1, f"X:{X}-Y:{Y}", self.lmax)  # for debug
 
 
 class Grid:
