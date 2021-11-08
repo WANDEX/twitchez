@@ -6,6 +6,20 @@ import curses
 import conf
 
 
+class Boxes:
+    """Operate on list of Boxes"""
+    boxlist = []
+    thmblist = []
+
+    def add(self, obj):
+        """Add box object to list."""
+        self.boxlist.append(obj)
+
+    def add_thmb(self, obj):
+        """Add thumbnail ue params to list."""
+        self.thmblist.append(obj)
+
+
 class Box:
     """Box with info about the stream inside the Grid."""
     h = int(conf.setting("container_box_height"))
@@ -20,6 +34,7 @@ class Box:
         self.url = f"https://www.twitch.tv/{user}"
         self.x = x
         self.y = y
+        self.img_path = ""
 
     def draw(self, parent):
         """Draw Box."""
