@@ -23,7 +23,7 @@ class Boxes:
 class Box:
     """Box with info about the stream inside the Grid."""
     h = int(conf.setting("container_box_height"))
-    w = int(conf.setting("container_box_width"))
+    w = int(conf.setting("container_box_width")) - 4
     last = h - 2  # last line before bottom box border
     lmax = w - 2  # max length of string inside box
 
