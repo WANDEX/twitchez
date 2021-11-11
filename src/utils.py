@@ -4,6 +4,8 @@
 from pathlib import Path
 from tempfile import gettempdir
 from os import environ
+from os.path import getmtime
+import time
 
 
 def project_root(*args) -> Path:
@@ -49,3 +51,8 @@ def get_user_conf_dir() -> Path:
         config_home = Path(Path.home(), ".config")
     config_dir = Path(config_home, dirname)
     return config_dir
+
+
+def secs_since_mtime(path):
+    """time_now - target_mtime = int(secs)."""
+    return int(time.time() - getmtime(path))
