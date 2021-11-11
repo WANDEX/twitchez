@@ -51,7 +51,6 @@ def prepare_objects():
     boxes = render.Boxes()
     grid = render.Grid()
     grid.key_list = user_list
-    #  grid.key_start_index = 5
     gcords = grid.coordinates()
     thumbnail_paths = update_thumbnails()
     for user, (x, y) in gcords.items():
