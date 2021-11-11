@@ -11,11 +11,31 @@ import utils
 import render
 
 
+def thumbnail_resolution(div=6):
+    """Return tuple: (width, height) - based on div key in table."""
+    table = {
+        12: (160, 90),
+        11: (174, 98),
+        10: (192, 108),
+        9: (213, 120),
+        8: (240, 135),
+        7: (274, 154),
+        6: (320, 180),
+        5: (384, 216),
+        4: (480, 270),
+        3: (640, 360),
+        2: (960, 540),
+        1: (1920, 1080),
+    }
+    # use fallback key if div key not found
+    return table.get(div, table.get(6))
+
+
 def get_thumbnail_urls(rawurls) -> list:
     """Return thumbnail urls with {width} and {height} replaced."""
-    # FIXME temporary hardcoded w/h
-    width = 192
-    height = 108
+    # TODO: DOUBTS: calculate closest resolution based on Screen/Window Resolution/DPI, Terminal font size, etc.
+    # TODO: closest resolution to approx box size.
+    width, height = thumbnail_resolution(int(conf.setting("thumbnail_size")))
     urls = [url.format(width=width, height=height) for url in rawurls]
     return urls
 
