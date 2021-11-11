@@ -25,5 +25,5 @@ def setting(keyname):
 
 
 def key(keyname):
-    found = keymap.get("GENERAL", keyname)
+    found = keymap.get("GENERAL", keyname, fallback="")
     return found
