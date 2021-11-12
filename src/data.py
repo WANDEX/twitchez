@@ -44,9 +44,14 @@ def get_followed_live_streams():
     return r.json()
 
 
+def cache_file_path(file_name):
+    """Get cache file path by file name."""
+    return Path(utils.get_cache_dir(), file_name)
+
+
 def update_cache(file_name):
     """ update_cache and return file_path. """
-    file_path = Path(utils.get_cache_dir(), file_name)
+    file_path = cache_file_path(file_name)
     data = json.dumps(get_followed_live_streams(), indent=2)
     with open(file_path, "w") as file:
         file.write(data)
@@ -55,10 +60,14 @@ def update_cache(file_name):
 
 def read_cache(file_name):
     """ read_cache and return data. """
-    file_path = Path(utils.get_cache_dir(), file_name)
+    file_path = cache_file_path(file_name)
     with open(file_path, "r") as file:
         data = json.load(file)
     return data
+
+
+def cache_path_live_streams():
+    return cache_file_path("followed_live_streams.json")
 
 
 def update_live_streams():
