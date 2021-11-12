@@ -78,6 +78,17 @@ def read_live_streams():
     return read_cache("followed_live_streams.json")
 
 
+def time_to_update_live_streams():
+    """Return True if path mtime > 5 mins from now.
+    (default twitch API update time).
+    """
+    fnf = not Path(cache_path_live_streams()).is_file()
+    if fnf or utils.secs_since_mtime(cache_path_live_streams()) > 300:
+        return True
+    else:
+        return False
+
+
 def get_entries(json_data, key, root_key='data') -> list:
     """ parse json data and return list with all entries found by key. """
     found = []
