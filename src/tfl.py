@@ -4,13 +4,13 @@
 from os import listdir, sep
 from os.path import basename, splitext
 from pathlib import Path
-import requests
+from requests import get
+import curses
 import data
+import keys
 import render
 import thumbnails
 import utils
-import keys
-import curses
 
 # TODO: get HEADER_H value from some Page class or smth like that. (to be able to re-use in all tabs/pages)
 HEADER_H = 5
@@ -26,7 +26,7 @@ def get_followed_live_streams():
         "Authorization": f"Bearer {token}",
         "Client-Id": c_id
     }
-    r = requests.get(url, headers=headers)
+    r = get(url, headers=headers)
     return r.json()
 
 
