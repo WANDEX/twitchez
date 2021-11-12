@@ -35,13 +35,17 @@ class Box:
         self.x = x
         self.y = y
         self.img_path = ""
+        self.viewers = ""
 
     def draw(self, parent):
         """Draw Box."""
         win = parent.derwin(self.h, self.w, self.y, self.x)
         win.addnstr(self.last - 2, 1, f"{self.title}\n", self.lmax)
         win.addnstr(self.last - 1, 1, f"{self.user}\n", self.lmax, curses.A_BOLD)
-        win.addnstr(self.last - 0, 1, f"{self.category}\n", self.lmax)
+        win.addnstr(self.last, 1, f"{self.category}\n", self.lmax)
+        if self.viewers:
+            rside = self.lmax - len(self.viewers)
+            win.addstr(self.last, rside, f" {self.viewers} ", curses.A_BOLD)
         win.box()
         Y, X = win.getparyx()
         win.addnstr(0, 1, f"X:{X}-Y:{Y}", self.lmax)  # for debug

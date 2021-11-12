@@ -60,6 +60,7 @@ def prepare_objects():
             user = fls[id]["user_login"]
         box = render.Box(user, fls[id]["title"], fls[id]["game_name"], x, y)
         box.img_path = thumbnail_paths[id]
+        box.viewers = str(fls[id]["viewer_count"])
         thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + HEADER_H).ue_params
         boxes.add(box)
         boxes.add_thmb(thmb)
