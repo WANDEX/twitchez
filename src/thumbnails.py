@@ -40,18 +40,18 @@ def get_thumbnail_urls(rawurls) -> list:
     return urls
 
 
-def get_thumbnails(user_names, rawurls) -> dict:
+def get_thumbnails(ids, rawurls) -> dict:
     """Download thumbnails and return paths."""
     thumbnail_paths = {}
     urls = get_thumbnail_urls(rawurls)
     tmpd = utils.get_tmp_dir("thumbnails_live")
-    for (user_name, thumbnail_url) in zip(user_names, urls):
+    for (id, thumbnail_url) in zip(ids, urls):
         r = requests.get(thumbnail_url)
-        thumbnail_fname = f"{user_name}.jpg"
+        thumbnail_fname = f"{id}.jpg"
         thumbnail_path = Path(tmpd, thumbnail_fname)
         with open(thumbnail_path, 'wb') as f:
             f.write(r.content)
-        thumbnail_paths[user_name] = str(thumbnail_path)
+        thumbnail_paths[id] = str(thumbnail_path)
     return thumbnail_paths
 
 

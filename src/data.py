@@ -98,9 +98,9 @@ def get_entries(json_data, key, root_key='data') -> list:
 
 
 def create_streams_dict(json_data) -> dict:
-    """ create and return streams dict with user_name as a key. """
+    """ create and return streams dict with id as a key. """
     streams = {}
-    user_names = get_entries(json_data, 'user_name')
-    for stream, name in zip(json_data['data'], user_names):
-        streams[name] = stream
+    ids = get_entries(json_data, 'id')
+    for stream, id in zip(json_data['data'], ids):
+        streams[id] = stream
     return streams
