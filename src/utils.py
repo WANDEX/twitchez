@@ -66,6 +66,12 @@ def replace_pattern_in_all(inputlist, oldstr, newstr) -> list:
     return outputlist
 
 
+def add_str_to_list(input_list, string) -> list:
+    """Add string to the end of all elements in a list."""
+    outputlist = [e + str(string) for e in input_list]
+    return outputlist
+
+
 def insert_to_all(list, string, opt_sep="") -> list:
     """ Insert the string at the beginning of all items in a list. """
     string = str(string)
