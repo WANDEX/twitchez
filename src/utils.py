@@ -58,6 +58,14 @@ def secs_since_mtime(path):
     return int(time.time() - getmtime(path))
 
 
+def replace_pattern_in_all(inputlist, oldstr, newstr) -> list:
+    """Replace oldstr with newstr in all items from a list."""
+    outputlist = []
+    for e in inputlist:
+        outputlist.append(str(e).replace(oldstr, newstr))
+    return outputlist
+
+
 def insert_to_all(list, string, opt_sep="") -> list:
     """ Insert the string at the beginning of all items in a list. """
     string = str(string)
