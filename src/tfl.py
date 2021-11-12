@@ -4,6 +4,7 @@
 from os import listdir, sep
 from os.path import basename, splitext
 from pathlib import Path
+import requests
 import data
 import render
 import thumbnails
@@ -15,17 +16,54 @@ import curses
 HEADER_H = 5
 
 
+def get_followed_live_streams():
+    """requests data from twitch API and return json."""
+    u_id = data.get_private_data("u_id")    # user_id
+    token = data.get_private_data("token")  # auth token
+    c_id = data.get_private_data("c_id")    # client-Id of this program
+    url = f"https://api.twitch.tv/helix/streams/followed?user_id={u_id}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Client-Id": c_id
+    }
+    r = requests.get(url, headers=headers)
+    return r.json()
+
+
+def cache_path_live_streams():
+    return data.cache_file_path("followed_live_streams.json")
+
+
+def update_live_streams():
+    return data.update_cache("followed_live_streams.json", get_followed_live_streams())
+
+
+def read_live_streams():
+    return data.read_cache("followed_live_streams.json")
+
+
+def time_to_update_live_streams():
+    """Return True if path mtime > 5 mins from now.
+    (default twitch API update time).
+    """
+    fnf = not Path(cache_path_live_streams()).is_file()
+    if fnf or utils.secs_since_mtime(cache_path_live_streams()) > 300:
+        return True
+    else:
+        return False
+
+
 def update_data() -> dict:
     """Update json data & return thumbnail paths."""
-    if data.time_to_update_live_streams():
-        data.update_live_streams()
-        json_data = data.read_live_streams()
+    if time_to_update_live_streams():
+        update_live_streams()
+        json_data = read_live_streams()
         ids = data.get_entries(json_data, 'id')
         thumbnail_urls_raw = data.get_entries(json_data, 'thumbnail_url')
         thumbnail_paths = thumbnails.get_thumbnails(ids, thumbnail_urls_raw)
     else:
         # do not download thumbnails, use previously downloaded thumbnails
-        json_data = data.read_live_streams()
+        json_data = read_live_streams()
         ids = data.get_entries(json_data, 'id')
         thumbnail_dir = utils.get_tmp_dir("thumbnails_live")
 
@@ -47,7 +85,7 @@ def update_data() -> dict:
 def prepare_objects():
     """Prepare objects for thumbnails and boxes."""
     thumbnail_paths = update_data()
-    json_data = data.read_live_streams()
+    json_data = read_live_streams()
     fls = data.create_streams_dict(json_data)  # dict with user name as key
     ids = list(fls.keys())
     boxes = render.Boxes()
