@@ -56,3 +56,13 @@ def get_user_conf_dir() -> Path:
 def secs_since_mtime(path):
     """time_now - target_mtime = int(secs)."""
     return int(time.time() - getmtime(path))
+
+
+def insert_to_all(list, string, opt_sep="") -> list:
+    """ Insert the string at the beginning of all items in a list. """
+    string = str(string)
+    if opt_sep:
+        string = f"{string}{opt_sep}"
+    string += '% s'
+    list = [string % i for i in list]
+    return list
