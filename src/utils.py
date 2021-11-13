@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from pathlib import Path
-from tempfile import gettempdir
 from os import environ
 from os.path import getmtime
+from pathlib import Path
+from tempfile import gettempdir
 import time
 
 
