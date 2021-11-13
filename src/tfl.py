@@ -12,6 +12,7 @@ import render
 import thumbnails
 import utils
 
+CACHE_FILE_NAME = "followed_live_streams.json"
 # TODO: get HEADER_H value from some Page class or smth like that. (to be able to re-use in all tabs/pages)
 HEADER_H = 5
 
@@ -31,15 +32,15 @@ def get_followed_live_streams():
 
 
 def cache_path_live_streams():
-    return data.cache_file_path("followed_live_streams.json")
+    return data.cache_file_path(CACHE_FILE_NAME)
 
 
 def update_live_streams():
-    return data.update_cache("followed_live_streams.json", get_followed_live_streams())
+    return data.update_cache(CACHE_FILE_NAME, get_followed_live_streams())
 
 
 def read_live_streams():
-    return data.read_cache("followed_live_streams.json")
+    return data.read_cache(CACHE_FILE_NAME)
 
 
 def time_to_update_live_streams():
