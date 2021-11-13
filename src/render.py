@@ -111,3 +111,13 @@ class Grid:
                 x = initial_x + scols
                 y += srows + self.h
         return coordinates
+
+
+def run(func):
+    """
+    The curses.wrapper function is an optional function that
+    encapsulates a number of lower-level setup and teardown
+    functions, and takes a single function to run when
+    the initializations have taken place.
+    """
+    curses.wrapper(func)
