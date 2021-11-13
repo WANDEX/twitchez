@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-import ueberzug.lib.v0 as ueberzug
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
 from time import sleep
 import requests
 import conf
-import utils
 import render
+import ueberzug.lib.v0 as ueberzug
+import utils
 
 
 def thumbnail_resolution(div=6):
