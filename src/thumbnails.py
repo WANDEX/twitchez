@@ -3,8 +3,10 @@
 
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
+from sys import version_info
 from time import sleep
-import requests
+import aiohttp
+import asyncio
 import conf
 import render
 import ueberzug.lib.v0 as ueberzug
@@ -40,19 +42,46 @@ def get_thumbnail_urls(rawurls) -> list:
     return urls
 
 
-def get_thumbnails(ids, rawurls) -> dict:
-    """Download thumbnails and return paths."""
+async def fetch_image(session, url):
+    """Asynchronously fetch image from url."""
+    async with session.get(url) as response:
+        return await response.read()
+
+
+async def __get_thumbnails_async(ids: list, rawurls: list) -> dict:
+    """Asynchronously download thumbnails and return paths.
+    (Actual realization)
+    """
     thumbnail_paths = {}
     urls = get_thumbnail_urls(rawurls)
     tmpd = utils.get_tmp_dir("thumbnails_live")
-    for (id, thumbnail_url) in zip(ids, urls):
-        r = requests.get(thumbnail_url)
+    tasks = []
+    async with aiohttp.ClientSession() as session:
+        for url in urls:
+            tasks.append(fetch_image(session, url))
+        # wait until all thumbnails fetched
+        thumbnails = await asyncio.gather(*tasks)
+    for (id, thumbnail) in zip(ids, thumbnails):
         thumbnail_fname = f"{id}.jpg"
         thumbnail_path = Path(tmpd, thumbnail_fname)
         with open(thumbnail_path, 'wb') as f:
-            f.write(r.content)
+            f.write(thumbnail)
         thumbnail_paths[id] = str(thumbnail_path)
     return thumbnail_paths
+
+
+def get_thumbnails(ids: list, rawurls: list) -> dict:
+    """Asynchronously download thumbnails and return paths.
+    (Wrapper with asyncio run/run_until_complete)
+    """
+    if version_info >= (3, 7):  # Python 3.7+
+        return asyncio.run(__get_thumbnails_async(ids, rawurls))
+    else:  # Python 3.5-3.6
+        loop = asyncio.get_event_loop()
+        try:
+            return loop.run_until_complete(__get_thumbnails_async(ids, rawurls))
+        finally:
+            loop.close()
 
 
 class Thumbnail:
