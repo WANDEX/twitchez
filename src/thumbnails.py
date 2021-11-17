@@ -118,12 +118,19 @@ class Draw:
     def __init__(self):
         self.ue_params_list = render.Boxes.thmblist
 
+    def __check_wait(self, loops_num):
+        """Check FINISH condition every sleep interval N loops."""
+        for _ in range(loops_num):
+            sleep(0.5)
+            if self.FINISH:
+                return
+
     def __draw(self):
         with ueberzug.Canvas() as c:
             with c.lazy_drawing:
                 for thumbnail in self.ue_params_list:
                     ueberzug.Placement(c, **thumbnail)
-            sleep(5)
+            self.__check_wait(120)
 
     def __loop(self):
         while not self.FINISH:
@@ -132,3 +139,4 @@ class Draw:
     def back_loop(self):
         ue = ThreadPool(processes=1)
         ue.apply_async(self.__loop)
+        return ue
