@@ -2,6 +2,7 @@
 # coding=utf-8
 
 from configparser import ConfigParser
+from pathlib import Path
 import utils
 
 glob_conf = utils.project_root("config", "default.conf")
@@ -18,6 +19,9 @@ keymap = ConfigParser()
 keymap.read(glob_keys)
 keymap.read(user_keys)  # user config takes precedence over global default config
 
+temp_vars = Path(utils.get_tmp_dir(), "vars")
+temp = ConfigParser()
+
 
 def setting(keyname):
     found = config.get("GENERAL", keyname)
@@ -26,4 +30,25 @@ def setting(keyname):
 
 def key(keyname):
     found = keymap.get("GENERAL", keyname, fallback="")
+    return found
+
+
+def tmp_set(option, value, section="GENERAL"):
+    """Set tmp variable value."""
+    if not temp.has_section(section):
+        temp.add_section(section)
+    temp.set(str(section), str(option), str(value))
+    with open(temp_vars, "w") as file:
+        temp.write(file, space_around_delimiters=False)
+
+
+def tmp_get(keyname, fallback, section="GENERAL"):
+    """Get tmp variable value."""
+    temp.read(temp_vars)
+    if not temp.has_section(section):
+        temp.add_section(section)
+    if fallback or not temp.has_option(section, keyname):
+        found = temp.get(section, keyname, fallback=fallback)
+    else:
+        found = temp.get(section, keyname)
     return found
