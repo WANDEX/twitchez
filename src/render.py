@@ -56,15 +56,14 @@ class Grid:
     h = int(conf.setting("container_box_height"))
     w = int(conf.setting("container_box_width"))
 
-    def __init__(self):
+    def __init__(self, page_name):
         """set key_list -> each key will have (X, Y) values on the Grid."""
         # FIXME: temporary hardcoded
         self.area_cols = 230
         self.area_rows = 55
         self.key_list = []
-        # TODO: update value after pressing scroll key
-        #       particularly: set it to total from capacity()
-        self.key_start_index = 0
+        self.page_name = page_name
+        self.key_start_index = self.index()
 
     def capacity(self, string="all"):
         """Count how many boxes fit in the area.
@@ -92,8 +91,46 @@ class Grid:
         r = int((self.area_rows - self.h * rows) / rows)
         return c, r
 
-    def coordinates(self, initial_x=0, initial_y=0) -> dict:  # FIXME: x, y initial values temporary hardcoded
+    def index(self, start_index=""):
+        """Set/Get initial grid index."""
+        if str(start_index):  # str -> to check if not empty (even 0 value)
+            index = int(start_index)
+            conf.tmp_set("grid_index", index, self.page_name)
+        else:
+            index = int(conf.tmp_get("grid_index", 0, self.page_name))
+            if not index or index < 0:
+                index = 0
+                conf.tmp_set("grid_index", index, self.page_name)
+        self.key_start_index = index
+        return index
+
+    def shift_index(self, dir="down", page=False):
+        """Shift value of the key start index."""
+        cols, _, total = self.capacity()
+        if len(self.key_list) <= total:
+            start_index = 0
+        else:
+            grid_index = self.index()
+            if page:
+                if dir == "down":
+                    start_index = grid_index + total
+                else:
+                    start_index = grid_index - total
+            else:
+                if dir == "down":
+                    start_index = grid_index + cols
+                else:
+                    start_index = grid_index - cols
+            if start_index < 0:
+                start_index = 0
+            if start_index > total:
+                start_index = total
+        self.index(start_index)
+        return start_index
+
+    def coordinates(self) -> dict:
         """Return dict with: tuple(X, Y) values where each key_list element is the key."""
+        initial_x, initial_y = 0, 0
         cols, rows, total = self.capacity()
         total += self.key_start_index  # for scrolling
         scols, srows = self.spacing(cols, rows)
