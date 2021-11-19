@@ -12,7 +12,8 @@ import render
 import thumbnails
 import utils
 
-CACHE_FILE_NAME = "followed_live_streams.json"
+PAGE_NAME = "followed_live_streams"
+CACHE_FILE_NAME = f"{PAGE_NAME}.json"
 # TODO: get HEADER_H value from some Page class or smth like that. (to be able to re-use in all tabs/pages)
 HEADER_H = 5
 
@@ -90,7 +91,7 @@ def prepare_objects():
     fls = data.create_streams_dict(json_data)  # dict with user name as key
     ids = list(fls.keys())
     boxes = render.Boxes()
-    grid = render.Grid()
+    grid = render.Grid(PAGE_NAME)
     grid.key_list = ids
     gcords = grid.coordinates()
     for id, (x, y) in gcords.items():
@@ -103,6 +104,7 @@ def prepare_objects():
         thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + HEADER_H).ue_params
         boxes.add(box)
         boxes.add_thmb(thmb)
+    return grid
 
 
 def draw_header(parent):
