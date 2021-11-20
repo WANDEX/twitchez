@@ -107,11 +107,21 @@ class Grid:
     def shift_index(self, dir="down", page=False):
         """Shift value of the key start index."""
         cols, _, total = self.capacity()
-        if len(self.key_list) <= total:
+        elems_total = len(self.key_list)
+        remainder = elems_total % cols
+        if remainder == 0:
+            end_of_page = elems_total - total
+        else:
+            end_of_page = elems_total - total - remainder + cols
+        if elems_total <= total:
             start_index = 0
         else:
             grid_index = self.index()
-            if page:
+            if dir == "top":
+                start_index = 0
+            elif dir == "bot":
+                start_index = end_of_page
+            elif page:
                 if dir == "down":
                     start_index = grid_index + total
                 else:
@@ -123,8 +133,8 @@ class Grid:
                     start_index = grid_index - cols
             if start_index < 0:
                 start_index = 0
-            if start_index > total:
-                start_index = total
+            elif start_index > end_of_page - start_index:
+                start_index = end_of_page
         self.index(start_index)
         return start_index
 
