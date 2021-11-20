@@ -122,7 +122,7 @@ class Draw:
     def __check_wait(self, loops_num):
         """Check FINISH condition every sleep interval N loops."""
         for _ in range(loops_num):
-            sleep(0.5)
+            sleep(0.25)
             if self.FINISH:
                 return
 
@@ -131,7 +131,7 @@ class Draw:
             with c.lazy_drawing:
                 for thumbnail in self.ue_params_list:
                     ueberzug.Placement(c, **thumbnail)
-            self.__check_wait(120)
+            self.__check_wait(240)
 
     def __loop(self):
         while not self.FINISH:

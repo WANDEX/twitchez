@@ -59,4 +59,4 @@ def loop(page_class):
             break
         scroll(c, renderfunc, parent)
     thumbnails.Draw().finish()
-    sleep(0.5)
+    sleep(0.3)
