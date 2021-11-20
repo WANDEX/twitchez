@@ -133,7 +133,7 @@ class Grid:
                     start_index = grid_index - cols
             if start_index < 0:
                 start_index = 0
-            elif start_index > end_of_page - start_index:
+            elif start_index > end_of_page - start_index + cols:
                 start_index = end_of_page
         self.index(start_index)
         return start_index
