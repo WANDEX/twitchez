@@ -150,6 +150,17 @@ class Grid:
         return coordinates
 
 
+class Page:
+    """Page."""
+    def __init__(self, render_func, page_parent, page_name):
+        self.render_func = render_func
+        self.page_parent = page_parent
+        self.page_name = page_name
+
+    def render_page(self):
+        return self.render_func(self.page_parent)
+
+
 def run(func):
     """
     The curses.wrapper function is an optional function that
