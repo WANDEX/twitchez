@@ -8,6 +8,8 @@ import thumbnails
 
 
 scroll_keys = {
+    "scroll_top": conf.key("scroll_top"),
+    "scroll_bot": conf.key("scroll_bot"),
     "scroll_up": conf.key("scroll_up"),
     "scroll_down": conf.key("scroll_down"),
     "scroll_up_page": conf.key("scroll_up_page"),
@@ -28,6 +30,10 @@ def scroll(c, renderfunc, parent):
             grid.shift_index("down", page=True)
         elif c == scroll_keys.get("scroll_up_page"):
             grid.shift_index("up", page=True)
+        elif c == scroll_keys.get("scroll_top"):
+            grid.shift_index("top")
+        elif c == scroll_keys.get("scroll_bot"):
+            grid.shift_index("bot")
         parent.clear()
         renderfunc()  # redraw after shifting grid index
         thumbnails.Draw().start()
