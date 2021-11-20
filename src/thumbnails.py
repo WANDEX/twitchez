@@ -114,6 +114,7 @@ class Thumbnail:
 class Draw:
     """Draw all images from list of ue_params with ueberzug."""
     FINISH = False
+    images = []
 
     def __init__(self):
         self.ue_params_list = render.Boxes.thmblist
@@ -137,6 +138,21 @@ class Draw:
             self.__draw()
 
     def back_loop(self):
+        """Draw images in background."""
         ue = ThreadPool(processes=1)
         ue.apply_async(self.__loop)
         return ue
+
+    def start(self):
+        """Start drawing images in background,
+        add new object to the images list.
+        """
+        img = Draw()
+        self.images.append(img)
+        return img.back_loop()
+
+    def finish(self):
+        """Finish all what was start()."""
+        for img in self.images:
+            img.FINISH = True  # finish back_loop()
+            self.images.remove(img)
