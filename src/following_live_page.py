@@ -130,12 +130,15 @@ def draw_body(parent):
 
 def following_live_page(stdscr):
     """Main page method."""
-    prepare_objects()
+    grid = prepare_objects()
     draw_header(stdscr)
     draw_body(stdscr)
-    thumbnails.Draw().back_loop()
-    keys.loop(stdscr)
-    thumbnails.Draw.FINISH = True  # finish back_loop()
+    return grid
 
 
-render.run(following_live_page)
+def loop(stdscr):
+    page_class = render.Page(following_live_page, stdscr, PAGE_NAME)
+    keys.loop(page_class)
+
+
+render.run(loop)
