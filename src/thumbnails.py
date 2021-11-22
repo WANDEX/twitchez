@@ -156,3 +156,4 @@ class Draw:
         for img in self.images:
             img.FINISH = True  # finish back_loop()
             self.images.remove(img)
+        self.ue_params_list.clear()
