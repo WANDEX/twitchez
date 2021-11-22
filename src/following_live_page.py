@@ -12,10 +12,10 @@ import render
 import thumbnails
 import utils
 
+HEADER_H = render.Tabs.HEADER_HEIGHT
+
 PAGE_NAME = "followed_live_streams"
 CACHE_FILE_NAME = f"{PAGE_NAME}.json"
-# TODO: get HEADER_H value from some Page class or smth like that. (to be able to re-use in all tabs/pages)
-HEADER_H = 5
 
 
 def get_followed_live_streams():
@@ -84,14 +84,14 @@ def update_data() -> dict:
     return thumbnail_paths
 
 
-def prepare_objects():
+def prepare_objects(parent):
     """Prepare objects for thumbnails and boxes."""
     thumbnail_paths = update_data()
     json_data = read_live_streams()
     fls = data.create_streams_dict(json_data)  # dict with user name as key
     ids = list(fls.keys())
     boxes = render.Boxes()
-    grid = render.Grid(PAGE_NAME)
+    grid = render.Grid(parent, PAGE_NAME)
     grid.key_list = ids
     gcords = grid.coordinates()
     for id, (x, y) in gcords.items():
@@ -107,17 +107,6 @@ def prepare_objects():
     return grid
 
 
-def draw_header(parent):
-    """Draw page header."""
-    _, w = parent.getmaxyx()
-    head = parent.derwin(HEADER_H - 1, w, 0, 0)
-    head.addstr(0, 0, "\n  Twitch\n  Curses", curses.A_BOLD)
-    head.addstr(1, 10, "Following Live", curses.A_REVERSE)  # Tab name
-    head.box()
-    head.refresh()
-    return head
-
-
 def draw_body(parent, grid):
     """Draw page body."""
     h, w = parent.getmaxyx()
@@ -128,8 +117,8 @@ def draw_body(parent, grid):
 
 def following_live_page(stdscr):
     """Main page method."""
-    grid = prepare_objects()
-    draw_header(stdscr)
+    grid = prepare_objects(stdscr)
+    render.Tabs().draw_header(stdscr)
     draw_body(stdscr, grid)
     return grid
 

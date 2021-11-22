@@ -66,11 +66,11 @@ class Grid:
     h = int(conf.setting("container_box_height"))
     w = int(conf.setting("container_box_width"))
 
-    def __init__(self, page_name):
+    def __init__(self, parent, page_name):
         """set key_list -> each key will have (X, Y) values on the Grid."""
-        # FIXME: temporary hardcoded
-        self.area_cols = 230
-        self.area_rows = 55
+        self.__window = Window(parent)
+        self.area_cols = self.__window.cols
+        self.area_rows = self.__window.rows
         self.key_list = []
         self.page_name = page_name
         self.key_start_index = self.index()
@@ -178,6 +178,39 @@ class Page:
 
     def render_page(self):
         return self.render_func(self.page_parent)
+
+
+class Tab:
+    """Each Tab has its own page."""
+    # TODO
+
+
+class Tabs:
+    """Tabs."""
+    HEADER_HEIGHT = 1
+    header_borders = int(conf.setting("header_borders"))
+    # TODO
+
+    def draw_header(self, parent):
+        """Draw header."""
+        # FIXME: temporary function till real realization of Tab & Tabs
+        _, w = parent.getmaxyx()
+        head = parent.derwin(self.HEADER_HEIGHT, w, 0, 0)
+        if self.header_borders:
+            head.box()
+        head.addstr(0, 2, "[Twitch Curses]", curses.A_BOLD)
+        head.addstr(0, 19, "Following Live", curses.A_REVERSE)  # Tab name
+        head.refresh()
+        return head
+
+
+class Window:
+    """Window."""
+
+    def __init__(self, parent):
+        self.__rows, self.__cols = parent.getmaxyx()  # get window size
+        self.rows = self.__rows - Tabs.HEADER_HEIGHT
+        self.cols = self.__cols
 
 
 def run(func):
