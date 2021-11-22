@@ -118,13 +118,11 @@ def draw_header(parent):
     return head
 
 
-def draw_body(parent):
+def draw_body(parent, grid):
     """Draw page body."""
     h, w = parent.getmaxyx()
     body = parent.derwin(h - HEADER_H, w, HEADER_H, 0)
-    for box in render.Boxes().boxlist:
-        box.draw(body)
-    body.refresh()
+    render.Boxes().draw(body, grid)
     return body
 
 
@@ -132,7 +130,7 @@ def following_live_page(stdscr):
     """Main page method."""
     grid = prepare_objects()
     draw_header(stdscr)
-    draw_body(stdscr)
+    draw_body(stdscr, grid)
     return grid
 
 

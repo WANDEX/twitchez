@@ -19,6 +19,14 @@ class Boxes:
         """Add thumbnail ue params to list."""
         self.thmblist.append(obj)
 
+    def draw(self, parent, grid):
+        """Draw boxes."""
+        stop = len(grid.coordinates())
+        for box in islice(self.boxlist, stop):
+            box.draw(parent)
+        parent.refresh()
+        self.boxlist.clear()
+
 
 class Box:
     """Box with info about the stream inside the Grid."""
