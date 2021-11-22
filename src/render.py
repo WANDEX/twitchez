@@ -32,6 +32,7 @@ class Box:
     """Box with info about the stream inside the Grid."""
     h = int(conf.setting("container_box_height"))
     w = int(conf.setting("container_box_width")) - 4
+    box_borders = int(conf.setting("box_borders"))
     last = h - 2  # last line before bottom box border
     lmax = w - 2  # max length of string inside box
 
@@ -54,7 +55,8 @@ class Box:
         if self.viewers:
             rside = self.lmax - len(self.viewers)
             win.addstr(self.last, rside, f" {self.viewers} ", curses.A_BOLD)
-        win.box()
+        if self.box_borders:  # show box borders if set in config
+            win.box()
         Y, X = win.getparyx()
         win.addnstr(0, 1, f"X:{X}-Y:{Y}", self.lmax)  # for debug
 
