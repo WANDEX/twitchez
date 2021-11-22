@@ -101,7 +101,6 @@ class Grid:
             if not index or index < 0:
                 index = 0
                 conf.tmp_set("grid_index", index, self.page_name)
-        self.key_start_index = index
         return index
 
     def shift_index(self, dir="down", page=False):
