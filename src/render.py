@@ -198,19 +198,25 @@ class Tab:
 
 class Tabs:
     """Tabs."""
-    HEADER_HEIGHT = 1
+    HEADER_HEIGHT = 2
     header_borders = int(conf.setting("header_borders"))
     # TODO
 
     def draw_header(self, parent):
         """Draw header."""
         # FIXME: temporary function till real realization of Tab & Tabs
+        tc = "[Twitch Curses]"
+        name = "Following Live"
+        s = 3
+        full_text = tc + " " * s + name
         _, w = parent.getmaxyx()
-        head = parent.derwin(self.HEADER_HEIGHT, w, 0, 0)
-        if self.header_borders:
-            head.box()
-        head.addstr(0, 2, "[Twitch Curses]", curses.A_BOLD)
-        head.addstr(0, 19, "Following Live", curses.A_REVERSE)  # Tab name
+        head = parent.derwin(self.HEADER_HEIGHT - 1, w, 0, 0)
+        if w > len(name) + 2:
+            if self.header_borders:
+                head.box()
+            head.addnstr(0, 2, name, w, curses.A_REVERSE)  # Tab name
+        if w > len(full_text):
+            head.addnstr(0, len(name) + s, tc, len(tc), curses.A_BOLD)
         head.refresh()
         return head
 
