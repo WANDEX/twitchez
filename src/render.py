@@ -97,8 +97,14 @@ class Grid:
         """Calculate even spacing between grid elements.
         returns spacing: cols, rows.
         """
-        c = int((self.area_cols - self.w * cols) / cols)
-        r = int((self.area_rows - self.h * rows) / rows)
+        if cols < 1:
+            c = 0
+        else:
+            c = int((self.area_cols - self.w * cols) / cols)
+        if rows < 1:
+            r = 0
+        else:
+            r = int((self.area_rows - self.h * rows) / rows)
         return c, r
 
     def index(self, start_index=""):
