@@ -6,6 +6,10 @@ import conf
 import curses
 import thumbnails
 
+keys = {
+    "quit": conf.key("quit"),
+    "redraw": conf.key("redraw"),
+}
 
 scroll_keys = {
     "scroll_top": conf.key("scroll_top"),
@@ -69,9 +73,9 @@ def loop(page_class):
         h, w = parent.getmaxyx()
         # Show last pressed key chars at the bottom-right corner.
         parent.insstr(h - 1, w - 4, c)
-        if c == conf.key("quit"):
+        if c == keys.get("quit"):
             break
-        elif c == conf.key("redraw"):
+        elif c == keys.get("redraw"):
             redraw()
             continue
         scroll(c, renderfunc, parent)
