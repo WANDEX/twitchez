@@ -153,19 +153,27 @@ class Grid:
         cols, rows, total = self.capacity()
         total += self.key_start_index  # for scrolling
         scols, srows = self.spacing(cols, rows)
-        x = initial_x + scols
-        y = initial_y + srows
+        # for more even spacing from both sides
+        sc = scols // 2
+        sr = srows // 2
+        remainderc = scols % 2
+        remainderr = srows % 2
+        x = initial_x + sc + remainderc
+        y = initial_y + sr + remainderr
         current_col = 1
         coordinates = {}
         for key in islice(self.key_list, self.key_start_index, total):
+            if cols > 2:
+                x += sc
+                y += sr
             coordinates[key] = (x, y)
             if current_col < cols:
                 current_col += 1
-                x += scols + self.w
+                x += sc + self.w
             else:
                 current_col = 1
-                x = initial_x + scols
-                y += srows + self.h
+                x = initial_x + sc
+                y += sr + self.h
         return coordinates
 
 
