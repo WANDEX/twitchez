@@ -48,15 +48,32 @@ def loop(page_class):
     curses.use_default_colors()
     curses.curs_set(0)  # Turn off cursor
 
+    def redraw():
+        """Reinitialize variables & redraw everything."""
+        thumbnails.Draw().finish()
+        parent.clear()
+        renderfunc()
+        thumbnails.Draw().start()
+
+    # draw once just before the loop start
     renderfunc()
     thumbnails.Draw().start()
 
     while True:
+        c = parent.get_wch()
+        if isinstance(c, int) and c == curses.KEY_RESIZE:  # terminal resize event
+            # redraw & start loop again without further more complex execution
+            redraw()
+            continue
+        c = str(c)  # convert character to string
         h, w = parent.getmaxyx()
-        c = str(parent.get_wch())
-        parent.insstr(h - 1, w - 4, c)  # Show last pressed key chars at the bottom-right corner.
+        # Show last pressed key chars at the bottom-right corner.
+        parent.insstr(h - 1, w - 4, c)
         if c == conf.key("quit"):
             break
+        elif c == conf.key("redraw"):
+            redraw()
+            continue
         scroll(c, renderfunc, parent)
     thumbnails.Draw().finish()
     sleep(0.3)
