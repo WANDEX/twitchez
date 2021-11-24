@@ -2,28 +2,28 @@
 # coding=utf-8
 
 from time import sleep
-import conf
+from conf import key as ck
 import curses
 from render import Hints
 import thumbnails
 
 keys = {
-    "quit": conf.key("quit"),
-    "redraw": conf.key("redraw"),
+    "quit": ck("quit"),
+    "redraw": ck("redraw"),
 }
 
 hint_keys = {
-    "hint_clip_url": conf.key("hint_clip_url"),
-    "hint_open_url": conf.key("hint_open_url"),
+    "hint_clip_url": ck("hint_clip_url"),
+    "hint_open_url": ck("hint_open_url"),
 }
 
 scroll_keys = {
-    "scroll_top": conf.key("scroll_top"),
-    "scroll_bot": conf.key("scroll_bot"),
-    "scroll_up": conf.key("scroll_up"),
-    "scroll_down": conf.key("scroll_down"),
-    "scroll_up_page": conf.key("scroll_up_page"),
-    "scroll_down_page": conf.key("scroll_down_page")
+    "scroll_top": ck("scroll_top"),
+    "scroll_bot": ck("scroll_bot"),
+    "scroll_up": ck("scroll_up"),
+    "scroll_down": ck("scroll_down"),
+    "scroll_up_page": ck("scroll_up_page"),
+    "scroll_down_page": ck("scroll_down_page")
 }
 
 
