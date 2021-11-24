@@ -10,6 +10,7 @@ class Boxes:
     """Operate on list of Boxes"""
     boxlist = []
     thmblist = []
+    drawn_boxes = []
 
     def add(self, obj):
         """Add box object to list."""
@@ -21,8 +22,10 @@ class Boxes:
 
     def draw(self, parent, grid):
         """Draw boxes."""
+        self.drawn_boxes.clear()
         stop = len(grid.coordinates())
         for box in islice(self.boxlist, stop):
+            self.drawn_boxes.append(box)
             box.draw(parent)
         parent.refresh()
         self.boxlist.clear()
