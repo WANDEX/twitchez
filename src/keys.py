@@ -4,11 +4,17 @@
 from time import sleep
 import conf
 import curses
+from render import Hints
 import thumbnails
 
 keys = {
     "quit": conf.key("quit"),
     "redraw": conf.key("redraw"),
+}
+
+hint_keys = {
+    "hint_clip_url": conf.key("hint_clip_url"),
+    "hint_open_url": conf.key("hint_open_url"),
 }
 
 scroll_keys = {
@@ -41,6 +47,25 @@ def scroll(c, renderfunc, parent):
         parent.clear()
         renderfunc()  # redraw after shifting grid index
         thumbnails.Draw().start()
+
+
+def hints(c, renderfunc, parent):
+    """Show hints, and make some action based on key and hint."""
+    if c in hint_keys.values():
+        hints = Hints()
+        hints.show_hints()
+        if c == hint_keys.get("hint_open_url"):
+            # TODO
+            pass
+        elif c == hint_keys.get("hint_clip_url"):
+            c = str(parent.get_wch())
+            if c in hints.active_hints_letters:
+                hints.copy_url(c)
+        # to hide previously shown hints
+        renderfunc()
+        return True
+    else:
+        return False
 
 
 def loop(page_class):
@@ -77,6 +102,8 @@ def loop(page_class):
             break
         elif c == keys.get("redraw"):
             redraw()
+            continue
+        if hints(c, renderfunc, parent):
             continue
         scroll(c, renderfunc, parent)
     thumbnails.Draw().finish()
