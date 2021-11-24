@@ -43,6 +43,7 @@ class Box:
         self.user = user
         self.title = title
         self.category = category
+        self.hint = ""
         self.url = f"https://www.twitch.tv/{user}"
         self.x = x
         self.y = y
@@ -62,6 +63,14 @@ class Box:
             win.box()
         Y, X = win.getparyx()
         win.addnstr(0, 1, f"X:{X}-Y:{Y}", self.lmax)  # for debug
+
+    def show_hint(self):
+        """Create window with hint character."""
+        if self.hint:  # if hint not empty -> show hint
+            curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_RED)
+            win = curses.newwin(1, 2, self.y + self.h - 1, self.x + self.w - 3)
+            win.addch(self.hint, curses.color_pair(1))
+            win.refresh()
 
 
 class Grid:
