@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from time import sleep
 from conf import key as ck
-import curses
 from render import Hints
+from time import sleep
+import curses
 import thumbnails
 
 keys = {
