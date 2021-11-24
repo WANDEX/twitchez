@@ -6,6 +6,43 @@ import curses
 import conf
 
 
+class Hints:
+    prev_hint_index = -1
+    hint_chars = str(conf.setting("hint_chars"))
+    active_hints_letters = []
+
+    def hint(self):
+        """return next letter from hint_chars string."""
+        inext = self.prev_hint_index + 1
+        if len(self.hint_chars) > inext:  # FIXME: this check is not complete!
+            hint = self.hint_chars[inext]
+        else:
+            # FIXME: this is temporary!
+            hint = "E"
+        self.prev_hint_index = inext  # set prev hint index
+        return hint
+
+    def hints_reset_index(self):
+        self.prev_hint_index = -1
+
+    def show_hints(self):
+        self.active_hints_letters.clear()
+        for box in Boxes.drawn_boxes:
+            hint = self.hint()
+            self.active_hints_letters.append(hint)
+            box.hint = hint
+            box.show_hint()
+        self.hints_reset_index()
+
+    def copy_url(self, input_hint_char):
+        value = ""
+        for box in Boxes.drawn_boxes:
+            if box.hint == input_hint_char:
+                value = box.url
+                break
+        # TODO: add copy to clipboard function
+
+
 class Boxes:
     """Operate on list of Boxes"""
     boxlist = []
