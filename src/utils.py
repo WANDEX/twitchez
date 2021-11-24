@@ -80,3 +80,14 @@ def insert_to_all(list, string, opt_sep="") -> list:
     string += '% s'
     list = [string % i for i in list]
     return list
+
+
+def notify(body="", summary="[TFL]"):
+    """Show notification."""
+    # TODO check if dunstify is at path & add notify-send
+    import subprocess
+    DST = "string:x-dunst-stack-tag"
+    subprocess.Popen(
+        ['dunstify', '-t', '0', '-u', 'low', "-h", f"{DST}:TFL", "-h", f"{DST}:hi", f"'{summary}'", f"'{body}'"]
+    )
+    return
