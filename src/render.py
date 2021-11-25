@@ -2,6 +2,7 @@
 # coding=utf-8
 
 from itertools import islice
+from notify import notify
 import curses
 import conf
 
@@ -47,6 +48,7 @@ class Hints:
     def copy_url(self, hint):
         value = self.get_box_attr_hint(hint, "url")
         # TODO: add copy to clipboard function
+        notify(value, "copied:")
 
 
 class Boxes:
