@@ -30,16 +30,23 @@ def notify_cmd_check() -> bool:
     return False
 
 
+def expire_time():
+    """return expire time for notifications from config."""
+    return conf.setting("notify_time")
+
+
 def dunstify_cmd() -> list:
     # NOTE: dunst stack tag 'hi' stands for 'history ignore' and can be used for that purpose.
     # (requires creating matching profile in dunst config)
+    t = expire_time()
     DST = "string:x-dunst-stack-tag"
-    cmd = f"dunstify -t 2000 -u low -h {DST}:TFL -h {DST}:hi"
+    cmd = f"dunstify -t {t} -u low -h {DST}:TFL -h {DST}:hi"
     return cmd.split()
 
 
 def notify_send_cmd() -> list:
-    cmd = "notify-send -t 2000 -u low"
+    t = expire_time()
+    cmd = f"notify-send -t {t} -u low"
     return cmd.split()
 
 
