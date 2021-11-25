@@ -34,12 +34,18 @@ class Hints:
             box.show_hint()
         self.hints_reset_index()
 
-    def copy_url(self, input_hint_char):
-        value = ""
-        for box in Boxes.drawn_boxes:
-            if box.hint == input_hint_char:
-                value = box.url
-                break
+    def get_box_attr_hint(self, hint, attr):
+        """return attribute value of box object found by the hint."""
+        boxes = Boxes.drawn_boxes
+        if not hasattr(boxes[0], attr):
+            raise AttributeError(f"'{attr}' -> {boxes[0]} does not have such attribute!")
+        for box in boxes:
+            if getattr(box, "hint") == hint:
+                return getattr(box, attr)
+        raise Exception(f"value of ATTR:'{attr}' by the HINT:'{hint}' not found!")
+
+    def copy_url(self, hint):
+        value = self.get_box_attr_hint(hint, "url")
         # TODO: add copy to clipboard function
 
 
