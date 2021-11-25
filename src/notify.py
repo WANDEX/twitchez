@@ -37,7 +37,7 @@ def expire_time():
 
 def dunstify_cmd() -> list:
     # NOTE: dunst stack tag 'hi' stands for 'history ignore' and can be used for that purpose.
-    # (requires creating matching profile in dunst config)
+    # (requires creating matching rule in dunst config)
     t = expire_time()
     DST = "string:x-dunst-stack-tag"
     cmd = f"dunstify -t {t} -u low -h {DST}:TFL -h {DST}:hi"
