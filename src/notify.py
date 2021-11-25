@@ -31,6 +31,8 @@ def notify_cmd_check() -> bool:
 
 
 def dunstify_cmd() -> list:
+    # NOTE: dunst stack tag 'hi' stands for 'history ignore' and can be used for that purpose.
+    # (requires creating matching profile in dunst config)
     DST = "string:x-dunst-stack-tag"
     cmd = f"dunstify -t 2000 -u low -h {DST}:TFL -h {DST}:hi"
     return cmd.split()
