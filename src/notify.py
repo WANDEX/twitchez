@@ -32,12 +32,12 @@ def notify_cmd_check() -> bool:
 
 def dunstify_cmd() -> list:
     DST = "string:x-dunst-stack-tag"
-    cmd = f"dunstify -u low -h {DST}:TFL -h {DST}:hi"
+    cmd = f"dunstify -t 2000 -u low -h {DST}:TFL -h {DST}:hi"
     return cmd.split()
 
 
 def notify_send_cmd() -> list:
-    cmd = "notify-send -u low"
+    cmd = "notify-send -t 2000 -u low"
     return cmd.split()
 
 
