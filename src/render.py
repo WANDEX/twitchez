@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from clip import clip
 from itertools import islice
 from notify import notify
 import curses
@@ -47,8 +48,7 @@ class Hints:
 
     def copy_url(self, hint):
         value = self.get_box_attr_hint(hint, "url")
-        # TODO: add copy to clipboard function
-        notify(value, "copied:")
+        clip(value)
 
 
 class Boxes:
