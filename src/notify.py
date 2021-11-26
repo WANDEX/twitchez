@@ -64,13 +64,18 @@ def get_notify_cmd() -> list:
     return cmd
 
 
-def notify(body="", summary=""):
+def notify(body="", summary="", error=False):
     """Show user notification."""
     if without_funcs:
         return
     s = f"[TFL] {summary}"
     b = f"{body}"
     cmd = get_notify_cmd()
+    if error:
+        cmd.append("-u")
+        cmd.append("critical")
+        cmd.append("-t")
+        cmd.append("8000")
     cmd.append(s)
     cmd.append(b)
     subprocess.Popen(cmd)
