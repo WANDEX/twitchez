@@ -2,12 +2,12 @@
 # coding=utf-8
 
 from shutil import which
-import cmd
+import command
 import conf
 import subprocess
 
 notify_cmd = conf.setting("notify_cmd")
-executable = cmd.first_cmd_word(notify_cmd)
+executable = command.first_cmd_word(notify_cmd)
 
 
 def without_notifications() -> bool:
@@ -21,7 +21,7 @@ def notify_cmd_check() -> bool:
     """return True if notifications are enabled & checks of executable are passed."""
     # written this way for readability
     if not without_notifications():
-        if cmd.executable_check(executable):
+        if command.executable_check(executable):
             return True
     return False
 
