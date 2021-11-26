@@ -4,6 +4,7 @@
 from clip import clip
 from itertools import islice
 from notify import notify
+from open_stream import open_stream_url
 import curses
 import conf
 
@@ -49,6 +50,10 @@ class Hints:
     def copy_url(self, hint):
         value = self.get_box_attr_hint(hint, "url")
         clip(value)
+
+    def open_url(self, hint):
+        value = self.get_box_attr_hint(hint, "url")
+        open_stream_url(value)
 
 
 class Boxes:
