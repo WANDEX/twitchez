@@ -22,6 +22,9 @@ class Hints:
         else:
             # FIXME: this is temporary!
             hint = "E"
+            # TODO: maybe i should convert hint_chars to uppercase and start from beginning index?
+            # TODO: OR i should start making two letter length hints if one letter hints are already used.
+            #       ^ same as surfingkeys etc.
         self.prev_hint_index = inext  # set prev hint index
         return hint
 

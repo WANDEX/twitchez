@@ -115,6 +115,8 @@ class Draw:
     """Draw all images from list of ue_params with ueberzug."""
     FINISH = False
     images = []
+    # FIXME: TODO: if not X11 - Wayland -> Do not even try to draw thumbnails
+    # -> only X11 supported by ueberzug
 
     def __init__(self):
         self.ue_params_list = render.Boxes.thmblist

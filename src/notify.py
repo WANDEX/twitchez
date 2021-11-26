@@ -71,6 +71,8 @@ def notify(body="", summary="", error=False):
     s = f"[TFL] {summary}"
     b = f"{body}"
     cmd = get_notify_cmd()
+    # FIXME: if user specified custom notify_cmd that does not support additional args
+    #        like we do here, it will break. (because we add -u & -t options after getting cmd)
     if error:
         cmd.append("-u")
         cmd.append("critical")
