@@ -8,22 +8,8 @@ import subprocess
 
 notify_cmd = conf.setting("notify_cmd")
 executable = command.first_cmd_word(notify_cmd)
-
-
-def without_notifications() -> bool:
-    """return True if notifications disabled via notify_cmd in settings."""
-    if "false" in executable.lower():
-        return True
-    return False
-
-
-def notify_cmd_check() -> bool:
-    """return True if notifications are enabled & checks of executable are passed."""
-    # written this way for readability
-    if not without_notifications():
-        if command.executable_check(executable):
-            return True
-    return False
+without_funcs = command.without_funcs(executable)
+cmd_check = command.cmd_check(executable)
 
 
 def expire_time():
@@ -48,7 +34,7 @@ def notify_send_cmd() -> list:
 
 def raise_user_note():
     """raise exception for regular user without traceback."""
-    if without_notifications():
+    if without_funcs:
         return
     try:
         a = "A program to send desktop notifications was not found at your 'PATH'."
@@ -67,7 +53,7 @@ def get_notify_cmd() -> list:
     """Check & return cmd if executable is on PATH."""
     cmd = []
     # prefer notify_cmd if set in config and found at PATH
-    if notify_cmd_check():
+    if cmd_check:
         cmd = notify_cmd.split()
     elif which("dunstify"):
         cmd = dunstify_cmd()
@@ -80,7 +66,7 @@ def get_notify_cmd() -> list:
 
 def notify(body="", summary=""):
     """Show user notification."""
-    if without_notifications():
+    if without_funcs:
         return
     s = f"[TFL] {summary}"
     b = f"{body}"
