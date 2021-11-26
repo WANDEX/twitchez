@@ -55,8 +55,9 @@ def hints(c, renderfunc, parent):
         hints = Hints()
         hints.show_hints()
         if c == hint_keys.get("hint_open_url"):
-            # TODO
-            pass
+            c = str(parent.get_wch())
+            if c in hints.active_hints_letters:
+                hints.open_url(c)
         elif c == hint_keys.get("hint_clip_url"):
             c = str(parent.get_wch())
             if c in hints.active_hints_letters:
