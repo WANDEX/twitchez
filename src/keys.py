@@ -72,8 +72,8 @@ def hints(c, renderfunc, parent):
 def loop(page_class):
     """Infinite loop to read every key press."""
     page = page_class
-    parent = page.page_parent
-    renderfunc = page.render_page
+    parent = page.parent
+    renderfunc = page.draw
 
     curses.use_default_colors()
     curses.curs_set(0)  # Turn off cursor

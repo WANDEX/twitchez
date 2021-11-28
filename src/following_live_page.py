@@ -5,7 +5,6 @@ from os import listdir, sep
 from os.path import basename, splitext
 from pathlib import Path
 from requests import get
-import curses
 import data
 import keys
 import render
@@ -84,8 +83,8 @@ def update_data() -> dict:
     return thumbnail_paths
 
 
-def prepare_objects(parent):
-    """Prepare objects for thumbnails and boxes."""
+def grid_func(parent):
+    """return grid for prepared objects of thumbnails and boxes."""
     thumbnail_paths = update_data()
     json_data = read_live_streams()
     fls = data.create_streams_dict(json_data)  # dict with user name as key
@@ -107,24 +106,8 @@ def prepare_objects(parent):
     return grid
 
 
-def draw_body(parent, grid):
-    """Draw page body."""
-    h, w = parent.getmaxyx()
-    body = parent.derwin(h - HEADER_H, w, HEADER_H, 0)
-    render.Boxes().draw(body, grid)
-    return body
-
-
-def following_live_page(stdscr):
-    """Main page method."""
-    grid = prepare_objects(stdscr)
-    render.Tabs().draw_header(stdscr)
-    draw_body(stdscr, grid)
-    return grid
-
-
 def loop(stdscr):
-    page_class = render.Page(following_live_page, stdscr, PAGE_NAME)
+    page_class = render.Page(stdscr, PAGE_NAME, grid_func)
     keys.loop(page_class)
 
 

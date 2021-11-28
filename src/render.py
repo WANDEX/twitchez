@@ -245,17 +245,6 @@ class Grid:
         return coordinates
 
 
-class Page:
-    """Page."""
-    def __init__(self, render_func, page_parent, page_name):
-        self.render_func = render_func
-        self.page_parent = page_parent
-        self.page_name = page_name
-
-    def render_page(self):
-        return self.render_func(self.page_parent)
-
-
 class Tab:
     """Each Tab has its own page."""
     # TODO
@@ -293,6 +282,34 @@ class Window:
         self.__rows, self.__cols = parent.getmaxyx()  # get window size
         self.rows = self.__rows - Tabs.HEADER_HEIGHT
         self.cols = self.__cols
+
+
+class Page:
+    """Page which renders everything."""
+    HEADER_H = Tabs.HEADER_HEIGHT
+
+    def __init__(self, parent, page_name, grid_func):
+        self.parent = parent
+        self.page_name = page_name
+        self.grid_func = grid_func
+
+    # TODO
+    def draw_header(self):
+        pass
+
+    def draw_body(self, grid):
+        """Draw page body."""
+        h, w = self.parent.getmaxyx()
+        body = self.parent.derwin(h - self.HEADER_H, w, self.HEADER_H, 0)
+        Boxes().draw(body, grid)
+        return body
+
+    def draw(self):
+        """return grid and draw full page."""
+        grid = self.grid_func(self.parent)
+        self.draw_body(grid)
+        Tabs().draw_header(self.parent)  # FIXME: temporary
+        return grid
 
 
 def run(func):
