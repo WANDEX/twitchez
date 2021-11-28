@@ -27,11 +27,11 @@ scroll_keys = {
 }
 
 
-def scroll(c, renderfunc, parent):
+def scroll(c, rendergrid, parent):
     """Scroll page and redraw."""
     if c in scroll_keys.values():
         thumbnails.Draw().finish()
-        grid = renderfunc()
+        grid = rendergrid()
         if c == scroll_keys.get("scroll_down"):
             grid.shift_index("down")
         elif c == scroll_keys.get("scroll_up"):
@@ -45,11 +45,11 @@ def scroll(c, renderfunc, parent):
         elif c == scroll_keys.get("scroll_bot"):
             grid.shift_index("bot")
         parent.clear()
-        renderfunc()  # redraw after shifting grid index
+        rendergrid()  # redraw after shifting grid index
         thumbnails.Draw().start()
 
 
-def hints(c, renderfunc, parent):
+def hints(c, rendergrid, parent):
     """Show hints, and make some action based on key and hint."""
     if c in hint_keys.values():
         hints = Hints()
@@ -63,7 +63,7 @@ def hints(c, renderfunc, parent):
             if c in hints.active_hints_letters:
                 hints.copy_url(c)
         # to hide previously shown hints
-        renderfunc()
+        rendergrid()
         return True
     else:
         return False
@@ -73,7 +73,7 @@ def loop(page_class):
     """Infinite loop to read every key press."""
     page = page_class
     parent = page.parent
-    renderfunc = page.draw
+    rendergrid = page.draw
 
     curses.use_default_colors()
     curses.curs_set(0)  # Turn off cursor
@@ -82,11 +82,11 @@ def loop(page_class):
         """Reinitialize variables & redraw everything."""
         thumbnails.Draw().finish()
         parent.clear()
-        renderfunc()
+        rendergrid()
         thumbnails.Draw().start()
 
     # draw once just before the loop start
-    renderfunc()
+    rendergrid()
     thumbnails.Draw().start()
 
     while True:
@@ -104,8 +104,8 @@ def loop(page_class):
         elif c == keys.get("redraw"):
             redraw()
             continue
-        if hints(c, renderfunc, parent):
+        if hints(c, rendergrid, parent):
             continue
-        scroll(c, renderfunc, parent)
+        scroll(c, rendergrid, parent)
     thumbnails.Draw().finish()
     sleep(0.3)
