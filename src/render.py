@@ -92,12 +92,13 @@ class Box:
     last = h - 2  # last line before bottom box border
     lmax = w - 2  # max length of string inside box
 
-    def __init__(self, user, title, category, x, y):
-        self.user = user
+    def __init__(self, user_login, user_name, title, category, x, y):
+        self.user_login = user_login  # for composing url
+        self.user_name = user_name
         self.title = title
         self.category = category
+        self.url = f"https://www.twitch.tv/{self.user_login}"
         self.hint = ""
-        self.url = f"https://www.twitch.tv/{user}"
         self.x = x
         self.y = y
         self.img_path = ""
@@ -107,7 +108,7 @@ class Box:
         """Draw Box."""
         win = parent.derwin(self.h, self.w, self.y, self.x)
         win.addnstr(self.last - 2, 1, f"{self.title}\n", self.lmax)
-        win.addnstr(self.last - 1, 1, f"{self.user}\n", self.lmax, curses.A_BOLD)
+        win.addnstr(self.last - 1, 1, f"{self.user_name}\n", self.lmax, curses.A_BOLD)
         win.addnstr(self.last, 1, f"{self.category}\n", self.lmax)
         if self.viewers:
             rside = self.lmax - len(self.viewers)

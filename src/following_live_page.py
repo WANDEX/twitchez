@@ -94,10 +94,11 @@ def grid_func(parent):
     grid.key_list = ids
     gcords = grid.coordinates()
     for id, (x, y) in gcords.items():
-        user = fls[id]["user_name"]
-        if not user:  # if user_name is empty (rare, but those exist!)
-            user = fls[id]["user_login"]
-        box = render.Box(user, fls[id]["title"], fls[id]["game_name"], x, y)
+        user_login = fls[id]["user_login"]  # for composing stream url
+        user_name = fls[id]["user_name"]
+        if not user_name:  # if user_name is empty (rare, but those exist!)
+            user_name = user_login
+        box = render.Box(user_login, user_name, fls[id]["title"], fls[id]["game_name"], x, y)
         box.img_path = thumbnail_paths[id]
         box.viewers = str(fls[id]["viewer_count"])
         thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + HEADER_H).ue_params
