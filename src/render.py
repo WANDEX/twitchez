@@ -5,8 +5,9 @@ from clip import clip
 from itertools import islice
 from notify import notify
 from open_stream import open_stream_url
-import curses
 import conf
+import curses
+import utils
 
 
 class Hints:
@@ -95,7 +96,7 @@ class Box:
     def __init__(self, user_login, user_name, title, category, x, y):
         self.user_login = user_login  # for composing url
         self.user_name = user_name
-        self.title = title
+        self.title = utils.strclean(title)
         self.category = category
         self.url = f"https://www.twitch.tv/{self.user_login}"
         self.hint = ""

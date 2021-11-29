@@ -82,3 +82,11 @@ def insert_to_all(list, string, opt_sep="") -> list:
     return list
 
 
+def strclean(str: str) -> str:
+    """return slightly cleaner string."""
+    # remove unneeded characters from string
+    s = str.replace("\n", " ").replace("\t", " ")
+    # replace repeating whitespaces by single whitespace
+    s = ' '.join(s.split())
+    s = s.strip()
+    return s
