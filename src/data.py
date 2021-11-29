@@ -2,6 +2,7 @@
 # coding=utf-8
 
 from pathlib import Path
+from requests import get
 import json
 import utils
 
@@ -66,3 +67,20 @@ def create_streams_dict(json_data) -> dict:
     for stream, id in zip(json_data['data'], ids):
         streams[id] = stream
     return streams
+
+
+def get_category(query: str) -> tuple[int, str]:
+    """Get first found category (id, name) by search query string."""
+    token = get_private_data("token")
+    c_id = get_private_data("c_id")
+    url = f"https://api.twitch.tv/helix/search/categories?query={query}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Client-Id": c_id
+    }
+    r = get(url, headers=headers)
+    j = r.json()
+    first_found = j["data"][0]
+    category_id = int(first_found["id"])
+    category_name = str(first_found["name"])
+    return category_id, category_name
