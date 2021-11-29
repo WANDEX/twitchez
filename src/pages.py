@@ -17,7 +17,8 @@ class Pages:
     def __init__(self, page_name: str, json_data: JSONDecoder):
         self.page_name = page_name
         self.json_data = json_data
-        self.cache_file_name = page_name.replace(" ", "_") + ".json"  # page_name_without_whitespaces
+        self.page_name_no_ws = page_name.replace(" ", "_")  # page_name_without_whitespaces
+        self.cache_file_name = f"{self.page_name_no_ws}.json"
 
     def cache_path(self):
         return data.cache_file_path(self.cache_file_name)
