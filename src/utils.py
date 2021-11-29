@@ -31,13 +31,13 @@ def get_cache_dir() -> Path:
     return cache_dir
 
 
-def get_tmp_dir(subdir="") -> Path:
-    """ Return path to tmp dir and create optional subdir if it doesn't already exist. """
+def get_tmp_dir(*subdirs) -> Path:
+    """Return path to tmp dir and create optional subdirs if they doesn't already exist."""
     dirname = "twitch-following-live"
-    if not subdir:
+    if not subdirs:
         tmp_dir_path = Path(gettempdir(), dirname)
     else:
-        tmp_dir_path = Path(gettempdir(), dirname, subdir)
+        tmp_dir_path = Path(gettempdir(), dirname, *subdirs)
     Path(tmp_dir_path).mkdir(parents=True, exist_ok=True)
     return tmp_dir_path
 

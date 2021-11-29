@@ -46,12 +46,12 @@ class Pages:
             json_data = self.read_live_streams()
             ids = data.get_entries(json_data, 'id')
             thumbnail_urls_raw = data.get_entries(json_data, 'thumbnail_url')
-            thumbnail_paths = thumbnails.get_thumbnails(ids, thumbnail_urls_raw)
+            thumbnail_paths = thumbnails.get_thumbnails(ids, thumbnail_urls_raw, self.page_name_no_ws)
         else:
             # do not download thumbnails, use previously downloaded thumbnails
             json_data = self.read_live_streams()
             ids = data.get_entries(json_data, 'id')
-            thumbnail_dir = utils.get_tmp_dir("thumbnails_live")
+            thumbnail_dir = utils.get_tmp_dir("thumbnails", self.page_name_no_ws)
 
             tnames = utils.replace_pattern_in_all(listdir(thumbnail_dir), ".jpg", "")
             differ = list(set(tnames).difference(set(ids)))

@@ -48,13 +48,13 @@ async def fetch_image(session, url):
         return await response.read()
 
 
-async def __get_thumbnails_async(ids: list, rawurls: list) -> dict:
+async def __get_thumbnails_async(ids: list, rawurls: list, *subdirs) -> dict:
     """Asynchronously download thumbnails and return paths.
     (Actual realization)
     """
     thumbnail_paths = {}
     urls = get_thumbnail_urls(rawurls)
-    tmpd = utils.get_tmp_dir("thumbnails_live")
+    tmpd = utils.get_tmp_dir("thumbnails", *subdirs)
     tasks = []
     async with aiohttp.ClientSession() as session:
         for url in urls:
@@ -70,16 +70,16 @@ async def __get_thumbnails_async(ids: list, rawurls: list) -> dict:
     return thumbnail_paths
 
 
-def get_thumbnails(ids: list, rawurls: list) -> dict:
+def get_thumbnails(ids: list, rawurls: list, *subdirs) -> dict:
     """Asynchronously download thumbnails and return paths.
     (Wrapper with asyncio run/run_until_complete)
     """
     if version_info >= (3, 7):  # Python 3.7+
-        return asyncio.run(__get_thumbnails_async(ids, rawurls))
+        return asyncio.run(__get_thumbnails_async(ids, rawurls, *subdirs))
     else:  # Python 3.5-3.6
         loop = asyncio.get_event_loop()
         try:
-            return loop.run_until_complete(__get_thumbnails_async(ids, rawurls))
+            return loop.run_until_complete(__get_thumbnails_async(ids, rawurls, *subdirs))
         finally:
             loop.close()
 
