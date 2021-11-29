@@ -290,10 +290,11 @@ class Page:
     """Page which renders everything."""
     HEADER_H = Tabs.HEADER_HEIGHT
 
-    def __init__(self, parent, page_name, grid_func):
+    def __init__(self, parent, pages_class):
         self.parent = parent
-        self.page_name = page_name
-        self.grid_func = grid_func
+        self.pages_class = pages_class
+        self.page_name = pages_class.page_name
+        self.grid_func = pages_class.grid_func
 
     # TODO
     def draw_header(self):

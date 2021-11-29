@@ -30,7 +30,7 @@ def get_json_data(category_id) -> JSONDecoder:
 
 def loop(stdscr):
     p = pages.Pages(category_name, get_json_data(category_id))
-    page_class = render.Page(stdscr, p.page_name, p.grid_func)
+    page_class = render.Page(stdscr, p)
     keys.loop(page_class)
 
 
