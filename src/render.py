@@ -312,6 +312,12 @@ class Page:
         return grid
 
 
+def set_curses_start_defaults():
+    """Set curses start defaults."""
+    curses.use_default_colors()
+    curses.curs_set(0)  # Turn off cursor
+
+
 def run(func):
     """
     The curses.wrapper function is an optional function that

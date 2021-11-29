@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from conf import key as ck
-from render import Hints
+from render import Hints, set_curses_start_defaults
 from time import sleep
 import curses
 import thumbnails
@@ -75,8 +75,7 @@ def loop(page_class):
     parent = page.parent
     rendergrid = page.draw
 
-    curses.use_default_colors()
-    curses.curs_set(0)  # Turn off cursor
+    set_curses_start_defaults()
 
     def redraw():
         """Reinitialize variables & redraw everything."""
