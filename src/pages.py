@@ -52,17 +52,15 @@ class Pages:
             thumbnail_paths = thumbnails.find_thumbnails(ids, self.page_name_no_ws)
         return thumbnail_paths
 
-    def grid_func(self, parent):
-        """return grid for prepared objects of thumbnails and boxes."""
+    def grid_func(self, parent) -> render.Grid:
+        """return grid class object for prepared objects of thumbnails and boxes."""
         thumbnail_paths = self.update_data()
         json_data = self.read_live_streams()
         fls = data.create_streams_dict(json_data)  # dict with stream id as the key
         ids = list(fls.keys())
         boxes = render.Boxes()
-        grid = render.Grid(parent, self.page_name)
-        grid.key_list = ids
-        gcords = grid.coordinates()
-        for id, (x, y) in gcords.items():
+        grid = render.Grid(parent, ids, self.page_name)
+        for id, (x, y) in grid.coords.items():
             user_login = fls[id]["user_login"]  # for composing stream url
             user_name = fls[id]["user_name"]
             if not user_name:  # if user_name is empty (rare, but such case exist!)

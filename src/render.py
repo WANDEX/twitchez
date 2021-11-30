@@ -133,14 +133,15 @@ class Grid:
     h = int(conf.setting("container_box_height"))
     w = int(conf.setting("container_box_width"))
 
-    def __init__(self, parent, page_name):
-        """set key_list -> each key will have (X, Y) values on the Grid."""
+    def __init__(self, parent, key_list: list, page_name: str):
+        """sets coords dict from key_list -> each key will have (X, Y) values on the Grid."""
         self.__window = Window(parent)
+        self.key_list = key_list
+        self.page_name = page_name
         self.area_cols = self.__window.cols
         self.area_rows = self.__window.rows
-        self.key_list = []
-        self.page_name = page_name
         self.key_start_index = self.index()
+        self.coords = self.coordinates()
 
     def capacity(self, string="all"):
         """Count how many boxes fit in the area.
