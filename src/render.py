@@ -143,23 +143,12 @@ class Grid:
         self.key_start_index = self.index()
         self.coords = self.coordinates()
 
-    def capacity(self, string="all"):
-        """Count how many boxes fit in the area.
-        returns value based on string: "all", "cols", "rows", "total".
-        """
-        cols = int(self.area_cols / self.w)
-        rows = int(self.area_rows / self.h)
+    def capacity(self) -> tuple[int, int, int]:
+        """Return - how many boxes can fit in: (cols, rows, total)."""
+        cols = self.area_cols // self.w
+        rows = self.area_rows // self.h
         total = cols * rows
-        if "all" in string:
-            return cols, rows, total
-        elif "total" in string:
-            return total
-        elif "col" in string:
-            return cols
-        elif "row" in string:
-            return rows
-        else:
-            raise ValueError(f"Unsupported argument string: '{string}'")
+        return cols, rows, total
 
     def spacing(self, cols, rows) -> tuple[int, int]:
         """Calculate even spacing between grid elements.
