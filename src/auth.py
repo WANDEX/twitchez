@@ -8,11 +8,11 @@ import requests
 
 def generate_nonce(length=8):
     """Generate pseudorandom number."""
-    return ''.join([str(randint(0, 9)) for i in range(length)])
+    return ''.join([str(randint(0, 9)) for _ in range(length)])
 
 
 def get_user_id(token, c_id):
-    """ get user id by access token. """
+    """Get user id by access token."""
     url = "https://api.twitch.tv/helix/users"
     headers = {
         "Authorization": f"Bearer {token}",
@@ -21,12 +21,12 @@ def get_user_id(token, c_id):
     try:
         r = requests.get(url, headers=headers)
     except Exception as err:
-        print(err)
+        raise Exception(err)
     return(r.json()['data'][0]['id'])
 
 
 def get_auth_token():
-    """
+    """Read more here:
     'https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#oauth-implicit-code-flow'
     """
     client_id = "dadsrpg93f0tvvq8zhbno69m2e3spr"  # this application client id
@@ -43,18 +43,20 @@ def get_auth_token():
     ))
     try:
         r = requests.get(url)
-    except requests.exceptions.HTTPError as err:
-        print(err)
+    except Exception as err:
+        raise Exception(err)
     if state in r.url:  # for safety check that 'state' is substring in response url
+        bold = "\033[1m"
+        end = "\033[0;0m"
         print("1) Open following url in your browser.")
         print("2) If asked to login into twitch, you are required to do so, in order to get 'access_token' only known by twitch, and now also known by YOU! B)")
-        print("3) After successful login, page is not existing! ALL WORK AS EXPECTED!")
-        print("4) Copy from url 'access_token' content (from '=' to first '&' excluding those symbols!) and paste that as input here.")
+        print(f"{bold}After successful login, page is not existing! ALL WORK AS EXPECTED!{end}")
+        print("3) Copy from url 'access_token' content (from '=' to first '&' excluding those symbols!) and paste that as input here.")
         print(f"'{r.url}'")
         access_token = input("access_token=")
         # try to get user_id by new access_token & validate that user put right access_token
         user_id = get_user_id(access_token, client_id)
-        # write to file for using in further connections
+        # write to private file for using in further requests
         write_private_data(user_id, access_token, client_id)
         print("SUCCESS")
     else:
