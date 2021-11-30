@@ -2,8 +2,6 @@
 # coding=utf-8
 
 from json.decoder import JSONDecoder
-from os import listdir, sep
-from os.path import basename, splitext
 from pathlib import Path
 import data
 import render
@@ -46,25 +44,12 @@ class Pages:
             json_data = self.read_live_streams()
             ids = data.get_entries(json_data, 'id')
             thumbnail_urls_raw = data.get_entries(json_data, 'thumbnail_url')
-            thumbnail_paths = thumbnails.get_thumbnails(ids, thumbnail_urls_raw, self.page_name_no_ws)
+            thumbnail_paths = thumbnails.download_thumbnails(ids, thumbnail_urls_raw, self.page_name_no_ws)
         else:
-            # do not download thumbnails, use previously downloaded thumbnails
+            # do not download thumbnails, find previously downloaded thumbnails paths
             json_data = self.read_live_streams()
             ids = data.get_entries(json_data, 'id')
-            thumbnail_dir = utils.get_tmp_dir("thumbnails", self.page_name_no_ws)
-
-            tnames = utils.replace_pattern_in_all(listdir(thumbnail_dir), ".jpg", "")
-            differ = list(set(tnames).difference(set(ids)))
-            fnames = utils.add_str_to_list(differ, ".jpg")  # add file extension back
-            for fname in fnames:
-                # remove thumbnail files of users who is not live streaming now.
-                Path(thumbnail_dir, fname).unlink(missing_ok=True)
-
-            thumbnail_list = utils.insert_to_all(listdir(thumbnail_dir), thumbnail_dir, opt_sep=sep)
-            thumbnail_paths = {}
-            for path in thumbnail_list:
-                id = basename(splitext(path)[0])  # file basename without .ext
-                thumbnail_paths[id] = path
+            thumbnail_paths = thumbnails.find_thumbnails(ids, self.page_name_no_ws)
         return thumbnail_paths
 
     def grid_func(self, parent):

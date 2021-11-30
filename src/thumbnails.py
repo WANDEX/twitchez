@@ -2,6 +2,8 @@
 # coding=utf-8
 
 from multiprocessing.pool import ThreadPool
+from os import listdir, sep
+from os.path import basename, splitext
 from pathlib import Path
 from sys import version_info
 from time import sleep
@@ -70,7 +72,7 @@ async def __get_thumbnails_async(ids: list, rawurls: list, *subdirs) -> dict:
     return thumbnail_paths
 
 
-def get_thumbnails(ids: list, rawurls: list, *subdirs) -> dict:
+def download_thumbnails(ids: list, rawurls: list, *subdirs) -> dict:
     """Asynchronously download thumbnails and return paths.
     (Wrapper with asyncio run/run_until_complete)
     """
@@ -82,6 +84,25 @@ def get_thumbnails(ids: list, rawurls: list, *subdirs) -> dict:
             return loop.run_until_complete(__get_thumbnails_async(ids, rawurls, *subdirs))
         finally:
             loop.close()
+
+
+def find_thumbnails(ids: list, *subdirs) -> dict:
+    """Find and return previously downloaded thumbnails paths."""
+    thumbnail_dir = utils.get_tmp_dir("thumbnails", *subdirs)
+
+    tnames = utils.replace_pattern_in_all(listdir(thumbnail_dir), ".jpg", "")
+    differ = list(set(tnames).difference(set(ids)))
+    fnames = utils.add_str_to_list(differ, ".jpg")  # add file extension back
+    for fname in fnames:
+        # remove thumbnail files of users who is not live streaming now.
+        Path(thumbnail_dir, fname).unlink(missing_ok=True)
+
+    thumbnail_list = utils.insert_to_all(listdir(thumbnail_dir), thumbnail_dir, opt_sep=sep)
+    thumbnail_paths = {}
+    for path in thumbnail_list:
+        id = basename(splitext(path)[0])  # file basename without .ext
+        thumbnail_paths[id] = path
+    return thumbnail_paths
 
 
 class Thumbnail:
