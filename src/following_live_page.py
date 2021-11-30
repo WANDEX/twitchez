@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from json.decoder import JSONDecoder
 from requests import get
 import data
 import keys
@@ -11,7 +10,7 @@ import pages
 PAGE_NAME = "Following Live"
 
 
-def get_json_data() -> JSONDecoder:
+def get_json_data() -> dict:
     """requests data from twitch API and return json."""
     u_id = data.get_private_data("u_id")    # user_id
     token = data.get_private_data("token")  # auth token

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from json.decoder import JSONDecoder
 from pathlib import Path
 import data
 import render
@@ -12,22 +11,22 @@ import utils
 class Pages:
     HEADER_H = render.Tabs.HEADER_HEIGHT
 
-    def __init__(self, page_name: str, json_data: JSONDecoder):
+    def __init__(self, page_name: str, json_data: dict):
         self.page_name = page_name
         self.json_data = json_data
         self.page_name_no_ws = page_name.replace(" ", "_")  # page_name_without_whitespaces
         self.cache_file_name = f"{self.page_name_no_ws}.json"
 
-    def cache_path(self):
+    def cache_path(self) -> Path:
         return data.cache_file_path(self.cache_file_name)
 
-    def update_live_streams(self):
+    def update_live_streams(self) -> Path:
         return data.update_cache(self.cache_file_name, self.json_data)
 
-    def read_live_streams(self):
+    def read_live_streams(self) -> dict:
         return data.read_cache(self.cache_file_name)
 
-    def time_to_update_live_streams(self):
+    def time_to_update_live_streams(self) -> bool:
         """Return True if path mtime > 5 mins from now.
         (default twitch API update time).
         """
@@ -53,7 +52,7 @@ class Pages:
         return thumbnail_paths
 
     def grid_func(self, parent) -> render.Grid:
-        """return grid class object for prepared objects of thumbnails and boxes."""
+        """Return grid class object for prepared objects of thumbnails and boxes."""
         thumbnail_paths = self.update_data()
         json_data = self.read_live_streams()
         fls = data.create_streams_dict(json_data)  # dict with stream id as the key

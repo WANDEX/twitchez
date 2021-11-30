@@ -161,7 +161,7 @@ class Grid:
         else:
             raise ValueError(f"Unsupported argument string: '{string}'")
 
-    def spacing(self, cols, rows):
+    def spacing(self, cols, rows) -> tuple[int, int]:
         """Calculate even spacing between grid elements.
         returns spacing: cols, rows.
         """
@@ -175,7 +175,7 @@ class Grid:
             r = int((self.area_rows - self.h * rows) / rows)
         return c, r
 
-    def index(self, start_index=""):
+    def index(self, start_index="") -> int:
         """Set/Get initial grid index."""
         if str(start_index):  # str -> to check if not empty (even 0 value)
             index = int(start_index)
@@ -187,7 +187,7 @@ class Grid:
                 conf.tmp_set("grid_index", index, self.page_name)
         return index
 
-    def shift_index(self, dir="down", page=False):
+    def shift_index(self, dir="down", page=False) -> int:
         """Shift value of the key start index."""
         cols, _, total = self.capacity()
         elems_total = len(self.key_list)

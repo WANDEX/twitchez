@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from json.decoder import JSONDecoder
 from requests import get
 import data
 import keys
@@ -14,7 +13,7 @@ category_id, category_name = data.get_category(category_query_string)
 # TODO: after that, i can move this inside loop() function
 
 
-def get_json_data(category_id) -> JSONDecoder:
+def get_json_data(category_id) -> dict:
     """requests data from twitch API and return json."""
     first = 100  # Maximum number of objects to return. (Twitch API Maximum: 100)
     token = data.get_private_data("token")
