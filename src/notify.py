@@ -36,17 +36,14 @@ def raise_user_note():
     """raise exception for regular user without traceback."""
     if without_funcs:
         return
-    try:
-        a = "A program to send desktop notifications was not found at your 'PATH'."
-        b = "You can install 'notify-send' and it will be working by default."
-        c = "Also you can set your own program cmd via 'notify_cmd = your cmd' in config."
-        d = "If you want to use this program without seeing any notifications from it,"
-        e = "simply paste next line in your config:"
-        f = "notify_cmd = false"
-        full_text = f"\n{a}\n{b}\n{c}\n{d}\n{e}\n{f}\n"
-        raise Exception(full_text)
-    except (Exception, KeyboardInterrupt) as exc:
-        exit(exc)
+    a = "A program to send desktop notifications was not found at your 'PATH'."
+    b = "You can install 'notify-send' and it will be working by default."
+    c = "Also you can set your own program cmd via 'notify_cmd = your cmd' in config."
+    d = "If you want to use this program without seeing any notifications from it,"
+    e = "simply paste next line in your config:"
+    f = "notify_cmd = false"
+    full_text = f"\n{a}\n{b}\n{c}\n{d}\n{e}\n{f}\n"
+    raise Exception(full_text)
 
 
 def get_notify_cmd() -> list:

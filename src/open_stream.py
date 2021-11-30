@@ -35,17 +35,14 @@ def raise_user_note():
     """raise exception for regular user without traceback."""
     if without_funcs:
         return
-    try:
-        a = "A program for opening stream url was not found at your 'PATH'."
-        b = "You can install 'streamlink' and it will be working by default."
-        c = "Also you can set your own program cmd via 'open_cmd = your cmd' in config."
-        d = "If you want to use this program without using it's open stream functions,"
-        e = "simply paste next line in your config:"
-        f = "open_cmd = false"
-        full_text = f"\n{a}\n{b}\n{c}\n{d}\n{e}\n{f}\n"
-        raise Exception(full_text)
-    except (Exception, KeyboardInterrupt) as exc:
-        exit(exc)
+    a = "A program for opening stream url was not found at your 'PATH'."
+    b = "You can install 'streamlink' and it will be working by default."
+    c = "Also you can set your own program cmd via 'open_cmd = your cmd' in config."
+    d = "If you want to use this program without using it's open stream functions,"
+    e = "simply paste next line in your config:"
+    f = "open_cmd = false"
+    full_text = f"\n{a}\n{b}\n{c}\n{d}\n{e}\n{f}\n"
+    raise Exception(full_text)
 
 
 def get_open_stream_cmd(url):
