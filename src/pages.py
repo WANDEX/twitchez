@@ -9,7 +9,7 @@ import utils
 
 
 class Pages:
-    HEADER_H = render.Tabs.HEADER_HEIGHT
+    HEADER_H = render.Page.HEADER_H
 
     def __init__(self, page_name: str, json_data: dict):
         self.page_name = page_name

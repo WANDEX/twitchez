@@ -244,19 +244,32 @@ class Tab:
 
 class Tabs:
     """Tabs."""
-    HEADER_HEIGHT = 2
-    header_borders = int(conf.setting("header_borders"))
     # TODO
 
-    def draw_header(self, parent):
-        """Draw header."""
-        # FIXME: temporary function till real realization of Tab & Tabs
+
+
+
+class Page:
+    """Page which renders everything."""
+    HEADER_H = 2
+    header_borders = int(conf.setting("header_borders"))
+
+    def __init__(self, parent, pages_class):
+        self.parent = parent
+        self.pages_class = pages_class
+        self.page_name = pages_class.page_name
+        self.grid_func = pages_class.grid_func
+
+    def draw_header(self):
+        """Draw page header."""
+        # TODO: add support of dynamic Tabs
         tc = "[Twitch Curses]"
-        name = "Following Live"
+        name = self.page_name
         s = 3
-        full_text = tc + " " * s + name
-        _, w = parent.getmaxyx()
-        head = parent.derwin(self.HEADER_HEIGHT - 1, w, 0, 0)
+        space_between_tabs = " " * s
+        full_text = name + space_between_tabs + tc
+        _, w = self.parent.getmaxyx()
+        head = self.parent.derwin(self.HEADER_H - 1, w, 0, 0)
         if w > len(name) + 2:
             if self.header_borders:
                 head.box()
@@ -265,30 +278,6 @@ class Tabs:
             head.addnstr(0, len(name) + s, tc, len(tc), curses.A_BOLD)
         head.refresh()
         return head
-
-
-class Window:
-    """Window."""
-
-    def __init__(self, parent):
-        self.__rows, self.__cols = parent.getmaxyx()  # get window size
-        self.rows = self.__rows - Tabs.HEADER_HEIGHT
-        self.cols = self.__cols
-
-
-class Page:
-    """Page which renders everything."""
-    HEADER_H = Tabs.HEADER_HEIGHT
-
-    def __init__(self, parent, pages_class):
-        self.parent = parent
-        self.pages_class = pages_class
-        self.page_name = pages_class.page_name
-        self.grid_func = pages_class.grid_func
-
-    # TODO
-    def draw_header(self):
-        pass
 
     def draw_body(self, grid):
         """Draw page body."""
@@ -301,8 +290,17 @@ class Page:
         """return grid and draw full page."""
         grid = self.grid_func(self.parent)
         self.draw_body(grid)
-        Tabs().draw_header(self.parent)  # FIXME: temporary
+        self.draw_header()
         return grid
+
+
+class Window:
+    """Window."""
+
+    def __init__(self, parent):
+        self.__rows, self.__cols = parent.getmaxyx()  # get window size
+        self.rows = self.__rows - Page.HEADER_H
+        self.cols = self.__cols
 
 
 def set_curses_start_defaults():
