@@ -263,19 +263,24 @@ class Page:
     def draw_header(self):
         """Draw page header."""
         # TODO: add support of dynamic Tabs
-        tc = "[Twitch Curses]"
-        name = self.page_name
-        s = 3
-        space_between_tabs = " " * s
-        full_text = name + space_between_tabs + tc
+        indent = 2  # indent from side
+        indent_between = 3
+        indent_between_tabs = " " * indent_between
+        logo = "[Twitch Curses]"
+        c_page = self.page_name  # current page name
         _, w = self.parent.getmaxyx()
         head = self.parent.derwin(self.HEADER_H - 1, w, 0, 0)
-        if w > len(name) + 2:
+        if w > len(c_page) + indent:
             if self.header_borders:
                 head.box()
-            head.addnstr(0, 2, name, w, curses.A_REVERSE)  # Tab name
-        if w > len(full_text):
-            head.addnstr(0, len(name) + s, tc, len(tc), curses.A_BOLD)
+            head.addnstr(0, indent, c_page, len(c_page), curses.A_REVERSE)  # current Tab page
+        # TODO: calculate length of all page names dynamically
+        other_tabs = ""
+        # TODO: + indent_between_tabs for each additional tab
+        other_tabs += indent_between_tabs
+        can_fit_via_tabs = c_page + other_tabs
+        if w > len(can_fit_via_tabs + logo):
+            head.addnstr(0, w - len(logo) - indent, logo, len(logo), curses.A_BOLD)
         head.refresh()
         return head
 
