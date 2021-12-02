@@ -69,6 +69,20 @@ def create_streams_dict(json_data) -> dict:
     return streams
 
 
+def following_live_data() -> dict:
+    """Return data of user 'following live channels' page."""
+    u_id = get_private_data("u_id")    # user_id
+    token = get_private_data("token")  # auth token
+    c_id = get_private_data("c_id")    # client-Id of this program
+    url = f"https://api.twitch.tv/helix/streams/followed?user_id={u_id}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Client-Id": c_id
+    }
+    r = get(url, headers=headers)
+    return r.json()
+
+
 def get_category(query: str) -> tuple[int, str]:
     """Get first found category (id, name) by search query string."""
     token = get_private_data("token")
@@ -84,3 +98,17 @@ def get_category(query: str) -> tuple[int, str]:
     category_id = int(first_found["id"])
     category_name = str(first_found["name"])
     return category_id, category_name
+
+
+def category_data(category_id) -> dict:
+    """Return json data for streams in certain category."""
+    first = 100  # Maximum number of objects to return. (Twitch API Maximum: 100)
+    token = get_private_data("token")
+    c_id = get_private_data("c_id")
+    url = f"https://api.twitch.tv/helix/streams?first={first}&game_id={category_id}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Client-Id": c_id
+    }
+    r = get(url, headers=headers)
+    return r.json()
