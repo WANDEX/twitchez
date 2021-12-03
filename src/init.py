@@ -72,6 +72,11 @@ def run(stdscr):
             rendergrid = page.draw
             redraw()
             continue
+        if c == k.get("tab_delete"):
+            # TODO: unfinished
+            exp_tab_name = render.Tabs().delete_tab(page.page_name)
+            redraw()
+            continue
         if c == k.get("tab_prev") or c == k.get("tab_next"):
             if c == k.get("tab_prev"):
                 exp_tab_name = render.Tabs().prev_tab(page.page_name)

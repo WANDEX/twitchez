@@ -245,7 +245,7 @@ class Tabs:
         if page_name not in self.tabs:
             self.tabs.append(page_name)
 
-    def remove_tab(self, tabname):
+    def delete_tab(self, tabname):
         self.tabs.remove(tabname)
 
     def next_tab(self, current_page_name):
