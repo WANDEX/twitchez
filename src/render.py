@@ -323,19 +323,3 @@ class Window:
         self.__rows, self.__cols = parent.getmaxyx()  # get window size
         self.rows = self.__rows - Page.HEADER_H
         self.cols = self.__cols
-
-
-def set_curses_start_defaults():
-    """Set curses start defaults."""
-    curses.use_default_colors()
-    curses.curs_set(0)  # Turn off cursor
-
-
-def run(func):
-    """
-    The curses.wrapper function is an optional function that
-    encapsulates a number of lower-level setup and teardown
-    functions, and takes a single function to run when
-    the initializations have taken place.
-    """
-    curses.wrapper(func)
