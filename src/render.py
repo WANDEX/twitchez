@@ -237,16 +237,27 @@ class Grid:
         return coordinates
 
 
-class Tab:
-    """Each Tab has its own page."""
-    # TODO
-
-
 class Tabs:
     """Tabs."""
-    # TODO
+    tabs = []  # list of tab names
 
+    def add_tab(self, page_name):
+        if page_name not in self.tabs:
+            self.tabs.append(page_name)
 
+    def remove_tab(self, tabname):
+        self.tabs.remove(tabname)
+
+    def next_tab(self, current_page_name):
+        """Return next tab name."""
+        pass
+
+    def prev_tab(self, current_page_name):
+        """Return prev tab name."""
+        cindex = self.tabs.index(current_page_name)
+        pindex = cindex - 1
+        ptabname = self.tabs[pindex]
+        return ptabname
 
 
 class Page:
