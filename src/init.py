@@ -72,18 +72,24 @@ def run(stdscr):
             rendergrid = page.draw
             redraw()
             continue
-        if c == k.get("tab_prev"):
-            prev_tab_name = render.Tabs().prev_tab(page.page_name)
-            json_file_name = prev_tab_name.replace(" ", "_") + ".json"
-            if prev_tab_name == "Following Live":
+        if c == k.get("tab_prev") or c == k.get("tab_next"):
+            if c == k.get("tab_prev"):
+                exp_tab_name = render.Tabs().prev_tab(page.page_name)
+            elif c == k.get("tab_next"):
+                exp_tab_name = render.Tabs().next_tab(page.page_name)
+            else:
+                continue
+            exp_tab_name = str(exp_tab_name)
+            json_file_name = exp_tab_name.replace(" ", "_") + ".json"
+            if exp_tab_name == "Following Live":
                 page_name = "Following Live"
                 json_data = data.following_live_data()
             else:
                 if data.cache_file_path(json_file_name).is_file():
-                    page_name = prev_tab_name
+                    page_name = exp_tab_name
                     json_data = data.read_cache(json_file_name)
                 else:
-                    category_id, category_name = data.get_category(prev_tab_name)
+                    category_id, category_name = data.get_category(exp_tab_name)
                     page_name = category_name
                     json_data = data.category_data(category_id)
             p = pages.Pages(page_name, json_data)
