@@ -2,14 +2,15 @@
 # coding=utf-8
 
 from conf import key as ck
-from render import Hints, set_curses_start_defaults
-from time import sleep
-import curses
+from render import Hints
 import thumbnails
 
 keys = {
     "quit": ck("quit"),
     "redraw": ck("redraw"),
+    "tab_add": ck("tab_add"),
+    "tab_next": ck("tab_next"),
+    "tab_prev": ck("tab_prev"),
 }
 
 hint_keys = {
@@ -67,44 +68,3 @@ def hints(c, rendergrid, parent):
         return True
     else:
         return False
-
-
-def loop(page_class):
-    """Infinite loop to read every key press."""
-    page = page_class
-    parent = page.parent
-    rendergrid = page.draw
-
-    set_curses_start_defaults()
-
-    def redraw():
-        """Reinitialize variables & redraw everything."""
-        thumbnails.Draw().finish()
-        parent.clear()
-        rendergrid()
-        thumbnails.Draw().start()
-
-    # draw once just before the loop start
-    rendergrid()
-    thumbnails.Draw().start()
-
-    while True:
-        c = parent.get_wch()
-        if isinstance(c, int) and c == curses.KEY_RESIZE:  # terminal resize event
-            # redraw & start loop again without further more complex execution
-            redraw()
-            continue
-        c = str(c)  # convert character to string
-        h, w = parent.getmaxyx()
-        # Show last pressed key chars at the bottom-right corner.
-        parent.insstr(h - 1, w - 4, c)
-        if c == keys.get("quit"):
-            break
-        elif c == keys.get("redraw"):
-            redraw()
-            continue
-        if hints(c, rendergrid, parent):
-            continue
-        scroll(c, rendergrid, parent)
-    thumbnails.Draw().finish()
-    sleep(0.3)
