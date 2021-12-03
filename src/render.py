@@ -270,13 +270,14 @@ class Page:
         self.pages_class = pages_class
         self.page_name = pages_class.page_name
         self.grid_func = pages_class.grid_func
+        self.tab = Tabs().add_tab(pages_class.page_name)
 
     def draw_header(self):
         """Draw page header."""
-        # TODO: add support of dynamic Tabs
         indent = 2  # indent from side
-        indent_between = 3
+        indent_between = 2
         indent_between_tabs = " " * indent_between
+        separator = "|"  # separator between tabs
         logo = "[Twitch Curses]"
         c_page = self.page_name  # current page name
         _, w = self.parent.getmaxyx()
@@ -285,12 +286,17 @@ class Page:
             if self.header_borders:
                 head.box()
             head.addnstr(0, indent, c_page, len(c_page), curses.A_REVERSE)  # current Tab page
-        # TODO: calculate length of all page names dynamically
         other_tabs = ""
-        # TODO: + indent_between_tabs for each additional tab
-        other_tabs += indent_between_tabs
+        for tab in Tabs.tabs:
+            if tab == c_page:
+                continue  # skip current tab
+            # TODO: calculate length of all page names dynamically
+            # + indent_between_tabs for each additional tab
+            other_tabs += indent_between_tabs + separator + tab
         can_fit_via_tabs = c_page + other_tabs
-        if w > len(can_fit_via_tabs + logo):
+        if w > len(can_fit_via_tabs):  # if we can fit all other tabs
+            head.addnstr(0, indent + len(c_page), other_tabs, len(other_tabs))
+        if w > len(can_fit_via_tabs + logo):  # if window have enough width for logo
             head.addnstr(0, w - len(logo) - indent, logo, len(logo), curses.A_BOLD)
         head.refresh()
         return head
