@@ -249,11 +249,17 @@ class Tabs:
         self.tabs.remove(tabname)
 
     def next_tab(self, current_page_name):
-        """Return next tab name."""
-        pass
+        """Return next tab name (carousel)."""
+        cindex = self.tabs.index(current_page_name)
+        nindex = cindex + 1
+        if nindex > len(self.tabs) - 1:
+            ntabname = self.tabs[0]
+        else:
+            ntabname = self.tabs[nindex]
+        return ntabname
 
     def prev_tab(self, current_page_name):
-        """Return prev tab name."""
+        """Return prev tab name (carousel)."""
         cindex = self.tabs.index(current_page_name)
         pindex = cindex - 1
         ptabname = self.tabs[pindex]
