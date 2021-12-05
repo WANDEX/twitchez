@@ -6,6 +6,8 @@ import command
 import conf
 import subprocess
 
+ENCODING = "utf-8"
+
 notify_cmd = conf.setting("notify_cmd")
 executable = command.first_cmd_word(notify_cmd)
 without_funcs = command.without_funcs(executable)
@@ -77,4 +79,4 @@ def notify(body="", summary="", error=False):
         cmd.append("8000")
     cmd.append(s)
     cmd.append(b)
-    subprocess.Popen(cmd)
+    subprocess.Popen(cmd, text=True, encoding=ENCODING)
