@@ -21,7 +21,7 @@ def dmenu_cmd() -> list:
 
 
 def fzf_cmd() -> list:
-    cmd = "fzf"
+    cmd = "fzf --no-multi"
     return cmd.split()
 
 
@@ -61,6 +61,7 @@ def iselect(multilinestr: str):
     text = multilinestr.strip()
     cmd = get_select_cmd()
     sub = subprocess.Popen
+    # FIXME: fzf does not show input lines (selection is working)
     p = sub(cmd, text=True, encoding=ENCODING,
             stdout=subprocess.PIPE,
             stdin=subprocess.PIPE,
