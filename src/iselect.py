@@ -57,7 +57,7 @@ def get_select_cmd():
 def iselect(multilinestr: str):
     """Interactive select of one line from all."""
     if without_funcs:
-        return
+        return 130
     text = multilinestr.strip()
     cmd = get_select_cmd()
     sub = subprocess.Popen
@@ -68,8 +68,10 @@ def iselect(multilinestr: str):
             stderr=subprocess.PIPE)
     out, err = p.communicate(input=text)
     p.wait()  # wait for process to finish
-    if p.returncode != 0:
+    if p.returncode == 1 or p.returncode == 130:
+        # dmenu(1), fzf(130) => command was canceled (Esc)
+        return 130
+    elif p.returncode != 0:
         notify(f"ERROR({p.returncode}): probably malformed cmd!\n{err}", "CANNOT SELECT:", error=True)
         raise Exception(f"ERROR({p.returncode}):\n{err}\n")
-    else:
-        return out.strip("\n")
+    return str(out).strip("\n")
