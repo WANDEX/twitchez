@@ -83,21 +83,43 @@ def following_live_data() -> dict:
     return r.json()
 
 
-def get_category(query: str) -> tuple[int, str]:
-    """Get first found category (id, name) by search query string."""
+def get_categories(query: str) -> list:
+    """Returns a list of categories that match the query via name either entirely or partially."""
+    first = 100  # Maximum number of objects to return. (Twitch API Maximum: 100)
     token = get_private_data("token")
     c_id = get_private_data("c_id")
-    url = f"https://api.twitch.tv/helix/search/categories?query={query}"
+    url = f"https://api.twitch.tv/helix/search/categories?first={first}&query={query}"
     headers = {
         "Authorization": f"Bearer {token}",
         "Client-Id": c_id
     }
     r = get(url, headers=headers)
     j = r.json()
-    first_found = j["data"][0]
-    category_id = int(first_found["id"])
-    category_name = str(first_found["name"])
-    return category_id, category_name
+    return j["data"]
+
+
+def get_categories_terse_data(query: str) -> dict:
+    categories = get_categories(query)
+    terse_info = {}
+    for c in categories:
+        # dict key is id = tuple of ...
+        terse_info[c["id"]] = c["name"], c["box_art_url"]
+    return terse_info
+
+
+def get_categories_terse_mulstr(query: str) -> str:
+    """Return multiline string with terse categories data. (for interactive select)"""
+    d = get_categories_terse_data(query)
+    mstr = ""
+    names = []
+    for v in d.values():
+        name, _ = v
+        names.append(name)
+    maxlen = len(max(names, key=len))  # max length of longest string in list
+    for id, v in d.items():
+        name, _ = v
+        mstr += f"{str(name):<{int(maxlen)}} [{id}]\n"
+    return mstr.strip()  # to remove blank line
 
 
 def category_data(category_id) -> dict:

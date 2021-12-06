@@ -8,6 +8,7 @@ import data
 import keys
 import pages
 import render
+import search
 import thumbnails
 
 
@@ -57,13 +58,13 @@ def run(stdscr):
             redraw()
             continue
         if c == k.get("tab_add"):
-            # TODO: how to select category? with fzf? (only if i can get names of all categories on twitch)
-            category_query_string = "software development"  # FIXME: temporary hardcoded
-            # TODO: write those variables to file to not get this data every loop iteration only read it from file
-            category_id, category_name = data.get_category(category_query_string)
+            s = search.Search(stdscr)
+            page_name, json_data = s.selected_category()
+            if page_name == 130:
+                # handle cancel of the command
+                # TODO: remove inputwin
+                continue
 
-            page_name = category_name
-            json_data = data.category_data(category_id)
             p = pages.Pages(page_name, json_data)
             page_class = render.Page(stdscr, p)
 
