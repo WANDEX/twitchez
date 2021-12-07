@@ -46,3 +46,31 @@ class Search:
         page_name = category_name
         json_data = data.category_data(category_id)
         return page_name, json_data
+
+    def selected_channel(self, video_type) -> tuple[str, dict]:
+        input = self.inputwin("channel:")
+        mulstr = data.get_channels_terse_mulstr(input)
+        selection = iselect.iselect(mulstr)
+        if selection == 130:
+            # handle cancel of the command
+            return selection, {}
+        id_pattern = re.compile(r"\[(\d+)\]$")
+        sel_id = re.search(id_pattern, selection).group(1)
+        __sel_user = re.sub(id_pattern, "", selection).strip()
+        sel_user = re.sub(r"^.*\s", "", __sel_user).strip()
+        user_id = sel_id
+        user_name = sel_user
+        page_name = user_name
+        json_data = data.get_channel_videos(user_id, video_type)
+        return page_name, json_data
+
+    def select_page(self):
+        """Interactive select of page to open."""
+        msel = "category streams\nchannel videos"
+        main_sel = iselect.iselect(msel)
+        if "streams" in main_sel:
+            return self.selected_category()
+        # => videos page
+        vtypes = "all\narchive\nhighlight\nupload"
+        video_type = iselect.iselect(vtypes)
+        return self.selected_channel(video_type)
