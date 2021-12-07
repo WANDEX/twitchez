@@ -40,6 +40,10 @@ def get_thumbnail_urls(rawurls) -> list:
     # TODO: DOUBTS: calculate closest resolution based on Screen/Window Resolution/DPI, Terminal font size, etc.
     # TODO: closest resolution to approx box size.
     width, height = thumbnail_resolution(int(conf.setting("thumbnail_size")))
+    # fix: video thumbnails currently have weird format with % characters
+    if len(rawurls) > 0 and "%{" in rawurls[0]:
+        # remove % character from all thumbnail urls
+        rawurls = [url.replace("%{", "{") for url in rawurls]
     urls = [url.format(width=width, height=height) for url in rawurls]
     return urls
 
