@@ -134,3 +134,55 @@ def category_data(category_id) -> dict:
     }
     r = get(url, headers=headers)
     return r.json()
+
+
+def get_channels(query: str, live_only=False) -> dict:
+    """Returns a list of channels that match the query via channel name.
+    (users who have streamed within the past 6 months)
+    """
+    first = 3  # XXX
+    token = get_private_data("token")
+    c_id = get_private_data("c_id")
+    url = f"https://api.twitch.tv/helix/search/channels?first={first}&live_only={str(live_only)}&query={query}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Client-Id": c_id
+    }
+    r = get(url, headers=headers)
+    j = r.json()
+    return j["data"]
+
+
+def get_channels_terse_data(query: str, live_only=False) -> dict:
+    """Return id dict with channels: (broadcaster_login, display_name, profile_image_url) only."""
+    channels = get_channels(query, live_only)
+    terse_info = {}
+    for ch in channels:
+        # dict key is channel id = tuple of ...
+        terse_info[ch["id"]] = ch["broadcaster_login"], ch["display_name"], ch["thumbnail_url"]
+    return terse_info
+
+
+def get_channels_terse_mulstr(query: str, live_only=False) -> str:
+    """Return multiline string with terse channels data. (for interactive select)"""
+    d = get_channels_terse_data(query, live_only)
+    mstr = ""
+    maxlen = 15
+    for id, ch in d.items():
+        login, name, _ = ch
+        mstr += f"{str(login):<{maxlen}} {str(name):<{maxlen}} [{id}]\n"
+    return mstr.strip()  # to remove blank line
+
+
+def get_channel_videos(user_id, type="all") -> dict:
+    """Gets video information by user ID."""
+    first = 3  # XXX
+    token = get_private_data("token")
+    c_id = get_private_data("c_id")
+    url = f"https://api.twitch.tv/helix/videos?type={type}&first={first}&user_id={user_id}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Client-Id": c_id
+    }
+    r = get(url, headers=headers)
+    return r.json()
