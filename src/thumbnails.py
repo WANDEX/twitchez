@@ -15,7 +15,7 @@ import ueberzug.lib.v0 as ueberzug
 import utils
 
 
-def thumbnail_resolution(div=6):
+def thumbnail_resolution(div=6) -> tuple[int, int]:
     """Return tuple: (width, height) - based on div key in table."""
     table = {
         12: (160, 90),
