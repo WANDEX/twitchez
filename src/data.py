@@ -176,7 +176,7 @@ def get_channels_terse_mulstr(query: str, live_only=False) -> str:
 
 def get_channel_videos(user_id, type="all") -> dict:
     """Gets video information by user ID."""
-    first = 3  # XXX
+    first = 100  # Maximum number of objects to return. (Twitch API Maximum: 100)
     token = get_private_data("token")
     c_id = get_private_data("c_id")
     url = f"https://api.twitch.tv/helix/videos?type={type}&first={first}&user_id={user_id}"
