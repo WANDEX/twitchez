@@ -40,16 +40,24 @@ def get_thumbnail_urls(rawurls) -> list:
     # TODO: DOUBTS: calculate closest resolution based on Screen/Window Resolution/DPI, Terminal font size, etc.
     # TODO: closest resolution to approx box size.
     width, height = thumbnail_resolution(int(conf.setting("thumbnail_size")))
-    # fix: video thumbnails currently have weird format with % characters
-    if len(rawurls) > 0 and "%{" in rawurls[0]:
-        # remove % character from all thumbnail urls
-        rawurls = [url.replace("%{", "{") for url in rawurls]
-    urls = [url.format(width=width, height=height) for url in rawurls]
+    urls = []
+    for url in rawurls:
+        # fix: video thumbnails currently have weird format with % characters
+        if url and "%{" in url:
+            # remove % character from thumbnail url
+            url = url.replace("%{", "{")
+        if not url:
+            url = ""
+        else:
+            url = url.format(width=width, height=height)
+        urls.append(url)
     return urls
 
 
 async def fetch_image(session, url):
     """Asynchronously fetch image from url."""
+    if not url:
+        return None
     async with session.get(url) as response:
         return await response.read()
 
@@ -61,17 +69,24 @@ async def __get_thumbnails_async(ids: list, rawurls: list, *subdirs) -> dict:
     thumbnail_paths = {}
     urls = get_thumbnail_urls(rawurls)
     tmpd = utils.get_tmp_dir("thumbnails", *subdirs)
+    blank_thumbnail = utils.project_root("config", "blank.jpg")
     tasks = []
     async with aiohttp.ClientSession() as session:
         for url in urls:
             tasks.append(fetch_image(session, url))
-        # wait until all thumbnails fetched
+        # wait until all thumbnails with non empty url are fetched
         thumbnails = await asyncio.gather(*tasks)
-    for (id, thumbnail) in zip(ids, thumbnails):
+
+    for id, thumbnail in zip(ids, thumbnails):
         thumbnail_fname = f"{id}.jpg"
         thumbnail_path = Path(tmpd, thumbnail_fname)
-        with open(thumbnail_path, 'wb') as f:
-            f.write(thumbnail)
+        if thumbnail is None:
+            if not thumbnail_path.is_file():
+                # create symlink of blank_thumbnail
+                thumbnail_path.symlink_to(blank_thumbnail)
+        else:
+            with open(thumbnail_path, 'wb') as f:
+                f.write(thumbnail)
         thumbnail_paths[id] = str(thumbnail_path)
     return thumbnail_paths
 
@@ -98,7 +113,7 @@ def find_thumbnails(ids: list, *subdirs) -> dict:
     differ = list(set(tnames).difference(set(ids)))
     fnames = utils.add_str_to_list(differ, ".jpg")  # add file extension back
     for fname in fnames:
-        # remove thumbnail files of users who is not live streaming now.
+        # remove thumbnail files/symlinks which id not in ids list
         Path(thumbnail_dir, fname).unlink(missing_ok=True)
 
     thumbnail_list = utils.insert_to_all(listdir(thumbnail_dir), thumbnail_dir, opt_sep=sep)
