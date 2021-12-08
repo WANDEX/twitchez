@@ -60,13 +60,32 @@ class Pages:
         boxes = render.Boxes()
         grid = render.Grid(parent, ids, self.page_name)
         for id, (x, y) in grid.coords.items():
-            user_login = fls[id]["user_login"]  # for composing stream url
-            user_name = fls[id]["user_name"]
+            d = fls[id]
+            title = d["title"]
+            user_login = d["user_login"]  # for composing stream url
+            user_name = d["user_name"]
             if not user_name:  # if user_name is empty (rare, but such case exist!)
                 user_name = user_login
-            box = render.Box(user_login, user_name, fls[id]["title"], fls[id]["game_name"], x, y)
+            # NOTE: videos DOES NOT HAVE game_name/category!
+            if "game_name" in d:  # => live streams
+                category = d["game_name"]
+            elif "published_at" in d:  # => videos page
+                category = d["published_at"]
+            elif "created_at" in d:
+                category = d["created_at"]
+            else:
+                category = ""
+            if "viewer_count" in d:  # => live streams
+                views = d["viewer_count"]
+            elif "view_count" in d:  # => videos page
+                views = d["view_count"]
+            else:
+                views = ""
+            box = render.Box(user_login, user_name, title, category, x, y)
+            if "url" in d:  # => videos page
+                box.url = d["url"]  # videos have specific url
+            box.viewers = str(views)
             box.img_path = thumbnail_paths[id]
-            box.viewers = str(fls[id]["viewer_count"])
             thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + self.HEADER_H).ue_params
             boxes.add(box)
             boxes.add_thmb(thmb)
