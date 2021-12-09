@@ -108,8 +108,8 @@ def sdate(isodate: str) -> str:
         match = sm.find_longest_match(0, len(vdate), 0, len(today))
         # longest common string between two
         pattern = vdate[match.a: match.a + match.size - 1]
-    # remove pattern and cut leading '-'
-    sdate = str(vdate).replace(pattern, "").strip("-")
+    # remove pattern, cut leading '-' and strip whitespaces
+    sdate = str(vdate).replace(pattern, "").strip("-").strip()
     return sdate
 
 
