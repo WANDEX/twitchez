@@ -111,3 +111,22 @@ def sdate(isodate: str) -> str:
     # remove pattern and cut leading '-'
     sdate = str(vdate).replace(pattern, "").strip("-")
     return sdate
+
+
+def duration(duration: str, simple=True) -> str:
+    """Take twitch duration str and return duration with : as separators."""
+    if simple:
+        return duration.replace("h", ":").replace("m", ":").replace("s", ":").strip(":")
+    # Don't see any real benefit of the following code over a silly simple one-liner :)
+    # NOTE: left here in case more complex processing will be required.
+    if "h" in duration:
+        ifmt = "%Hh%Mm%Ss"
+        ofmt = "%H:%M:%S"
+    elif "m" in duration:
+        ifmt = "%Mm%Ss"
+        ofmt = "%M:%S"
+    else:
+        return duration
+    idur = datetime.strptime(duration, ifmt)
+    odur = str(idur.strftime(ofmt))
+    return odur
