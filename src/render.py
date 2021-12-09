@@ -104,13 +104,19 @@ class Box:
         self.y = y
         self.img_path = ""
         self.viewers = ""
+        self.duration = ""
 
     def draw(self, parent):
         """Draw Box."""
         win = parent.derwin(self.h, self.w, self.y, self.x)
-        win.addnstr(self.last - 2, 1, f"{self.title}\n", self.lmax)
-        win.addnstr(self.last - 1, 1, f"{self.user_name}\n", self.lmax, curses.A_BOLD)
-        win.addnstr(self.last, 1, f"{self.category}\n", self.lmax)
+        win.addnstr(self.last - 2, 1, f"{self.title}", self.lmax)
+        if self.duration:
+            rside = self.lmax - len(self.duration)
+            win.addnstr(self.last - 1, 1, f"{self.user_name}", rside, curses.A_BOLD)
+            win.addstr(self.last - 1, rside, f"[{self.duration}]")
+        else:
+            win.addnstr(self.last - 1, 1, f"{self.user_name}", self.lmax, curses.A_BOLD)
+        win.addnstr(self.last, 1, f"{self.category}", self.lmax)
         if self.viewers:
             rside = self.lmax - len(self.viewers)
             win.addstr(self.last, rside, f" {self.viewers} ", curses.A_BOLD)
