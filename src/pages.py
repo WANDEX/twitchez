@@ -69,10 +69,10 @@ class Pages:
             # NOTE: videos DOES NOT HAVE game_name/category!
             if "game_name" in d:  # => live streams
                 category = d["game_name"]
-            elif "published_at" in d:  # => videos page
-                category = d["published_at"]
-            elif "created_at" in d:
-                category = d["created_at"]
+            elif "created_at" in d:  # => videos page
+                category = utils.sdate(d["created_at"])
+            elif "published_at" in d:
+                category = utils.sdate(d["published_at"])
             else:
                 category = ""
             if "viewer_count" in d:  # => live streams
