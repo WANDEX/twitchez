@@ -123,8 +123,15 @@ class Box:
         """Create window with hint character."""
         if self.hint:  # if hint not empty -> show hint
             curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_RED)
-            win = curses.newwin(1, 2, self.y + self.h - 1, self.x + self.w - 3)
-            win.addch(self.hint, curses.color_pair(1))
+            if len(self.hint) == 1:
+                hint = f" {self.hint} "
+            elif len(self.hint) == 2:
+                hint = f" {self.hint}"
+            else:
+                hint = f"{self.hint}"
+            lh = len(hint) + 1
+            win = curses.newwin(1, lh, self.y + self.h - 1, self.x + self.w - lh)
+            win.addstr(hint, curses.color_pair(1))
             win.refresh()
 
 
