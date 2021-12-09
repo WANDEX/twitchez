@@ -125,8 +125,16 @@ def duration(duration: str, simple=False, noprocessing=False) -> str:
     # Don't see any real benefit of the following code over a silly simple one-liner :)
     # Result of the following algorithm are prettier, but also produces longer str.
     if "h" in duration:
-        ifmt = "%Hh%Mm%Ss"
-        ofmt = "%H:%M:%S"
+        # extract hours from string
+        H, _, _ = duration.partition("h")
+        H = int(H.strip())
+        # fix: if hours > 23 => put hours as simple str into format
+        if H > 23:
+            ifmt = f"{H}h%Mm%Ss"
+            ofmt = f"{H}:%M:%S"
+        else:
+            ifmt = "%Hh%Mm%Ss"
+            ofmt = "%H:%M:%S"
     elif "m" in duration:
         ifmt = "%Mm%Ss"
         ofmt = "%M:%S"
