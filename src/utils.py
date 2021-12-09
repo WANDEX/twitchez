@@ -113,12 +113,17 @@ def sdate(isodate: str) -> str:
     return sdate
 
 
-def duration(duration: str, simple=True) -> str:
-    """Take twitch duration str and return duration with : as separators."""
+def duration(duration: str, simple=False, noprocessing=False) -> str:
+    """Take twitch duration str and return duration with : as separators.
+    Can optionally return a str without processing or with simple str processing.
+    """
+    if noprocessing:
+        return duration
     if simple:
+        # downside is very variable length of str and subjective ugliness of result.
         return duration.replace("h", ":").replace("m", ":").replace("s", ":").strip(":")
     # Don't see any real benefit of the following code over a silly simple one-liner :)
-    # NOTE: left here in case more complex processing will be required.
+    # Result of the following algorithm are prettier, but also produces longer str.
     if "h" in duration:
         ifmt = "%Hh%Mm%Ss"
         ofmt = "%H:%M:%S"
