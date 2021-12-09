@@ -82,8 +82,10 @@ class Pages:
             else:
                 views = ""
             box = render.Box(user_login, user_name, title, category, x, y)
-            if "url" in d:  # => videos page
+            if "url" in d:
                 box.url = d["url"]  # videos have specific url
+            if "duration" in d:
+                box.duration = utils.duration(d["duration"])
             box.viewers = str(views)
             box.img_path = thumbnail_paths[id]
             thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + self.HEADER_H).ue_params
