@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from datetime import datetime
+from difflib import SequenceMatcher
 from os import environ
 from os.path import getmtime
 from pathlib import Path
@@ -90,3 +92,14 @@ def strclean(str: str) -> str:
     s = ' '.join(s.split())
     s = s.strip()
     return s
+
+
+def sdate(isodate: str) -> str:
+    "Return shorten date."
+    idate = isodate.replace("Z", "")  # remove Z character from date (2021-12-08T11:43:43Z)
+    vdate = datetime.fromisoformat(idate).isoformat(' ', 'minutes')
+    today = datetime.today().isoformat(' ', 'minutes')
+    match = SequenceMatcher(None, vdate, today).find_longest_match(0, len(vdate), 0, len(today))
+    longest_common_str = vdate[match.a: match.a + match.size]
+    sdate = str(vdate).replace(longest_common_str, "")  # remove common between two str
+    return sdate
