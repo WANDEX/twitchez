@@ -20,13 +20,13 @@ class Pages:
     def cache_path(self) -> Path:
         return data.cache_file_path(self.cache_file_name)
 
-    def update_live_streams(self) -> Path:
+    def update_cache(self) -> Path:
         return data.update_cache(self.cache_file_name, self.json_data)
 
-    def read_live_streams(self) -> dict:
+    def read_cache(self) -> dict:
         return data.read_cache(self.cache_file_name)
 
-    def time_to_update_live_streams(self) -> bool:
+    def time_to_update_cache(self) -> bool:
         """Return True if path mtime > 5 mins from now.
         (default twitch API update time).
         """
@@ -38,15 +38,15 @@ class Pages:
 
     def update_data(self) -> dict:
         """Update json data & return thumbnail paths."""
-        if self.time_to_update_live_streams():
-            self.update_live_streams()
-            json_data = self.read_live_streams()
+        if self.time_to_update_cache():
+            self.update_cache()
+            json_data = self.read_cache()
             ids = data.get_entries(json_data, 'id')
             thumbnail_urls_raw = data.get_entries(json_data, 'thumbnail_url')
             thumbnail_paths = thumbnails.download_thumbnails(ids, thumbnail_urls_raw, self.page_name_no_ws)
         else:
             # do not download thumbnails, find previously downloaded thumbnails paths
-            json_data = self.read_live_streams()
+            json_data = self.read_cache()
             ids = data.get_entries(json_data, 'id')
             thumbnail_paths = thumbnails.find_thumbnails(ids, self.page_name_no_ws)
         return thumbnail_paths
@@ -54,7 +54,7 @@ class Pages:
     def grid_func(self, parent) -> render.Grid:
         """Return grid class object for prepared objects of thumbnails and boxes."""
         thumbnail_paths = self.update_data()
-        json_data = self.read_live_streams()
+        json_data = self.read_cache()
         fls = data.create_streams_dict(json_data)  # dict with stream id as the key
         ids = list(fls.keys())
         boxes = render.Boxes()
