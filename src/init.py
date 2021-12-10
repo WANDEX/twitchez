@@ -60,9 +60,8 @@ def run(stdscr):
         if c == k.get("tab_add"):
             s = search.Search(stdscr)
             page_name, json_data = s.select_page()
+            # handle cancel of the command
             if page_name == 130:
-                # handle cancel of the command
-                # TODO: remove inputwin
                 continue
 
             p = pages.Pages(page_name, json_data)
