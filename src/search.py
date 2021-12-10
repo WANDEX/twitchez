@@ -33,6 +33,8 @@ class Search:
 
     def selected_category(self) -> tuple[str, dict]:
         input = self.inputwin("category:")
+        if not input:
+            return 130, {}
         mulstr = data.get_categories_terse_mulstr(input)
         selection = iselect.iselect(mulstr)
         if selection == 130:
@@ -49,11 +51,13 @@ class Search:
 
     def selected_channel(self, video_type) -> tuple[str, dict]:
         input = self.inputwin("channel:")
+        if not input:
+            return 130, {}
         mulstr = data.get_channels_terse_mulstr(input)
         selection = iselect.iselect(mulstr)
         if selection == 130:
             # handle cancel of the command
-            return selection, {}
+            return 130, {}
         id_pattern = re.compile(r"\[(\d+)\]$")
         sel_id = re.search(id_pattern, selection).group(1)
         __sel_user = re.sub(id_pattern, "", selection).strip()
@@ -70,7 +74,7 @@ class Search:
         main_sel = iselect.iselect(msel)
         if main_sel == 130:
             # handle cancel of the command
-            return main_sel, {}
+            return 130, {}
         if "streams" in main_sel:
             return self.selected_category()
         # => videos page
@@ -78,5 +82,5 @@ class Search:
         video_type = iselect.iselect(vtypes)
         if video_type == 130:
             # handle cancel of the command
-            return video_type, {}
+            return 130, {}
         return self.selected_channel(video_type)
