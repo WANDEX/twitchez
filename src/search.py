@@ -68,9 +68,15 @@ class Search:
         """Interactive select of page to open."""
         msel = "category streams\nchannel videos"
         main_sel = iselect.iselect(msel)
+        if main_sel == 130:
+            # handle cancel of the command
+            return main_sel, {}
         if "streams" in main_sel:
             return self.selected_category()
         # => videos page
         vtypes = "all\narchive\nhighlight\nupload"
         video_type = iselect.iselect(vtypes)
+        if video_type == 130:
+            # handle cancel of the command
+            return video_type, {}
         return self.selected_channel(video_type)
