@@ -81,7 +81,9 @@ async def __get_thumbnails_async(ids: list, rawurls: list, *subdirs) -> dict:
         thumbnail_fname = f"{id}.jpg"
         thumbnail_path = Path(tmpd, thumbnail_fname)
         if thumbnail is None:
-            if not thumbnail_path.is_file():
+            if thumbnail_path.is_file() and thumbnail_path.samefile(blank_thumbnail):
+                pass
+            else:
                 # create symlink of blank_thumbnail
                 thumbnail_path.symlink_to(blank_thumbnail)
         else:
