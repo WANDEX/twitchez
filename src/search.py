@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from notify import notify
 import curses
-import re
 import data
 import iselect
+import re
 
 ENCODING = "utf-8"
 
@@ -26,10 +27,22 @@ class Search:
         curses.echo()
         # indent from the prompt by one character
         input = win.getstr(0, len(prompt) + 1)
+        # convert bytes to string (remove the b prefix)
+        decoded = str(input, ENCODING).strip()
         curses.noecho()
         win.erase()
-        # convert bytes to string (remove the b prefix)
-        return str(input, ENCODING).strip()
+        win.refresh()
+
+        # Esc = b'\x1b', ^C = b'\x03'
+        ignorebyte = ['\x1b', '\x03']
+        ignorelist = ['/', '\\']
+        ignorelist.extend(ignorebyte)
+
+        # handle Esc or ^C from input as cancel command
+        if any(_ in decoded for _ in ignorelist):
+            notify("input was ignored!")
+            return ""
+        return decoded
 
     def selected_category(self) -> tuple[str, dict]:
         input = self.inputwin("category:")
