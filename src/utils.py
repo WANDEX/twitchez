@@ -84,6 +84,11 @@ def insert_to_all(list, string, opt_sep="") -> list:
     return list
 
 
+def strws(str: str) -> str:
+    """Return a str with whitespace characters replaced by '_'."""
+    return str.strip().replace(" ", "_")
+
+
 def strclean(str: str) -> str:
     """return slightly cleaner string."""
     # remove unneeded characters from string
