@@ -2,6 +2,7 @@
 # coding=utf-8
 
 from pathlib import Path
+from utils import strws
 import data
 import render
 import thumbnails
@@ -11,20 +12,33 @@ import utils
 class Pages:
     HEADER_H = render.Page.HEADER_H
 
-    def __init__(self, page_name: str, json_data: dict):
-        self.page_name = page_name
+    def __init__(self, page_name: str, json_data: dict, page_type: dict):
+        self.page_name = page_name  # TODO: take page_name from page_type dict
         self.json_data = json_data
-        self.page_name_no_ws = page_name.replace(" ", "_")  # page_name_without_whitespaces
-        self.cache_file_name = f"{self.page_name_no_ws}.json"
+        self.page_type = page_type
+        self.cache_file_name = f"{strws(page_name)}.json"
+
+    def cache_subdirs(self):
+        """Return list of subdirs (to unpack them later as args)."""
+        subdirs = []
+        pt = self.page_type
+        ptype = pt.get("type", "streams")
+        subdirs.append(ptype)
+        if ptype == "videos":
+            if "user_name" in pt:
+                subdirs.append(strws(pt["user_name"]))
+        if "category" in pt:
+            subdirs.append(strws(pt["category"]))
+        return subdirs
 
     def cache_path(self) -> Path:
-        return data.cache_file_path(self.cache_file_name)
+        return data.cache_file_path(self.cache_file_name, *self.cache_subdirs())
 
     def update_cache(self) -> Path:
-        return data.update_cache(self.cache_file_name, self.json_data)
+        return data.update_cache(self.cache_file_name, self.json_data, *self.cache_subdirs())
 
     def read_cache(self) -> dict:
-        return data.read_cache(self.cache_file_name)
+        return data.read_cache(self.cache_file_name, *self.cache_subdirs())
 
     def time_to_update_cache(self) -> bool:
         """Return True if path mtime > 5 mins from now.
@@ -38,17 +52,18 @@ class Pages:
 
     def update_data(self) -> dict:
         """Update json data & return thumbnail paths."""
+        subdirs = self.cache_subdirs()
         if self.time_to_update_cache():
             self.update_cache()
             json_data = self.read_cache()
             ids = data.get_entries(json_data, 'id')
             thumbnail_urls_raw = data.get_entries(json_data, 'thumbnail_url')
-            thumbnail_paths = thumbnails.download_thumbnails(ids, thumbnail_urls_raw, self.page_name_no_ws)
+            thumbnail_paths = thumbnails.download_thumbnails(ids, thumbnail_urls_raw, *subdirs)
         else:
             # do not download thumbnails, find previously downloaded thumbnails paths
             json_data = self.read_cache()
             ids = data.get_entries(json_data, 'id')
-            thumbnail_paths = thumbnails.find_thumbnails(ids, self.page_name_no_ws)
+            thumbnail_paths = thumbnails.find_thumbnails(ids, *subdirs)
         return thumbnail_paths
 
     def grid_func(self, parent) -> render.Grid:
