@@ -30,23 +30,34 @@ def get_private_data(key) -> str:
     return data[key]
 
 
-def cache_file_path(file_name) -> Path:
-    """Get cache file path by file name."""
-    return Path(utils.get_cache_dir(), file_name)
+def cache_file_path(file_name, *subdirs) -> Path:
+    """Get cache file path by file name, optionally supports subdirs."""
+    if subdirs:
+        path = Path(utils.get_cache_dir(), *subdirs)
+        path.mkdir(parents=True, exist_ok=True)
+    else:
+        path = utils.get_cache_dir()
+    return Path(path, file_name)
 
 
-def update_cache(file_name, json_data) -> Path:
+def update_cache(file_name, json_data, *subdirs) -> Path:
     """Update json file from cache and return file path."""
-    file_path = cache_file_path(file_name)
+    if subdirs:
+        file_path = cache_file_path(file_name, *subdirs)
+    else:
+        file_path = cache_file_path(file_name)
     data = json.dumps(json_data, indent=2)
     with open(file_path, "w") as file:
         file.write(data)
     return file_path
 
 
-def read_cache(file_name) -> dict:
+def read_cache(file_name, *subdirs) -> dict:
     """Read json file from cache and return data."""
-    file_path = cache_file_path(file_name)
+    if subdirs:
+        file_path = cache_file_path(file_name, *subdirs)
+    else:
+        file_path = cache_file_path(file_name)
     with open(file_path, "r") as file:
         data = json.load(file)
     return data
