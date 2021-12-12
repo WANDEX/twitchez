@@ -44,7 +44,7 @@ class Search:
             return ""
         return decoded
 
-    def selected_category(self) -> tuple[str, dict, dict]:
+    def selected_category(self) -> tuple[int, dict, dict]:
         input = self.inputwin("category:")
         if not input:
             return 130, {}, {}
@@ -58,7 +58,6 @@ class Search:
         sel_id = re.search(id_pattern, selection).group(1)
         category_id = sel_id
         category_name = sel_name
-        page_name = category_name
         json_data = data.category_data(category_id)
         page_dict = {
             "type": "streams",
@@ -66,9 +65,9 @@ class Search:
             "page_name": category_name,
             "category_id": category_id
         }
-        return page_name, json_data, page_dict
+        return 0, json_data, page_dict
 
-    def selected_channel(self, video_type) -> tuple[str, dict, dict]:
+    def selected_channel(self, video_type) -> tuple[int, dict, dict]:
         input = self.inputwin("channel:")
         if not input:
             return 130, {}, {}
@@ -83,7 +82,6 @@ class Search:
         sel_user = re.sub(r"^.*\s", "", __sel_user).strip()
         user_id = sel_id
         user_name = sel_user
-        page_name = user_name
         json_data = data.get_channel_videos(user_id, video_type)
         page_dict = {
             "type": "videos",
@@ -92,7 +90,7 @@ class Search:
             "user_name": user_name,
             "user_id": user_id
         }
-        return page_name, json_data, page_dict
+        return 0, json_data, page_dict
 
     def select_page(self):
         """Interactive select of page to open."""

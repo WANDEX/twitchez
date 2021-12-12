@@ -64,12 +64,12 @@ def run(stdscr):
             continue
         if c == k.get("tab_add"):
             s = search.Search(stdscr)
-            page_name, json_data, page_type = s.select_page()
+            rc, json_data, page_type = s.select_page()
             # handle cancel of the command
-            if page_name == 130:
+            if rc == 130:
                 continue
 
-            p = pages.Pages(page_name, json_data, page_type)
+            p = pages.Pages(page_type["page_name"], json_data, page_type)
             page_class = render.Page(stdscr, p)
 
             page = page_class
