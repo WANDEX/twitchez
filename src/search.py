@@ -51,7 +51,6 @@ class Search:
         mulstr = data.get_categories_terse_mulstr(input)
         selection = iselect.iselect(mulstr)
         if selection == 130:
-            # handle cancel of the command
             return 130, {}, {}
         id_pattern = re.compile(r"\[(\d+)\]$")
         sel_name = re.sub(id_pattern, "", selection).strip()
@@ -65,7 +64,7 @@ class Search:
             "page_name": category_name,
             "category_id": category_id
         }
-        return 0, json_data, page_dict
+        return 0, page_dict, json_data
 
     def selected_channel(self, video_type) -> tuple[int, dict, dict]:
         input = self.inputwin("channel:")
@@ -74,7 +73,6 @@ class Search:
         mulstr = data.get_channels_terse_mulstr(input)
         selection = iselect.iselect(mulstr)
         if selection == 130:
-            # handle cancel of the command
             return 130, {}, {}
         id_pattern = re.compile(r"\[(\d+)\]$")
         sel_id = re.search(id_pattern, selection).group(1)
@@ -90,21 +88,19 @@ class Search:
             "user_name": user_name,
             "user_id": user_id
         }
-        return 0, json_data, page_dict
+        return 0, page_dict, json_data
 
     def select_page(self):
         """Interactive select of page to open."""
         msel = "category streams\nchannel videos"
         main_sel = iselect.iselect(msel)
         if main_sel == 130:
-            # handle cancel of the command
-            return 130, {}, {}
+            return 130, {}, {}  # handle cancel of the command
         if "streams" in main_sel:
             return self.selected_category()
         # => videos page
         vtypes = "all\narchive\nhighlight\nupload"
         video_type = iselect.iselect(vtypes)
         if video_type == 130:
-            # handle cancel of the command
             return 130, {}, {}
         return self.selected_channel(video_type)

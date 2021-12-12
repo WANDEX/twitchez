@@ -21,12 +21,12 @@ def set_curses_start_defaults():
 def run(stdscr):
     page_name = "Following Live"
     json_data = data.following_live_data()
-    page_type = {
+    page_dict = {
         "type": "streams",
         "category": page_name,
         "page_name": page_name,
     }
-    p = pages.Pages(page_name, json_data, page_type)
+    p = pages.Pages(page_dict, json_data)
     page_class = render.Page(stdscr, p)
 
     page = page_class
@@ -64,12 +64,12 @@ def run(stdscr):
             continue
         if c == k.get("tab_add"):
             s = search.Search(stdscr)
-            rc, json_data, page_type = s.select_page()
+            rc, page_dict, json_data = s.select_page()
             # handle cancel of the command
             if rc == 130:
                 continue
 
-            p = pages.Pages(page_type["page_name"], json_data, page_type)
+            p = pages.Pages(page_dict, json_data)
             page_class = render.Page(stdscr, p)
 
             page = page_class

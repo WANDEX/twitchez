@@ -12,23 +12,23 @@ import utils
 class Pages:
     HEADER_H = render.Page.HEADER_H
 
-    def __init__(self, page_name: str, json_data: dict, page_type: dict):
-        self.page_name = page_name  # TODO: take page_name from page_type dict
+    def __init__(self, page_dict: dict, json_data: dict):
+        self.page_dict = page_dict
         self.json_data = json_data
-        self.page_type = page_type
-        self.cache_file_name = f"{strws(page_name)}.json"
+        self.page_name = page_dict["page_name"]
+        self.cache_file_name = f"{strws(self.page_name)}.json"
 
     def cache_subdirs(self):
         """Return list of subdirs (to unpack them later as args)."""
         subdirs = []
-        pt = self.page_type
-        ptype = pt.get("type", "streams")
+        pd = self.page_dict
+        ptype = pd.get("type", "streams")
         subdirs.append(ptype)
         if ptype == "videos":
-            if "user_name" in pt:
-                subdirs.append(strws(pt["user_name"]))
-        if "category" in pt:
-            subdirs.append(strws(pt["category"]))
+            if "user_name" in pd:
+                subdirs.append(strws(pd["user_name"]))
+        if "category" in pd:
+            subdirs.append(strws(pd["category"]))
         return subdirs
 
     def cache_path(self) -> Path:
