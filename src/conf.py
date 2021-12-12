@@ -35,6 +35,7 @@ def key(keyname):
 
 def tmp_set(option, value, section="GENERAL"):
     """Set tmp variable value."""
+    temp.read(temp_vars)
     if not temp.has_section(section):
         temp.add_section(section)
     temp.set(str(section), str(option), str(value))
