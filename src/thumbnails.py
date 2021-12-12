@@ -84,9 +84,17 @@ async def __get_thumbnails_async(ids: list, rawurls: list, *subdirs) -> dict:
             if thumbnail_path.is_file() and thumbnail_path.samefile(blank_thumbnail):
                 pass
             else:
+                # remove symlink or file before creating new symlink
+                if thumbnail_path.is_file():
+                    thumbnail_path.unlink(missing_ok=True)
                 # create symlink of blank_thumbnail
                 thumbnail_path.symlink_to(blank_thumbnail)
         else:
+            # NOTE: if existing thumbnail_path is symlink, original blank thumbnail
+            # will be replaced by the thumbnail_path image, to prevent that
+            # => remove symlink before writing new image file
+            if thumbnail_path.is_symlink():
+                thumbnail_path.unlink(missing_ok=True)
             with open(thumbnail_path, 'wb') as f:
                 f.write(thumbnail)
         thumbnail_paths[id] = str(thumbnail_path)
