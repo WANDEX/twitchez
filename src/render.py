@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from ast import literal_eval
 from clip import clip
 from itertools import islice
 from notify import notify
@@ -252,18 +253,34 @@ class Grid:
 
 class Tabs:
     """Tabs."""
-    tabs = []  # list of tab names
+    # list of tab names
+    tabs = literal_eval(conf.tmp_get("tabs", [], "TABS"))
+
+    def curtab(self):
+        #  TODO: what page name is fallback? default page set in settings?
+        return conf.tmp_get("current_page_name", "Following Live", "TABS")
 
     def add_tab(self, page_name):
+        current_page_name = self.curtab()
+        # don't add the same tab twice
         if page_name not in self.tabs:
-            self.tabs.append(page_name)
+            if not self.tabs or current_page_name not in self.tabs:
+                self.tabs.append(current_page_name)
+                if page_name not in self.tabs:
+                    self.tabs.append(page_name)
+            else:
+                # find index of current page name and insert new tab after that index
+                cindex = self.tabs.index(current_page_name)
+                nindex = cindex + 1
+                self.tabs.insert(nindex, page_name)
+            conf.tmp_set("tabs", self.tabs, "TABS")
 
     def delete_tab(self, tabname):
         self.tabs.remove(tabname)
 
-    def next_tab(self, current_page_name):
+    def next_tab(self):
         """Return next tab name (carousel)."""
-        cindex = self.tabs.index(current_page_name)
+        cindex = self.tabs.index(self.curtab())
         nindex = cindex + 1
         if nindex > len(self.tabs) - 1:
             ntabname = self.tabs[0]
@@ -271,9 +288,9 @@ class Tabs:
             ntabname = self.tabs[nindex]
         return ntabname
 
-    def prev_tab(self, current_page_name):
+    def prev_tab(self):
         """Return prev tab name (carousel)."""
-        cindex = self.tabs.index(current_page_name)
+        cindex = self.tabs.index(self.curtab())
         pindex = cindex - 1
         ptabname = self.tabs[pindex]
         return ptabname
@@ -289,7 +306,6 @@ class Page:
         self.pages_class = pages_class
         self.page_name = pages_class.page_name
         self.grid_func = pages_class.grid_func
-        self.tab = Tabs().add_tab(pages_class.page_name)
 
     def draw_header(self):
         """Draw page header."""
