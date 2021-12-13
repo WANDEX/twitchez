@@ -27,9 +27,8 @@ def run(stdscr):
         "page_name": page_name,
     }
     p = pages.Pages(page_dict)
-    page_class = render.Page(stdscr, p)
+    page = render.Page(stdscr, p)
 
-    page = page_class
     parent = page.parent
     rendergrid = page.draw
 
@@ -70,9 +69,8 @@ def run(stdscr):
                 continue
 
             p = pages.Pages(page_dict)
-            page_class = render.Page(stdscr, p)
+            page = render.Page(stdscr, p)
 
-            page = page_class
             parent = page.parent
             rendergrid = page.draw
             redraw()
@@ -81,9 +79,8 @@ def run(stdscr):
             page_dict = render.Tabs().delete_tab()
 
             p = pages.Pages(page_dict)
-            page_class = render.Page(stdscr, p)
+            page = render.Page(stdscr, p)
 
-            page = page_class
             parent = page.parent
             rendergrid = page.draw
             redraw()
@@ -95,9 +92,8 @@ def run(stdscr):
                 page_dict = render.Tabs().prev_tab()
 
             p = pages.Pages(page_dict)
-            page_class = render.Page(stdscr, p)
+            page = render.Page(stdscr, p)
 
-            page = page_class
             parent = page.parent
             rendergrid = page.draw
             redraw()
