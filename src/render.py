@@ -6,6 +6,7 @@ from clip import clip
 from itertools import islice
 from notify import notify
 from open_stream import open_stream_url
+from time import sleep
 import conf
 import curses
 import utils
@@ -322,6 +323,7 @@ class Page:
         self.pages_class = pages_class
         self.page_name = pages_class.page_name
         self.grid_func = pages_class.grid_func
+        self.loaded = False
 
     def draw_header(self):
         """Draw page header."""
@@ -352,6 +354,23 @@ class Page:
         head.refresh()
         return head
 
+    @utils.background
+    def loading(self):
+        """Simple animation to show that currently something is being done."""
+        chars = "|/-\\"  # animation chars
+        win = curses.newwin(1, 1, 0, 0)
+        for _ in range(25):
+            for c in chars:
+                win.insstr(c)
+                win.refresh()
+                sleep(.1)
+                if self.loaded:
+                    break
+            if self.loaded:
+                break
+        win.erase()
+        win.refresh()
+
     def draw_body(self, grid):
         """Draw page body."""
         h, w = self.parent.getmaxyx()
@@ -361,9 +380,11 @@ class Page:
 
     def draw(self):
         """return grid and draw full page."""
+        self.loading()
         grid = self.grid_func(self.parent)
         self.draw_body(grid)
         self.draw_header()
+        self.loaded = True  # finish loading animation
         return grid
 
 
