@@ -44,43 +44,41 @@ class Search:
             return ""
         return decoded
 
-    def selected_category(self) -> tuple[int, dict, dict]:
+    def selected_category(self) -> tuple[int, dict]:
         input = self.inputwin("category:")
         if not input:
-            return 130, {}, {}
+            return 130, {}
         mulstr = data.get_categories_terse_mulstr(input)
         selection = iselect.iselect(mulstr)
         if selection == 130:
-            return 130, {}, {}
+            return 130, {}
         id_pattern = re.compile(r"\[(\d+)\]$")
         sel_name = re.sub(id_pattern, "", selection).strip()
         sel_id = re.search(id_pattern, selection).group(1)
         category_id = sel_id
         category_name = sel_name
-        json_data = data.category_data(category_id)
         page_dict = {
             "type": "streams",
             "category": category_name,
             "page_name": category_name,
             "category_id": category_id
         }
-        return 0, page_dict, json_data
+        return 0, page_dict
 
-    def selected_channel(self, video_type) -> tuple[int, dict, dict]:
+    def selected_channel(self, video_type) -> tuple[int, dict]:
         input = self.inputwin("channel:")
         if not input:
-            return 130, {}, {}
+            return 130, {}
         mulstr = data.get_channels_terse_mulstr(input)
         selection = iselect.iselect(mulstr)
         if selection == 130:
-            return 130, {}, {}
+            return 130, {}
         id_pattern = re.compile(r"\[(\d+)\]$")
         sel_id = re.search(id_pattern, selection).group(1)
         __sel_user = re.sub(id_pattern, "", selection).strip()
         sel_user = re.sub(r"^.*\s", "", __sel_user).strip()
         user_id = sel_id
         user_name = sel_user
-        json_data = data.get_channel_videos(user_id, video_type)
         page_dict = {
             "type": "videos",
             "category": video_type,
@@ -88,19 +86,19 @@ class Search:
             "user_name": user_name,
             "user_id": user_id
         }
-        return 0, page_dict, json_data
+        return 0, page_dict
 
     def select_page(self):
         """Interactive select of page to open."""
         msel = "category streams\nchannel videos"
         main_sel = iselect.iselect(msel)
         if main_sel == 130:
-            return 130, {}, {}  # handle cancel of the command
+            return 130, {}  # handle cancel of the command
         if "streams" in main_sel:
             return self.selected_category()
         # => videos page
         vtypes = "all\narchive\nhighlight\nupload"
         video_type = iselect.iselect(vtypes)
         if video_type == 130:
-            return 130, {}, {}
+            return 130, {}
         return self.selected_channel(video_type)
