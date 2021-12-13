@@ -54,7 +54,7 @@ def get_select_cmd():
     return cmd
 
 
-def iselect(multilinestr: str):
+def iselect(multilinestr: str, fallback):
     """Interactive select of one line from all."""
     if without_funcs:
         return 130
@@ -74,4 +74,7 @@ def iselect(multilinestr: str):
     elif p.returncode != 0:
         notify(f"ERROR({p.returncode}): probably malformed cmd!\n{err}", "CANNOT SELECT:", error=True)
         raise Exception(f"ERROR({p.returncode}):\n{err}\n")
+    # return fallback if input is not a substring of multinestr
+    if str(out) not in multilinestr:
+        return fallback
     return str(out).strip("\n")

@@ -49,7 +49,7 @@ class Search:
         if not input:
             return 130, {}
         mulstr = data.get_categories_terse_mulstr(input)
-        selection = iselect.iselect(mulstr)
+        selection = iselect.iselect(mulstr, 130)
         if selection == 130:
             return 130, {}
         id_pattern = re.compile(r"\[(\d+)\]$")
@@ -70,7 +70,7 @@ class Search:
         if not input:
             return 130, {}
         mulstr = data.get_channels_terse_mulstr(input)
-        selection = iselect.iselect(mulstr)
+        selection = iselect.iselect(mulstr, 130)
         if selection == 130:
             return 130, {}
         id_pattern = re.compile(r"\[(\d+)\]$")
@@ -91,14 +91,14 @@ class Search:
     def select_page(self):
         """Interactive select of page to open."""
         msel = "category streams\nchannel videos"
-        main_sel = iselect.iselect(msel)
+        main_sel = iselect.iselect(msel, 130)
         if main_sel == 130:
             return 130, {}  # handle cancel of the command
         if "streams" in main_sel:
             return self.selected_category()
         # => videos page
         vtypes = "all\narchive\nhighlight\nupload"
-        video_type = iselect.iselect(vtypes)
+        video_type = iselect.iselect(vtypes, 130)
         if video_type == 130:
             return 130, {}
         return self.selected_channel(video_type)
