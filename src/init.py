@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from ast import literal_eval
 from keys import keys as k
 from time import sleep
+import conf
 import curses
-import data
 import keys
 import pages
 import render
@@ -20,13 +21,12 @@ def set_curses_start_defaults():
 
 def run(stdscr):
     page_name = "Following Live"
-    json_data = data.following_live_data()
     page_dict = {
         "type": "streams",
         "category": page_name,
         "page_name": page_name,
     }
-    p = pages.Pages(page_dict, json_data)
+    p = pages.Pages(page_dict)
     page_class = render.Page(stdscr, p)
 
     page = page_class
@@ -64,12 +64,12 @@ def run(stdscr):
             continue
         if c == k.get("tab_add"):
             s = search.Search(stdscr)
-            rc, page_dict, json_data = s.select_page()
+            rc, page_dict = s.select_page()
             # handle cancel of the command
             if rc == 130:
                 continue
 
-            p = pages.Pages(page_dict, json_data)
+            p = pages.Pages(page_dict)
             page_class = render.Page(stdscr, p)
 
             page = page_class
@@ -83,26 +83,13 @@ def run(stdscr):
             redraw()
             continue
         if c == k.get("tab_prev") or c == k.get("tab_next"):
-            if c == k.get("tab_prev"):
-                exp_tab_name = render.Tabs().prev_tab(page.page_name)
-            elif c == k.get("tab_next"):
-                exp_tab_name = render.Tabs().next_tab(page.page_name)
+            if c == k.get("tab_next"):
+                exp_tab_name = render.Tabs().next_tab()
             else:
-                continue
-            exp_tab_name = str(exp_tab_name)
-            json_file_name = exp_tab_name.replace(" ", "_") + ".json"
-            if exp_tab_name == "Following Live":
-                page_name = "Following Live"
-                json_data = data.following_live_data()
-            else:
-                if data.cache_file_path(json_file_name).is_file():
-                    page_name = exp_tab_name
-                    json_data = data.read_cache(json_file_name)
-                else:
-                    category_id, category_name = data.get_category(exp_tab_name)
-                    page_name = category_name
-                    json_data = data.category_data(category_id)
-            p = pages.Pages(page_name, json_data)
+                exp_tab_name = render.Tabs().prev_tab()
+            page_dict = literal_eval(conf.tmp_get("page_dict", page_dict, exp_tab_name))
+
+            p = pages.Pages(page_dict)
             page_class = render.Page(stdscr, p)
 
             page = page_class
