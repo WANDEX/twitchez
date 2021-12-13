@@ -3,6 +3,7 @@
 
 from pathlib import Path
 from utils import strws
+import conf
 import data
 import render
 import thumbnails
@@ -12,11 +13,28 @@ import utils
 class Pages:
     HEADER_H = render.Page.HEADER_H
 
-    def __init__(self, page_dict: dict, json_data: dict):
+    def __init__(self, page_dict: dict):
         self.page_dict = page_dict
-        self.json_data = json_data
         self.page_name = page_dict["page_name"]
         self.cache_file_name = f"{strws(self.page_name)}.json"
+        # set page tmp vars for reusing in next/prev tab movement etc.
+        conf.tmp_set("page_dict", self.page_dict, self.page_name)
+        conf.tmp_set("current_page_name", self.page_name, "TABS")
+        # each new Pages instance -> add to tabs page_name (if not already in tabs)
+        render.Tabs().add_tab(self.page_name)
+
+    def page_data(self) -> dict:
+        """Get and return page data based on page_dict."""
+        pd = self.page_dict
+        ptype = pd.get("type", "streams")
+        if ptype == "videos":
+            json_data = data.get_channel_videos(pd["user_id"], pd["category"])
+        else:
+            if pd["category"] == "Following Live":
+                json_data = data.following_live_data()
+            else:
+                json_data = data.category_data(pd["category_id"])
+        return json_data
 
     def cache_subdirs(self):
         """Return list of subdirs (to unpack them later as args)."""
@@ -35,7 +53,7 @@ class Pages:
         return data.cache_file_path(self.cache_file_name, *self.cache_subdirs())
 
     def update_cache(self) -> Path:
-        return data.update_cache(self.cache_file_name, self.json_data, *self.cache_subdirs())
+        return data.update_cache(self.cache_file_name, self.page_data(), *self.cache_subdirs())
 
     def read_cache(self) -> dict:
         return data.read_cache(self.cache_file_name, *self.cache_subdirs())
