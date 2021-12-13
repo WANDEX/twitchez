@@ -75,6 +75,6 @@ def iselect(multilinestr: str, fallback):
         notify(f"ERROR({p.returncode}): probably malformed cmd!\n{err}", "CANNOT SELECT:", error=True)
         raise Exception(f"ERROR({p.returncode}):\n{err}\n")
     # return fallback if input is not a substring of multinestr
-    if str(out) not in multilinestr:
+    if str(out).strip() not in multilinestr:
         return fallback
     return str(out).strip("\n")
