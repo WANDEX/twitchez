@@ -78,8 +78,7 @@ def run(stdscr):
             redraw()
             continue
         if c == k.get("tab_delete"):
-            exp_tab_name = render.Tabs().delete_tab()
-            page_dict = literal_eval(conf.tmp_get("page_dict", page_dict, exp_tab_name))
+            page_dict = render.Tabs().delete_tab()
 
             p = pages.Pages(page_dict)
             page_class = render.Page(stdscr, p)
@@ -91,10 +90,9 @@ def run(stdscr):
             continue
         if c == k.get("tab_prev") or c == k.get("tab_next"):
             if c == k.get("tab_next"):
-                exp_tab_name = render.Tabs().next_tab()
+                page_dict = render.Tabs().next_tab()
             else:
-                exp_tab_name = render.Tabs().prev_tab()
-            page_dict = literal_eval(conf.tmp_get("page_dict", page_dict, exp_tab_name))
+                page_dict = render.Tabs().prev_tab()
 
             p = pages.Pages(page_dict)
             page_class = render.Page(stdscr, p)

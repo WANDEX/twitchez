@@ -260,6 +260,12 @@ class Tabs:
         #  TODO: what page name is fallback? default page set in settings?
         return conf.tmp_get("current_page_name", "Following Live", "TABS")
 
+    def fpagedict(self, tab_name) -> dict:
+        """Find and return page dict by the tab name."""
+        page_dict_str = conf.tmp_get("page_dict", self.curtab(), tab_name)
+        page_dict = literal_eval(page_dict_str)
+        return page_dict
+
     def add_tab(self, page_name):
         current_page_name = self.curtab()
         # don't add the same tab twice
@@ -276,28 +282,34 @@ class Tabs:
             conf.tmp_set("tabs", self.tabs, "TABS")
 
     def delete_tab(self):
-        """Delete current tab and return the previous tab."""
-        ptabname = self.prev_tab()
+        """Delete current tab and return page_dict of the previous tab."""
+        ptabname = self.prev_tab(tab_name=True)
         self.tabs.remove(self.curtab())
         conf.tmp_set("tabs", self.tabs, "TABS")
-        return ptabname
+        return self.fpagedict(ptabname)
 
-    def next_tab(self):
-        """Return next tab name (carousel)."""
+    def next_tab(self, tab_name=False):
+        """Return page_dict for the next tab name (carousel) or simply tab_name."""
         cindex = self.tabs.index(self.curtab())
         nindex = cindex + 1
         if nindex > len(self.tabs) - 1:
             ntabname = self.tabs[0]
         else:
             ntabname = self.tabs[nindex]
-        return ntabname
+        if tab_name:
+            return ntabname
+        else:
+            return self.fpagedict(ntabname)
 
-    def prev_tab(self):
-        """Return prev tab name (carousel)."""
+    def prev_tab(self, tab_name=False):
+        """Return page_dict for the prev tab name (carousel) or simply tab_name."""
         cindex = self.tabs.index(self.curtab())
         pindex = cindex - 1
         ptabname = self.tabs[pindex]
-        return ptabname
+        if tab_name:
+            return ptabname
+        else:
+            return self.fpagedict(ptabname)
 
 
 class Page:
