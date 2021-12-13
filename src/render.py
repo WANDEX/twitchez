@@ -357,7 +357,7 @@ class Page:
     @utils.background
     def loading(self):
         """Simple animation to show that currently something is being done."""
-        chars = "|/-\\"  # animation chars
+        chars = "-\\|/"  # animation chars
         win = curses.newwin(1, 1, 0, 0)
         for _ in range(25):
             for c in chars:
