@@ -275,8 +275,12 @@ class Tabs:
                 self.tabs.insert(nindex, page_name)
             conf.tmp_set("tabs", self.tabs, "TABS")
 
-    def delete_tab(self, tabname):
-        self.tabs.remove(tabname)
+    def delete_tab(self):
+        """Delete current tab and return the previous tab."""
+        ptabname = self.prev_tab()
+        self.tabs.remove(self.curtab())
+        conf.tmp_set("tabs", self.tabs, "TABS")
+        return ptabname
 
     def next_tab(self):
         """Return next tab name (carousel)."""

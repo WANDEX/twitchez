@@ -78,8 +78,15 @@ def run(stdscr):
             redraw()
             continue
         if c == k.get("tab_delete"):
-            # TODO: unfinished
-            exp_tab_name = render.Tabs().delete_tab(page.page_name)
+            exp_tab_name = render.Tabs().delete_tab()
+            page_dict = literal_eval(conf.tmp_get("page_dict", page_dict, exp_tab_name))
+
+            p = pages.Pages(page_dict)
+            page_class = render.Page(stdscr, p)
+
+            page = page_class
+            parent = page.parent
+            rendergrid = page.draw
             redraw()
             continue
         if c == k.get("tab_prev") or c == k.get("tab_next"):
