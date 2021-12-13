@@ -151,7 +151,7 @@ def get_channels(query: str, live_only=False) -> dict:
     """Returns a list of channels that match the query via channel name.
     (users who have streamed within the past 6 months)
     """
-    first = 3  # XXX
+    first = 5  # Maximum number of objects to return. (Twitch API Maximum: 100)
     token = get_private_data("token")
     c_id = get_private_data("c_id")
     url = f"https://api.twitch.tv/helix/search/channels?first={first}&live_only={str(live_only)}&query={query}"
