@@ -76,13 +76,15 @@ class Boxes:
         """Add thumbnail ue params to list."""
         self.thmblist.append(obj)
 
-    def draw(self, parent, grid):
+    def draw(self, parent, grid, fulltitle=False):
         """Draw boxes."""
         self.drawn_boxes.clear()
         stop = len(grid.coordinates())
         for box in islice(self.boxlist, stop):
-            self.drawn_boxes.append(box)
+            if fulltitle:
+                box.fulltitle = True
             box.draw(parent)
+            self.drawn_boxes.append(box)
         parent.refresh()
         self.boxlist.clear()
 
@@ -107,11 +109,11 @@ class Box:
         self.img_path = ""
         self.viewers = ""
         self.duration = ""
+        self.fulltitle = False
 
     def draw(self, parent):
         """Draw Box."""
         win = parent.derwin(self.h, self.w, self.y, self.x)
-        win.addnstr(self.last - 2, 1, f"{self.title}", self.lmax)
         if self.duration:
             rside = self.lmax - len(self.duration)
             win.addnstr(self.last - 1, 1, f"{self.user_name}", rside, curses.A_BOLD)
@@ -122,6 +124,10 @@ class Box:
         if self.viewers:
             rside = self.lmax - len(self.viewers)
             win.addstr(self.last, rside, f" {self.viewers} ", curses.A_BOLD)
+        if self.fulltitle:
+            win.addstr(self.last - 2, 1, f"{self.title}")
+        else:
+            win.addnstr(self.last - 2, 1, f"{self.title}", self.lmax)
         if self.box_borders:  # show box borders if set in config
             win.box()
         Y, X = win.getparyx()
@@ -374,18 +380,21 @@ class Page:
         win.erase()
         win.refresh()
 
-    def draw_body(self, grid):
+    def draw_body(self, grid, fulltitle=False):
         """Draw page body."""
         h, w = self.parent.getmaxyx()
         body = self.parent.derwin(h - self.HEADER_H, w, self.HEADER_H, 0)
-        Boxes().draw(body, grid)
+        if fulltitle:
+            Boxes().draw(body, grid, fulltitle)
+        else:
+            Boxes().draw(body, grid)
         return body
 
-    def draw(self):
+    def draw(self, fulltitle=False):
         """return grid and draw full page."""
         self.loading()
         grid = self.grid_func(self.parent)
-        self.draw_body(grid)
+        self.draw_body(grid, fulltitle)
         self.draw_header()
         self.loaded = True  # finish loading animation
         return grid

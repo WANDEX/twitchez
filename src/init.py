@@ -66,6 +66,15 @@ def run(stdscr):
             rendergrid = page.draw
             redraw()
             continue
+        if c == k.get("full_title"):
+            page.parent.clear()
+            fbox = render.Boxes.drawn_boxes[0]
+            # toggle full title drawing
+            if not fbox.fulltitle:
+                page.draw(fulltitle=True)
+            else:
+                page.draw()
+            continue
         if c == k.get("tab_add"):
             s = search.Search(stdscr)
             rc, page_dict = s.select_page()
