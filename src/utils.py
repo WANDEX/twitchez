@@ -138,7 +138,8 @@ def word_wrap_for_box(str: str, width: int) -> str:
     for line in lines:
         num_ws = width - len(line) + 1
         out_str += line.replace("\n", " " * num_ws)
-    return out_str
+    # with additional spaces to mask/differentiate from underlying text
+    return out_str + "  "
 
 
 def sdate(isodate: str) -> str:
