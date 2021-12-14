@@ -93,19 +93,17 @@ class Box:
     """Box with info about the stream inside the Grid."""
     h = int(conf.setting("container_box_height"))
     w = int(conf.setting("container_box_width")) - 4
-    box_borders = int(conf.setting("box_borders"))
-    last = h - 2  # last line before bottom box border
-    lmax = w - 2  # max length of string inside box
+    last = h - 2  # last line of box
 
     def __init__(self, user_login, user_name, title, category, x, y):
         self.user_login = user_login  # for composing url
         self.user_name = user_name
         self.title = utils.strclean(title)
         self.category = category
-        self.url = f"https://www.twitch.tv/{self.user_login}"
-        self.hint = ""
         self.x = x
         self.y = y
+        self.url = f"https://www.twitch.tv/{self.user_login}"
+        self.hint = ""
         self.img_path = ""
         self.viewers = ""
         self.duration = ""
@@ -114,24 +112,25 @@ class Box:
     def draw(self, parent):
         """Draw Box."""
         win = parent.derwin(self.h, self.w, self.y, self.x)
+        win.addnstr(self.last, 0, f"{self.category}", self.w)
         if self.duration:
-            rside = self.lmax - len(self.duration)
-            win.addnstr(self.last - 1, 1, f"{self.user_name}", rside, curses.A_BOLD)
-            win.addstr(self.last - 1, rside, f"[{self.duration}]")
+            duration = f"[{self.duration}]"
+            rside = self.w - len(duration)
+            win.addnstr(self.last - 1, 0, f"{self.user_name}", rside, curses.A_BOLD)
+            win.addstr(self.last - 1, rside, duration)
         else:
-            win.addnstr(self.last - 1, 1, f"{self.user_name}", self.lmax, curses.A_BOLD)
-        win.addnstr(self.last, 1, f"{self.category}", self.lmax)
+            win.addnstr(self.last - 1, 0, f"{self.user_name}", self.w, curses.A_BOLD)
         if self.viewers:
-            rside = self.lmax - len(self.viewers)
-            win.addstr(self.last, rside, f" {self.viewers} ", curses.A_BOLD)
+            viewers = f" {self.viewers}"
+            rside = self.w - len(viewers)
+            win.addstr(self.last, rside, viewers, curses.A_BOLD)
+        # FIXME: if title contains emoji characters -> "visual width" of one emoji ch may be ~2.
+        # TODO: find a way to detect emoji in text, and recalculate max width of str properly.
         if self.fulltitle:
-            win.addstr(self.last - 2, 1, f"{self.title}")
+            maxw = int(self.w * 3)  # 3 box widths (lines)
+            win.addnstr(self.last - 2, 0, f"{self.title}", maxw)
         else:
-            win.addnstr(self.last - 2, 1, f"{self.title}", self.lmax)
-        if self.box_borders:  # show box borders if set in config
-            win.box()
-        Y, X = win.getparyx()
-        win.addnstr(0, 1, f"X:{X}-Y:{Y}", self.lmax)  # for debug
+            win.addnstr(self.last - 2, 0, f"{self.title}", self.w)
 
     def show_hint(self):
         """Create window with hint character."""
@@ -143,8 +142,8 @@ class Box:
                 hint = f" {self.hint}"
             else:
                 hint = f"{self.hint}"
-            lh = len(hint) + 1
-            win = curses.newwin(1, lh, self.y + self.h - 1, self.x + self.w - lh)
+            lh = len(hint)
+            win = curses.newwin(1, lh + 1, self.y + self.h - 1, self.x + self.w - lh)
             win.addstr(hint, curses.color_pair(1))
             win.refresh()
 
