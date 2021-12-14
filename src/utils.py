@@ -126,6 +126,21 @@ def word_wrap(str: str, width: int, sep="\n") -> str:
     return out_str + str
 
 
+def word_wrap_for_box(str: str, width: int) -> str:
+    """Word wrap with trailing whitespaces till width
+    (use only to fit in width like boxes).
+    """
+    if len(str) < width:
+        return str
+    out_str = ""
+    text = word_wrap(str, width, "\n")
+    lines = text.splitlines(keepends=True)
+    for line in lines:
+        num_ws = width - len(line) + 1
+        out_str += line.replace("\n", " " * num_ws)
+    return out_str
+
+
 def sdate(isodate: str) -> str:
     """Take iso date str and return shorten date str."""
     # remove Z character from default twitch date (2021-12-08T11:43:43Z)
