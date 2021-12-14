@@ -110,6 +110,22 @@ def strtoolong(str: str, width: int, indicator="..") -> str:
         return str
 
 
+def word_wrap(str: str, width: int, sep="\n") -> str:
+    """Basic word wrap."""
+    if len(str) < width:
+        return str
+    out_str = ""
+    while len(str) > width:
+        index = width - 1
+        # find nearest whitespace to the left of width
+        while not str[index].isspace():
+            index = index - 1
+        chunk = str[:index] + sep  # separate on chunks
+        out_str = out_str + chunk
+        str = str[index + 1:]  # remaining words
+    return out_str + str
+
+
 def sdate(isodate: str) -> str:
     """Take iso date str and return shorten date str."""
     # remove Z character from default twitch date (2021-12-08T11:43:43Z)
