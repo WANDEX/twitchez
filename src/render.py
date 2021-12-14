@@ -316,7 +316,6 @@ class Tabs:
 class Page:
     """Page which renders everything."""
     HEADER_H = 2
-    header_borders = int(conf.setting("header_borders"))
 
     def __init__(self, parent, pages_class):
         self.parent = parent
@@ -328,24 +327,22 @@ class Page:
     def draw_header(self):
         """Draw page header."""
         indent = 2  # indent from side
-        indent_between = 2
-        indent_between_tabs = " " * indent_between
+        indent_between = " "
         separator = "|"  # separator between tabs
+        between_tabs = indent_between + separator + indent_between
         logo = "[Twitch Curses]"
         c_page = self.page_name  # current page name
         _, w = self.parent.getmaxyx()
         head = self.parent.derwin(self.HEADER_H - 1, w, 0, 0)
         if w > len(c_page) + indent:
-            if self.header_borders:
-                head.box()
             head.addnstr(0, indent, c_page, len(c_page), curses.A_REVERSE)  # current Tab page
         other_tabs = ""
         for tab in Tabs.tabs:
             if tab == c_page:
                 continue  # skip current tab
             # TODO: calculate length of all page names dynamically
-            # + indent_between_tabs for each additional tab
-            other_tabs += indent_between_tabs + separator + tab
+            # + indent_between for each additional tab
+            other_tabs += between_tabs + tab
         can_fit_via_tabs = c_page + other_tabs
         if w > len(can_fit_via_tabs):  # if we can fit all other tabs
             head.addnstr(0, indent + len(c_page), other_tabs, len(other_tabs))
