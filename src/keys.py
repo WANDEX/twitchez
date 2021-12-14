@@ -52,7 +52,7 @@ def scroll(c, rendergrid, parent):
         thumbnails.Draw().start()
 
 
-def hints(c, rendergrid, parent):
+def hints(c, parent):
     """Show hints, and make some action based on key and hint."""
     if c in hint_keys.values():
         hints = Hints()
@@ -65,8 +65,6 @@ def hints(c, rendergrid, parent):
             c = str(parent.get_wch())
             if c in hints.active_hints_letters:
                 hints.copy_url(c)
-        # to hide previously shown hints
-        rendergrid()
         return True
     else:
         return False

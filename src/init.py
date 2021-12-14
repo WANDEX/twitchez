@@ -112,7 +112,11 @@ def run(stdscr):
             rendergrid = page.draw
             redraw()
             continue
-        if keys.hints(c, rendergrid, parent):
+        if keys.hints(c, parent):
+            # clear possible fulltitle str
+            # hide previously shown hints etc.
+            page.parent.clear()
+            page.draw()
             continue
         keys.scroll(c, rendergrid, parent)
     thumbnails.Draw().finish()
