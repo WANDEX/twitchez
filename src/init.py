@@ -59,6 +59,11 @@ def run(stdscr):
         if c == k.get("quit"):
             break
         if c == k.get("redraw"):
+            p = pages.Pages(page_dict)
+            page = render.Page(stdscr, p)
+
+            parent = page.parent
+            rendergrid = page.draw
             redraw()
             continue
         if c == k.get("tab_add"):
