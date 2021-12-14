@@ -337,7 +337,13 @@ class Page:
         if w > len(c_page) + indent:
             head.addnstr(0, indent, c_page, len(c_page), curses.A_REVERSE)  # current Tab page
         other_tabs = ""
-        for tab in Tabs.tabs:
+        # tab order where current page is always first in list (to look as carousel)
+        taborder = []
+        tabs = Tabs.tabs
+        cpni = tabs.index(c_page)
+        taborder.extend(tabs[cpni:])
+        taborder.extend(tabs[:cpni])
+        for tab in taborder:
             if tab == c_page:
                 continue  # skip current tab
             # TODO: calculate length of all page names dynamically
