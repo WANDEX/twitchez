@@ -100,6 +100,16 @@ def strclean(str: str) -> str:
     return s
 
 
+def strtoolong(str: str, width: int, indicator="..") -> str:
+    """Return str slice of width with indicator at the end.
+    (to show that the string cannot fit completely in width)
+    """
+    if len(str) > width:
+        return str[:width - len(indicator)] + indicator
+    else:
+        return str
+
+
 def sdate(isodate: str) -> str:
     """Take iso date str and return shorten date str."""
     # remove Z character from default twitch date (2021-12-08T11:43:43Z)
