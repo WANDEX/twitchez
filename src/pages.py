@@ -88,7 +88,7 @@ class Pages:
         """Return grid class object for prepared objects of thumbnails and boxes."""
         thumbnail_paths = self.update_data()
         json_data = self.read_cache()
-        fls = data.create_streams_dict(json_data)  # dict with stream id as the key
+        fls = data.create_id_dict(json_data)  # dict with id as the key
         ids = list(fls.keys())
         boxes = render.Boxes()
         grid = render.Grid(parent, ids, self.page_name)

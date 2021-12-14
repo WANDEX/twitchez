@@ -71,8 +71,8 @@ def get_entries(json_data, key, root_key='data') -> list:
     return found
 
 
-def create_streams_dict(json_data) -> dict:
-    """Create and return streams dict with id as the key."""
+def create_id_dict(json_data) -> dict:
+    """Create and return dict with id as the key."""
     streams = {}
     ids = get_entries(json_data, 'id')
     for stream, id in zip(json_data['data'], ids):
