@@ -341,8 +341,6 @@ class Page:
         c_page = self.page_name  # current page name
         _, w = self.parent.getmaxyx()
         head = self.parent.derwin(self.HEADER_H - 1, w, 0, 0)
-        if w > len(c_page) + indent:
-            head.addnstr(0, indent, c_page, len(c_page), curses.A_REVERSE)  # current Tab page
         other_tabs = ""
         # tab order where current page is always first in list (to look as carousel)
         taborder = []
@@ -353,14 +351,27 @@ class Page:
         for tab in taborder:
             if tab == c_page:
                 continue  # skip current tab
-            # TODO: calculate length of all page names dynamically
-            # + indent_between for each additional tab
+            # indent_between with separator for each additional tab page
             other_tabs += between_tabs + tab
-        can_fit_via_tabs = c_page + other_tabs
-        if w > len(can_fit_via_tabs):  # if we can fit all other tabs
-            head.addnstr(0, indent + len(c_page), other_tabs, len(other_tabs))
-        if w > len(can_fit_via_tabs + logo):  # if window have enough width for logo
-            head.addnstr(0, w - len(logo) - indent, logo, len(logo), curses.A_BOLD)
+        icp = indent + len(c_page)  # width of current page with indent
+        all_tabs = indent + len(c_page + other_tabs)
+        if w > all_tabs:  # if we can fit all tabs
+            head.addnstr(0, indent, c_page, len(c_page), curses.A_REVERSE)  # current Tab page
+            head.addnstr(0, icp, other_tabs, len(other_tabs))
+            if w > all_tabs + len(logo) + 1:  # if window have enough width for logo
+                wllimit = w - len(logo) - indent
+                head.addnstr(0, wllimit, logo, len(logo), curses.A_BOLD)
+        else:
+            # crop tabs visually that do not fit into the window
+            # > character signalize about cropping (existence of other tabs)
+            if w > indent:
+                wclimit = w - indent - 1
+                c_page = c_page[:wclimit - 1] + ">"
+                head.addnstr(0, indent, c_page, wclimit, curses.A_REVERSE)
+            if w > icp:
+                wolimit = w - icp - 1
+                other_tabs = other_tabs[:wolimit - 1] + ">"
+                head.addnstr(0, icp, other_tabs, wolimit)
         head.refresh()
         return head
 
