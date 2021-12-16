@@ -38,6 +38,9 @@ def run(stdscr):
         """Reinitialize variables & redraw everything."""
         thumbnails.Draw().finish()
         parent.clear()
+        h, w = parent.getmaxyx()
+        if h < 3 or w < 3:
+            return
         rendergrid()
         thumbnails.Draw().start()
 
