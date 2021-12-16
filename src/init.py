@@ -49,6 +49,16 @@ def run(stdscr):
     while True:
         c = parent.get_wch()
         if isinstance(c, int) and c == curses.KEY_RESIZE:  # terminal resize event
+            # fix: handle crazy multiple repeated window resizing initiated by the user
+            # NOTE: this introduces slight redraw delay after resize but fixes crashes
+            while True:
+                sleep(.25)
+                nlines, ncols = parent.getmaxyx()
+                if curses.is_term_resized(nlines, ncols):
+                    sleep(.75)
+                    continue
+                else:
+                    break
             # redraw & start loop again without further more complex execution
             redraw()
             continue
