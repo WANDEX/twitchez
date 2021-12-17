@@ -17,7 +17,9 @@ keys = {
 
 hint_keys = {
     "hint_clip_url": ck("hint_clip_url"),
-    "hint_open_url": ck("hint_open_url"),
+    "hint_open_stream": ck("hint_open_stream"),
+    "hint_open_extra": ck("hint_open_extra"),
+    "hint_open_video": ck("hint_open_video"),
 }
 
 scroll_keys = {
@@ -57,14 +59,22 @@ def hints(c, parent):
     if c in hint_keys.values():
         hints = Hints()
         hints.show_hints()
-        if c == hint_keys.get("hint_open_url"):
-            c = str(parent.get_wch())
-            if c in hints.active_hints_letters:
-                hints.open_url(c)
-        elif c == hint_keys.get("hint_clip_url"):
+        if c == hint_keys.get("hint_clip_url"):
             c = str(parent.get_wch())
             if c in hints.active_hints_letters:
                 hints.copy_url(c)
+        else:
+            if c == hint_keys.get("hint_open_stream"):
+                type = "stream"
+            elif c == hint_keys.get("hint_open_video"):
+                type = "video"
+            elif c == hint_keys.get("hint_open_extra"):
+                type = "extra"
+            else:
+                type = "stream"
+            c = str(parent.get_wch())
+            if c in hints.active_hints_letters:
+                hints.open_url(c, type)
         return True
     else:
         return False

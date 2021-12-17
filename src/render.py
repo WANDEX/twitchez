@@ -5,10 +5,10 @@ from ast import literal_eval
 from clip import clip
 from itertools import islice
 from notify import notify
-from open_stream import open_stream_url
 from time import sleep
 import conf
 import curses
+import open_cmd
 import utils
 
 
@@ -57,9 +57,9 @@ class Hints:
         value = self.get_box_attr_hint(hint, "url")
         clip(value)
 
-    def open_url(self, hint):
+    def open_url(self, hint, type):
         value = self.get_box_attr_hint(hint, "url")
-        open_stream_url(value)
+        open_cmd.open_url(value, type)
 
 
 class Boxes:
