@@ -4,7 +4,6 @@
 from ast import literal_eval
 from clip import clip
 from itertools import islice
-from notify import notify
 from time import sleep
 import conf
 import curses
