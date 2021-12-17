@@ -7,14 +7,31 @@ import command
 import conf
 import subprocess
 
-open_cmd = conf.setting("open_cmd")
-executable = command.first_cmd_word(open_cmd)
-without_funcs = command.without_funcs(executable)
-cmd_check = command.cmd_check(executable)
+
+def custom_cmd_check(type) -> tuple[bool, str]:
+    if type == "stream":
+        type_cmd = conf.setting("open_stream_cmd")
+    elif type == "video":
+        type_cmd = conf.setting("open_video_cmd")
+    elif type == "extra":
+        type_cmd = conf.setting("open_extra_cmd")
+    else:
+        type_cmd = conf.setting("open_stream_cmd")
+    if type_cmd == "undefined":
+        return False, ""
+    executable = command.first_cmd_word(type_cmd)
+    cmd_check = command.cmd_check(executable)
+    return cmd_check, type_cmd
 
 
-def streamlink_cmd(url, quality) -> list:
+def custom_cmd(type_cmd, url) -> list:
+    cmd = f"{type_cmd} {url}"
+    return cmd.split()
+
+
+def streamlink_cmd(url) -> list:
     streamlink_title_format = True
+    quality = "best"  # hardcoded default
     cmd = "streamlink --quiet".split()
     if streamlink_title_format:
         # those are streamlink formatting variables
@@ -33,30 +50,25 @@ def mpv_cmd(url) -> list:
 
 def raise_user_note():
     """raise exception for regular user without traceback."""
-    if without_funcs:
-        return
     a = "A program for opening stream url was not found at your 'PATH'."
-    b = "You can install 'streamlink' and it will be working by default."
-    c = "Also you can set your own program cmd via 'open_cmd = your cmd' in config."
-    d = "If you want to use this program without using it's open stream functions,"
-    e = "simply paste next line in your config:"
-    f = "open_cmd = false"
-    full_text = f"\n{a}\n{b}\n{c}\n{d}\n{e}\n{f}\n"
+    b = "You can install 'streamlink' and/or 'mpv' and it will be working by default."
+    c = "Also you can set your own program cmd via 'open_*_cmd = your cmd' in config."
+    full_text = f"\n{a}\n{b}\n{c}\n"
     raise Exception(full_text)
 
 
-def get_open_stream_cmd(url):
+def get_open_cmd(url, type):
     """Check & return cmd if executable is on PATH."""
     cmd = []
     # DOUBTS TODO: also add built-in support for youtube-dl/yt-dlp
     #  ^ RESEARCH: already work like that with simple mpv call?
-    # prefer open_cmd if set in config and found at PATH
-    if cmd_check:
-        # TODO: pass url to that custom cmd
-        cmd = open_cmd.split()
+    # prefer custom open_cmd if set in config and found at PATH
+    cmd_check, type_cmd = custom_cmd_check(type)
+    if cmd_check and type_cmd:
+        cmd = custom_cmd(type_cmd, url)
+    # following are defaults and fallback if custom open cmd not set in config
     elif which("streamlink"):
-        quality = "best"  # FIXME: temporary hardcoded
-        cmd = streamlink_cmd(url, quality)
+        cmd = streamlink_cmd(url)
     elif which("mpv"):
         cmd = mpv_cmd(url)
     else:
@@ -64,11 +76,9 @@ def get_open_stream_cmd(url):
     return cmd
 
 
-def open_stream_url(url):
-    """Open stream url."""
-    if without_funcs:
-        return False
-    cmd = get_open_stream_cmd(url)
+def open_url(url, type):
+    """Open stream/video url with external/custom program."""
+    cmd = get_open_cmd(url, type)
     notify(url, "opening:")
     sub = subprocess.Popen
     sub(cmd,
