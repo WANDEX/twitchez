@@ -9,6 +9,7 @@ keys = {
     "quit": ck("quit"),
     "redraw": ck("redraw"),
     "full_title": ck("full_title"),
+    "tab_find": ck("tab_find"),
     "tab_add": ck("tab_add"),
     "tab_delete": ck("tab_delete"),
     "tab_next": ck("tab_next"),

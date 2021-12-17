@@ -88,6 +88,19 @@ def run(stdscr):
             else:
                 page.draw()
             continue
+        if c == k.get("tab_find"):
+            rc, page_dict = render.Tabs().find_tab()
+            #  handle cancel of the command
+            if rc == 130:
+                continue
+
+            p = pages.Pages(page_dict)
+            page = render.Page(stdscr, p)
+
+            parent = page.parent
+            rendergrid = page.draw
+            redraw()
+            continue
         if c == k.get("tab_add"):
             s = search.Search(stdscr)
             rc, page_dict = s.select_page()

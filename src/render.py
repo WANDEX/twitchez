@@ -3,6 +3,7 @@
 
 from ast import literal_eval
 from clip import clip
+from iselect import iselect
 from itertools import islice
 from time import sleep
 import conf
@@ -294,6 +295,15 @@ class Tabs:
         self.tabs.remove(self.curtab())
         conf.tmp_set("tabs", self.tabs, "TABS")
         return self.fpagedict(ptabname)
+
+    def find_tab(self) -> tuple[int, dict]:
+        """Find and return page dict of selected tab."""
+        mulstr = "\n".join(self.tabs)  # each list element on it's own line
+        tabname = iselect(mulstr, 130)
+        # handle cancel of the command
+        if tabname == 130:
+            return 130, {}
+        return 0, self.fpagedict(tabname)
 
     def next_tab(self, tab_name=False):
         """Return page_dict for the next tab name (carousel) or simply tab_name."""
