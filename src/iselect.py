@@ -6,6 +6,7 @@ from shutil import which
 import command
 import conf
 import subprocess
+import thumbnails
 
 ENCODING = "utf-8"
 
@@ -45,10 +46,10 @@ def get_select_cmd():
     # prefer select_cmd if set in config and found at PATH
     if cmd_check:
         cmd = select_cmd.split()
-    elif which("dmenu"):
-        cmd = dmenu_cmd()
     elif which("fzf"):
         cmd = fzf_cmd()
+    elif which("dmenu"):
+        cmd = dmenu_cmd()
     else:
         raise_user_note()
     return cmd
@@ -60,22 +61,20 @@ def iselect(multilinestr: str, fallback):
         return 130
     text = multilinestr.strip()
     cmd = get_select_cmd()
-    sub = subprocess.Popen
-    # FIXME: fzf does not show input lines (selection is working)
-    p = sub(cmd, text=True, encoding=ENCODING,
-            stdout=subprocess.PIPE,
-            stdin=subprocess.PIPE,
-            stderr=subprocess.PIPE)
-    out, err = p.communicate(input=text)
-    p.wait()  # wait for process to finish
+    if cmd[0] == "fzf":
+        # hide thumbnails, they will be redrawn in the next redraw() call.
+        thumbnails.Draw().finish()
+    #  p = subprocess.run(cmd, input=text, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #  ^ FIXME: Why with stderr=subprocess.PIPE - we cannot see fzf?
+    #  => How to get stderr then? (bug or what?)
+    p = subprocess.run(cmd, input=text, text=True, stdout=subprocess.PIPE)
+    sel = str(p.stdout).strip()
     if p.returncode == 1 or p.returncode == 130:
         # dmenu(1), fzf(130) => command was canceled (Esc)
         return 130
     elif p.returncode != 0:
-        notify(f"ERROR({p.returncode}): probably malformed cmd!\n{err}", "CANNOT SELECT:", error=True)
-        raise Exception(f"ERROR({p.returncode}):\n{err}\n")
-    sel = str(out).strip()
-    # return fallback if input is not a substring of multinestr
+        raise Exception(f"select cmd ERROR({p.returncode})\n{p.stderr}")
+    # return fallback if input is not a substring of multilinestr
     if sel not in multilinestr:
         return fallback
     return sel
