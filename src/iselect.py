@@ -5,6 +5,7 @@ from notify import notify
 from shutil import which
 import command
 import conf
+import curses
 import subprocess
 import thumbnails
 
@@ -62,6 +63,8 @@ def iselect(multilinestr: str, fallback):
     text = multilinestr.strip()
     cmd = get_select_cmd()
     if cmd[0] == "fzf":
+        # fix: clearing of the terminal after calling subprocess
+        curses.endwin()
         # hide thumbnails, they will be redrawn in the next redraw() call.
         thumbnails.Draw().finish()
     #  p = subprocess.run(cmd, input=text, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
