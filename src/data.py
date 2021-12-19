@@ -186,11 +186,25 @@ def get_channels_terse_mulstr(query: str, live_only=False) -> str:
 
 
 def get_channel_videos(user_id, type="all") -> dict:
-    """Gets video information by user ID."""
+    """Gets videos information by user ID."""
     first = 100  # Maximum number of objects to return. (Twitch API Maximum: 100)
     token = get_private_data("token")
     c_id = get_private_data("c_id")
     url = f"https://api.twitch.tv/helix/videos?type={type}&first={first}&user_id={user_id}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Client-Id": c_id
+    }
+    r = get(url, headers=headers)
+    return r.json()
+
+
+def get_channel_clips(broadcaster_id) -> dict:
+    """Gets clips information by broadcaster ID."""
+    first = 100  # Maximum number of objects to return. (Twitch API Maximum: 100)
+    token = get_private_data("token")
+    c_id = get_private_data("c_id")
+    url = f"https://api.twitch.tv/helix/clips?first={first}&broadcaster_id={broadcaster_id}"
     headers = {
         "Authorization": f"Bearer {token}",
         "Client-Id": c_id
