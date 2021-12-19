@@ -97,7 +97,7 @@ class Search:
         if "streams" in main_sel:
             return self.selected_category()
         # => videos page
-        vtypes = "all\narchive\nhighlight\nupload"
+        vtypes = "archive\nclips\nhighlight\nupload"
         video_type = iselect.iselect(vtypes, 130)
         if video_type == 130:
             return 130, {}

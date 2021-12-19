@@ -28,7 +28,10 @@ class Pages:
         pd = self.page_dict
         ptype = pd.get("type", "streams")
         if ptype == "videos":
-            json_data = data.get_channel_videos(pd["user_id"], pd["category"])
+            if pd["category"] == "clips":
+                json_data = data.get_channel_clips(pd["user_id"])
+            else:
+                json_data = data.get_channel_videos(pd["user_id"], pd["category"])
         else:
             if pd["category"] == "Following Live":
                 json_data = data.following_live_data()
@@ -95,8 +98,14 @@ class Pages:
         for id, (x, y) in grid.coords.items():
             d = did[id]
             title = d["title"]
-            user_login = d["user_login"]  # for composing stream url
-            user_name = d["user_name"]
+            if "creator_name" in d:  # => clips
+                # this is actually not login but name -> we do not need that anyway for clips
+                user_login = d["broadcaster_name"]
+                user_name = d["creator_name"]
+            else:
+                # used for composing stream url
+                user_login = d["user_login"]
+                user_name = d["user_name"]
             if not user_name:  # if user_name is empty (rare, but such case exist!)
                 user_name = user_login
             # NOTE: videos DOES NOT HAVE game_name/category!
@@ -118,7 +127,7 @@ class Pages:
             if "url" in d:
                 box.url = d["url"]  # videos have specific url
             if "duration" in d:
-                box.duration = utils.duration(d["duration"])
+                box.duration = utils.duration(str(d["duration"]))
             box.viewers = str(views)
             box.img_path = thumbnail_paths[id]
             thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + self.HEADER_H).ue_params
