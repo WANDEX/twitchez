@@ -137,6 +137,8 @@ def run(stdscr):
             page.parent.clear()
             page.draw()
             continue
+        if keys.yank(c):
+            continue
         keys.scroll(c, rendergrid, parent)
     thumbnails.Draw().finish()
     sleep(0.3)

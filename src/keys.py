@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from conf import key as ck
-from render import Hints
+from render import Hints, Boxes
 import thumbnails
 
 keys = {
@@ -14,6 +14,7 @@ keys = {
     "tab_delete": ck("tab_delete"),
     "tab_next": ck("tab_next"),
     "tab_prev": ck("tab_prev"),
+    "yank_urls": ck("yank_urls"),
 }
 
 hint_keys = {
@@ -76,6 +77,14 @@ def hints(c, parent):
             c = str(parent.get_wch())
             if c in hints.active_hints_letters:
                 hints.open_url(c, type)
+        return True
+    else:
+        return False
+
+
+def yank(c):
+    if c == keys.get("yank_urls"):
+        Boxes().yank_urls()
         return True
     else:
         return False
