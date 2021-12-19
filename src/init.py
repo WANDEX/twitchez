@@ -99,10 +99,7 @@ def run(stdscr):
             continue
         if c == k.get("tab_add"):
             s = search.Search(stdscr)
-            rc, page_dict = s.select_page()
-            # handle cancel of the command
-            if rc == 130:
-                continue
+            page_dict = s.select_page(page_dict)
 
             p = pages.Pages(page_dict)
             page = render.Page(stdscr, p)
