@@ -88,14 +88,6 @@ class Boxes:
         parent.refresh()
         self.boxlist.clear()
 
-    def yank_urls(self):
-        """Yank urls of visible boxes."""
-        urls = ""
-        blist = self.drawn_boxes
-        for box in blist:
-            urls += f"{box.url}\n"
-        clip(urls)
-
 
 class Box:
     """Box with info about the stream inside the Grid."""

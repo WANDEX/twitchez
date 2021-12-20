@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from clip import clip
 from conf import key as ck
-from render import Hints, Boxes
+from notify import notify
+import data
+import render
 import thumbnails
 
 keys = {
@@ -15,6 +18,7 @@ keys = {
     "tab_next": ck("tab_next"),
     "tab_prev": ck("tab_prev"),
     "yank_urls": ck("yank_urls"),
+    "yank_urls_page": ck("yank_urls_page"),
 }
 
 hint_keys = {
@@ -59,7 +63,7 @@ def scroll(c, rendergrid, parent):
 def hints(c, parent):
     """Show hints, and make some action based on key and hint."""
     if c in hint_keys.values():
-        hints = Hints()
+        hints = render.Hints()
         hints.show_hints()
         if c == hint_keys.get("hint_clip_url"):
             c = str(parent.get_wch())
@@ -82,9 +86,31 @@ def hints(c, parent):
         return False
 
 
+def yank_urls(full_page=False):
+    """Yank urls of visible boxes or all urls of the page."""
+    urls = ""
+    if full_page:
+        page_dict = render.Tabs().fpagedict()  # current tab/page
+        json_data = data.page_data(page_dict)
+        if "url" in json_data["data"][0]:
+            page_urls = data.get_entries(json_data, "url")
+            for url in page_urls:
+                urls += f"{url}\n"
+    else:
+        for box in render.Boxes.drawn_boxes:
+            urls += f"{box.url}\n"
+    if urls:
+        clip(urls)
+    else:
+        notify("This page does not have 'url' entries in json data.")
+
+
 def yank(c):
-    if c == keys.get("yank_urls"):
-        Boxes().yank_urls()
+    if c == keys.get("yank_urls") or c == keys.get("yank_urls_page"):
+        if c == keys.get("yank_urls"):
+            yank_urls()
+        elif c == keys.get("yank_urls_page"):
+            yank_urls(full_page=True)
         return True
     else:
         return False
