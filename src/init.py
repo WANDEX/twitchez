@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from ast import literal_eval
 from keys import keys as k
 from time import sleep
-import conf
 import curses
 import keys
 import pages
