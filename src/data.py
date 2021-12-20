@@ -211,3 +211,20 @@ def get_channel_clips(broadcaster_id) -> dict:
     }
     r = get(url, headers=headers)
     return r.json()
+
+
+def page_data(page_dict) -> dict:
+    """Get and return page data based on page_dict."""
+    pd = page_dict
+    ptype = pd.get("type", "streams")
+    if ptype == "videos":
+        if pd["category"] == "clips":
+            json_data = get_channel_clips(pd["user_id"])
+        else:
+            json_data = get_channel_videos(pd["user_id"], pd["category"])
+    else:
+        if pd["category"] == "Following Live":
+            json_data = following_live_data()
+        else:
+            json_data = category_data(pd["category_id"])
+    return json_data

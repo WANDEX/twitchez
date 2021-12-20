@@ -23,22 +23,6 @@ class Pages:
         # each new Pages instance -> add to tabs page_name (if not already in tabs)
         render.Tabs().add_tab(self.page_name)
 
-    def page_data(self) -> dict:
-        """Get and return page data based on page_dict."""
-        pd = self.page_dict
-        ptype = pd.get("type", "streams")
-        if ptype == "videos":
-            if pd["category"] == "clips":
-                json_data = data.get_channel_clips(pd["user_id"])
-            else:
-                json_data = data.get_channel_videos(pd["user_id"], pd["category"])
-        else:
-            if pd["category"] == "Following Live":
-                json_data = data.following_live_data()
-            else:
-                json_data = data.category_data(pd["category_id"])
-        return json_data
-
     def cache_subdirs(self):
         """Return list of subdirs (to unpack them later as args)."""
         subdirs = []
@@ -56,7 +40,7 @@ class Pages:
         return data.cache_file_path(self.cache_file_name, *self.cache_subdirs())
 
     def update_cache(self) -> Path:
-        return data.update_cache(self.cache_file_name, self.page_data(), *self.cache_subdirs())
+        return data.update_cache(self.cache_file_name, data.page_data(self.page_dict), *self.cache_subdirs())
 
     def read_cache(self) -> dict:
         return data.read_cache(self.cache_file_name, *self.cache_subdirs())
