@@ -276,9 +276,12 @@ class Tabs:
         #  TODO: what page name is fallback? default page set in settings?
         return conf.tmp_get("current_page_name", "Following Live", "TABS")
 
-    def fpagedict(self, tab_name) -> dict:
-        """Find and return page dict by the tab name."""
-        page_dict_str = conf.tmp_get("page_dict", self.curtab(), tab_name)
+    def fpagedict(self, tab_name="") -> dict:
+        """Find and return page dict by the tab name or for current tab."""
+        if not tab_name:  # return page_dict of current tab/page
+            page_dict_str = conf.tmp_get("page_dict", "", self.curtab())
+        else:
+            page_dict_str = conf.tmp_get("page_dict", self.curtab(), tab_name)
         page_dict = literal_eval(page_dict_str)
         return page_dict
 
