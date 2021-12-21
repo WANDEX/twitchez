@@ -5,6 +5,7 @@ from ast import literal_eval
 from clip import clip
 from iselect import iselect
 from itertools import islice
+from thumbnails import container_size
 from time import sleep
 import conf
 import curses
@@ -91,9 +92,8 @@ class Boxes:
 
 class Box:
     """Box with info about the stream inside the Grid."""
-    h = int(conf.setting("container_box_height"))
-    w = int(conf.setting("container_box_width")) - 4
-    last = h - 2  # last line of box
+    w, h = container_size()
+    last = h - 2  # last line of the box
 
     def __init__(self, user_login, user_name, title, category, x, y):
         self.user_login = user_login  # for composing url
@@ -152,8 +152,7 @@ class Box:
 
 class Grid:
     """Grid of boxes inside the Window."""
-    h = int(conf.setting("container_box_height"))
-    w = int(conf.setting("container_box_width"))
+    w, h = container_size()
 
     def __init__(self, parent, key_list: list, page_name: str):
         """sets coords dict from key_list -> each key will have (X, Y) values on the Grid."""

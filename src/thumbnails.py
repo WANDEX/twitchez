@@ -15,11 +15,48 @@ import ueberzug.lib.v0 as ueberzug
 import utils
 
 
-def thumbnail_resolution(div=6) -> tuple[int, int]:
-    """Return tuple: (width, height) - based on div key in table."""
+def rdiv() -> int:
+    """Thumbnail resolution divisor (min: 2, max: 10)."""
+    div = 1 + int(conf.setting("thumbnail_size"))
+    if div < 2:
+        div = 2
+    elif div > 10:
+        div = 10
+    return div
+
+
+def container_size(thumbnail=False) -> tuple[int, int]:
+    """Return tuple: (width, height) - based on divisor key in table.
+    Selected values are close as possible to the real resolution of the thumbnails.
+    Except couple values where visual result more appropriate: with (2,3,4) as divisor.
+    """
     table = {
-        12: (160, 90),
-        11: (174, 98),
+        10: (24, 7),
+        9: (27, 8),
+        8: (30, 9),
+        7: (35, 10),
+        6: (40, 11),
+        5: (48, 13),
+        4: (56, 15),
+        3: (76, 20),
+        2: (90, 24),
+    }
+    # use fallback key if div key not found
+    w, h = table.get(rdiv(), table.get(6))
+    if thumbnail:
+        return w, h
+    else:
+        NLC = 3  # num of content lines in the box
+        return w, h + NLC
+
+
+def thumbnail_resolution() -> tuple[int, int]:
+    """Return tuple: (width, height) - based on divisor key in table.
+    really simple:  divisor = 10
+    (1920, 1080) / 10 = (192, 108)
+    The only values that don't match the actual result: divisor=2.
+    """
+    table = {
         10: (192, 108),
         9: (213, 120),
         8: (240, 135),
@@ -28,18 +65,15 @@ def thumbnail_resolution(div=6) -> tuple[int, int]:
         5: (384, 216),
         4: (480, 270),
         3: (640, 360),
-        2: (960, 540),
-        1: (1920, 1080),
+        2: (720, 405),  # actual (960, 540) is overkill!
     }
     # use fallback key if div key not found
-    return table.get(div, table.get(6))
+    return table.get(rdiv(), table.get(6))
 
 
 def get_thumbnail_urls(rawurls) -> list:
     """Return thumbnail urls with {width} and {height} replaced."""
-    # TODO: DOUBTS: calculate closest resolution based on Screen/Window Resolution/DPI, Terminal font size, etc.
-    # TODO: closest resolution to approx box size.
-    width, height = thumbnail_resolution(int(conf.setting("thumbnail_size")))
+    width, height = thumbnail_resolution()
     urls = []
     for url in rawurls:
         # fix: video thumbnails currently have weird format with % characters
@@ -136,8 +170,7 @@ def find_thumbnails(ids: list, *subdirs) -> dict:
 
 class Thumbnail:
     """Prepare Thumbnail object."""
-    h = int(conf.setting("container_box_height")) - 4
-    w = int(conf.setting("container_box_width"))
+    w, h = container_size(thumbnail=True)
 
     def __init__(self, identifier, img_path, x, y):
         self.identifier = identifier
