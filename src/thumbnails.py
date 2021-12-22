@@ -128,8 +128,8 @@ async def __get_thumbnails_async(ids: list, rawurls: list, *subdirs) -> dict:
         # wait until all thumbnails with non empty url are fetched
         thumbnails = await asyncio.gather(*tasks)
 
-    for id, thumbnail in zip(ids, thumbnails):
-        thumbnail_fname = f"{id}.jpg"
+    for tid, thumbnail in zip(ids, thumbnails):
+        thumbnail_fname = f"{tid}.jpg"
         thumbnail_path = Path(tmpd, thumbnail_fname)
         if thumbnail is None:
             if thumbnail_path.is_file() and thumbnail_path.samefile(blank_thumbnail):
@@ -148,7 +148,7 @@ async def __get_thumbnails_async(ids: list, rawurls: list, *subdirs) -> dict:
                 thumbnail_path.unlink(missing_ok=True)
             with open(thumbnail_path, 'wb') as f:
                 f.write(thumbnail)
-        thumbnail_paths[id] = str(thumbnail_path)
+        thumbnail_paths[tid] = str(thumbnail_path)
     return thumbnail_paths
 
 
@@ -244,7 +244,7 @@ class Draw:
         while not self.FINISH:
             self.__draw()
 
-    def back_loop(self):
+    def __back_loop(self):
         """Draw images in background."""
         ue = ThreadPool(processes=1)
         ue.apply_async(self.__loop)
@@ -258,13 +258,13 @@ class Draw:
             return
         img = Draw()
         self.images.append(img)
-        return img.back_loop()
+        return img.__back_loop()
 
     def finish(self):
         """Finish all what was start()."""
         if self.tm:
             return
         for img in self.images:
-            img.FINISH = True  # finish back_loop()
+            img.FINISH = True  # finish __back_loop()
             self.images.remove(img)
         self.ue_params_list.clear()
