@@ -15,9 +15,23 @@ import ueberzug.lib.v0 as ueberzug
 import utils
 
 
+def text_mode() -> int:
+    """Text mode: 0 => thumbnails mode (min: 0, max: 6).
+    [1-6] => don't do anything with thumbnails don't even download them!
+    The higher the value, the more rows of cells there will be in the grid.
+    """
+    # TODO: if not X11 (Wayland) -> return 1 (only X11 supported by ueberzug)
+    tm = int(conf.setting("text_mode"))
+    if tm < 0:
+        tm = 0
+    elif tm > 6:
+        tm = 6
+    return tm
+
+
 def rdiv() -> int:
     """Thumbnail resolution divisor (min: 2, max: 10)."""
-    div = 1 + int(conf.setting("thumbnail_size"))
+    div = 1 + int(conf.setting("grid_size"))
     if div < 2:
         div = 2
     elif div > 10:
@@ -43,7 +57,10 @@ def container_size(thumbnail=False) -> tuple[int, int]:
     }
     # use fallback key if div key not found
     w, h = table.get(rdiv(), table.get(6))
-    if thumbnail:
+    tm = text_mode()
+    if tm:
+        return w, h - tm
+    elif thumbnail:
         return w, h
     else:
         NLC = 3  # num of content lines in the box
@@ -198,8 +215,7 @@ class Draw:
     """Draw all images from list of ue_params with ueberzug."""
     FINISH = False
     images = []
-    # FIXME: TODO: if not X11 - Wayland -> Do not even try to draw thumbnails
-    # -> only X11 supported by ueberzug
+    tm = text_mode()
 
     def __init__(self):
         self.ue_params_list = render.Boxes.thmblist
@@ -232,12 +248,16 @@ class Draw:
         """Start drawing images in background,
         add new object to the images list.
         """
+        if self.tm:
+            return
         img = Draw()
         self.images.append(img)
         return img.back_loop()
 
     def finish(self):
         """Finish all what was start()."""
+        if self.tm:
+            return
         for img in self.images:
             img.FINISH = True  # finish back_loop()
             self.images.remove(img)

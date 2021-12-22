@@ -73,7 +73,12 @@ class Pages:
 
     def grid_func(self, parent) -> render.Grid:
         """Return grid class object for prepared objects of thumbnails and boxes."""
-        thumbnail_paths = self.update_data()
+        if thumbnails.text_mode():
+            if self.time_to_update_cache():
+                self.update_cache()
+            thumbnail_paths = {}
+        else:
+            thumbnail_paths = self.update_data()
         json_data = self.read_cache()
         did = data.create_id_dict(json_data)  # dict with id as the key
         ids = list(did.keys())
@@ -113,8 +118,9 @@ class Pages:
             if "duration" in d:
                 box.duration = utils.duration(str(d["duration"]))
             box.viewers = str(views)
-            box.img_path = thumbnail_paths[id]
-            thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + self.HEADER_H).ue_params
+            if thumbnail_paths:
+                box.img_path = thumbnail_paths[id]
+                thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + self.HEADER_H).ue_params
+                boxes.add_thmb(thmb)
             boxes.add(box)
-            boxes.add_thmb(thmb)
         return grid
