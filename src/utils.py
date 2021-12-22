@@ -112,7 +112,11 @@ def strtoolong(str: str, width: int, indicator="..") -> str:
 
 def word_wrap(str: str, width: int, sep="\n") -> str:
     """Basic word wrap."""
-    if len(str) < width:
+    if len(str) < width or " " not in str:
+        return str
+    # length of longest non-space str in list
+    lls = len(max(str.split(" "), key=len))
+    if lls > width:  # fix: too long => do not do anything
         return str
     out_str = ""
     while len(str) > width:
