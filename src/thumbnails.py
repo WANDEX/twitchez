@@ -168,20 +168,26 @@ def download_thumbnails(ids: list, rawurls: list, *subdirs) -> dict:
 
 def find_thumbnails(ids: list, *subdirs) -> dict:
     """Find and return previously downloaded thumbnails paths."""
-    thumbnail_dir = utils.get_tmp_dir("thumbnails", *subdirs)
+    tmpd = utils.get_tmp_dir("thumbnails", *subdirs)
+    blank_thumbnail = utils.project_root("config", "blank.jpg")
 
-    tnames = utils.replace_pattern_in_all(listdir(thumbnail_dir), ".jpg", "")
+    tnames = utils.replace_pattern_in_all(listdir(tmpd), ".jpg", "")
     differ = list(set(tnames).difference(set(ids)))
     fnames = utils.add_str_to_list(differ, ".jpg")  # add file extension back
     for fname in fnames:
         # remove thumbnail files/symlinks which id not in ids list
-        Path(thumbnail_dir, fname).unlink(missing_ok=True)
+        Path(tmpd, fname).unlink(missing_ok=True)
 
-    thumbnail_list = utils.insert_to_all(listdir(thumbnail_dir), thumbnail_dir, opt_sep=sep)
+    thumbnail_list = utils.insert_to_all(listdir(tmpd), tmpd, opt_sep=sep)
     thumbnail_paths = {}
     for path in thumbnail_list:
-        id = basename(splitext(path)[0])  # file basename without .ext
-        thumbnail_paths[id] = path
+        tid = basename(splitext(path)[0])  # file basename without .ext
+        thumbnail_paths[tid] = path
+    # fix: if thumbnail_paths does not have id from ids
+    # this usually happens if text mode without thumbnails was previously set
+    for tid in ids:
+        if tid not in thumbnail_paths.keys():
+            thumbnail_paths[tid] = str(blank_thumbnail)
     return thumbnail_paths
 
 
