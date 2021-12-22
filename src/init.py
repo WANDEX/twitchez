@@ -18,12 +18,10 @@ def set_curses_start_defaults():
 
 
 def run(stdscr):
-    page_name = "Following Live"
-    page_dict = {
-        "type": "streams",
-        "category": page_name,
-        "page_name": page_name,
-    }
+    s = search.Search(stdscr)
+    page_dict = render.Tabs().fpagedict()  # last used tab/page
+    if not page_dict:  # fallback to following live page
+        page_dict = s.following_live()
     p = pages.Pages(page_dict)
     page = render.Page(stdscr, p)
 
@@ -96,7 +94,6 @@ def run(stdscr):
             redraw()
             continue
         if c == k.get("tab_add"):
-            s = search.Search(stdscr)
             page_dict = s.select_page(page_dict)
 
             p = pages.Pages(page_dict)

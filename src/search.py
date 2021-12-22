@@ -44,6 +44,16 @@ class Search:
             return ""
         return decoded
 
+    def following_live(self) -> dict:
+        """Following Live page dict."""
+        page_name = "Following Live"
+        page_dict = {
+            "type": "streams",
+            "category": page_name,
+            "page_name": page_name,
+        }
+        return page_dict
+
     def selected_category(self, fallback) -> dict:
         input = self.inputwin("category:")
         if not input:
@@ -90,12 +100,14 @@ class Search:
 
     def select_page(self, fallback) -> dict:
         """Interactive select of page to open, return page_dict of that page or fallback page."""
-        msel = "category streams\nchannel videos"
+        msel = "category streams\nchannel videos\nfollowing live"
         main_sel = iselect.iselect(msel, 130)
         if main_sel == 130:
             # handle cancel of the command
             return fallback
-        if "streams" in main_sel:
+        if "following" in main_sel:
+            return self.following_live()
+        elif "streams" in main_sel:
             return self.selected_category(fallback)
         # => videos page
         vtypes = "archive\nclips\nhighlight\nupload"
