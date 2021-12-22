@@ -16,16 +16,16 @@ import utils
 
 
 def text_mode() -> int:
-    """Text mode: 0 => thumbnails mode (min: 0, max: 6).
-    [1-6] => don't do anything with thumbnails don't even download them!
+    """Text mode: 0 => thumbnails mode (min: 0, max: 3).
+    [1-3] => don't do anything with thumbnails don't even download them!
     The higher the value, the more rows of cells there will be in the grid.
     """
     # TODO: if not X11 (Wayland) -> return 1 (only X11 supported by ueberzug)
     tm = int(conf.setting("text_mode"))
     if tm < 0:
         tm = 0
-    elif tm > 6:
-        tm = 6
+    elif tm > 3:
+        tm = 3
     return tm
 
 
