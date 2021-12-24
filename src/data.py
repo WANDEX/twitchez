@@ -4,14 +4,14 @@
 from pathlib import Path
 from requests import get
 import json
-import utils
+import fs
 
 
 def write_private_data(user_id, access_token, client_id):
     """Write private data to file for using in further requests.
     Also set r+w file permissions to owner only.
     """
-    file_path = utils.project_root(".private")
+    file_path = fs.project_root(".private")
     data = {
         "u_id": user_id,
         "token": access_token,
@@ -24,7 +24,7 @@ def write_private_data(user_id, access_token, client_id):
 
 def get_private_data(key) -> str:
     """Get value by the key from .private file."""
-    file_path = utils.project_root(".private")
+    file_path = fs.project_root(".private")
     with open(file_path, "r") as file:
         data = json.load(file)
     return data[key]
@@ -33,10 +33,10 @@ def get_private_data(key) -> str:
 def cache_file_path(file_name, *subdirs) -> Path:
     """Get cache file path by file name, optionally supports subdirs."""
     if subdirs:
-        path = Path(utils.get_cache_dir(), *subdirs)
+        path = Path(fs.get_cache_dir(), *subdirs)
         path.mkdir(parents=True, exist_ok=True)
     else:
-        path = utils.get_cache_dir()
+        path = fs.get_cache_dir()
     return Path(path, file_name)
 
 
