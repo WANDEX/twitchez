@@ -99,8 +99,17 @@ def strtoolong(str: str, width: int, indicator="..") -> str:
     """Return str slice of width with indicator at the end.
     (to show that the string cannot fit completely in width)
     """
-    if len(str) > width:
-        return str[:width - len(indicator)] + indicator
+    if tlen(str) > width:
+        str_fit_in_width = str[:width]
+        # visible width in terminal cells that str occupies
+        terminal_cells = tlen(str_fit_in_width)
+        if terminal_cells > width:
+            ec = emoji_count(str_fit_in_width)
+            cut = ec + len(indicator)
+            out_str = str_fit_in_width[:-cut] + indicator
+        else:
+            out_str = str_fit_in_width[:-len(indicator)] + indicator
+        return out_str
     else:
         return str
 
