@@ -4,8 +4,51 @@
 from datetime import datetime
 from difflib import SequenceMatcher
 from os.path import getmtime
+from re import compile
 from threading import Thread
+import conf
 import time
+
+
+# visible length of one emoji in terminal cells
+EMOJI_CELLS = int(conf.setting("emoji_cells"))
+
+EMOJI_PATTERN = compile(
+    "["
+    "\U0001F1E0-\U0001F1FF"  # flags (iOS)
+    "\U0001F300-\U0001F5FF"  # symbols & pictographs
+    "\U0001F600-\U0001F64F"  # emoticons
+    "\U0001F680-\U0001F6FF"  # transport & map symbols
+    "\U0001F700-\U0001F77F"  # alchemical symbols
+    "\U0001F780-\U0001F7FF"  # Geometric Shapes Extended
+    "\U0001F800-\U0001F8FF"  # Supplemental Arrows-C
+    "\U0001F900-\U0001F9FF"  # Supplemental Symbols and Pictographs
+    "\U0001FA00-\U0001FA6F"  # Chess Symbols
+    "\U0001FA70-\U0001FAFF"  # Symbols and Pictographs Extended-A
+    "\U00002702-\U000027B0"  # Dingbats
+    "\U000024C2-\U0001F251"
+    "]+"
+)
+
+
+def demojize(str: str) -> str:
+    """Return string without emojis."""
+    return EMOJI_PATTERN.sub(r'', str)
+
+
+def emoji_count(str: str) -> int:
+    """Returns the count of emojis in a string."""
+    return len(str) - len(demojize(str))
+
+
+def tlen(str: str) -> int:
+    """Return len of str respecting emoji visible length in terminal cells.
+    EMOJI_CELLS: visible length of one emoji in terminal cells.
+    """
+    if EMOJI_CELLS < 2:
+        return len(str)
+    else:
+        return EMOJI_CELLS * emoji_count(str) + len(demojize(str))
 
 
 def secs_since_mtime(path):
