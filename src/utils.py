@@ -31,6 +31,17 @@ EMOJI_PATTERN = compile(
 )
 
 
+def tryencoding(string: str) -> str:
+    """Return string in default encoding or
+    if not printable -> try to re-encode into utf-16."""
+    if not string.isprintable():
+        try:
+            string = string.encode('utf-16', 'surrogatepass').decode("utf-16", "ignore")
+        except (UnicodeEncodeError, UnicodeDecodeError) as e:
+            string = str(e)
+    return string
+
+
 def demojize(str: str) -> str:
     """Return string without emojis."""
     return EMOJI_PATTERN.sub(r'', str)

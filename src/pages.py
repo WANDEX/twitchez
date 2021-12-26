@@ -86,7 +86,7 @@ class Pages:
         grid = render.Grid(parent, ids, self.page_name)
         for id, (x, y) in grid.coords.items():
             d = did[id]
-            title = d["title"]
+            title = utils.tryencoding(d["title"])
             if "creator_name" in d:  # => clips
                 # this is actually not login but name -> we do not need that anyway for clips
                 user_login = d["broadcaster_name"]
