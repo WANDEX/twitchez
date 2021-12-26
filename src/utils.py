@@ -7,6 +7,7 @@ from os.path import getmtime
 from re import compile
 from threading import Thread
 import conf
+import textwrap
 import time
 
 
@@ -125,40 +126,32 @@ def strtoolong(str: str, width: int, indicator="..") -> str:
         return str
 
 
-def word_wrap(str: str, width: int, sep="\n") -> str:
-    """Basic word wrap."""
-    if len(str) < width or " " not in str:
-        return str
-    # length of longest non-space str in list
-    lls = len(max(str.split(" "), key=len))
-    if lls > width:  # fix: too long => do not do anything
-        return str
+def word_wrap_title(string: str, width: int, max_len: int, max_lines=3) -> str:
+    """Word wrap title string."""
+    string = strclean(string)
+    if tlen(string) <= width:
+        return string
+    title_lines = textwrap.wrap(
+        string, width, max_lines=max_lines,
+        expand_tabs=False, replace_whitespace=True,
+        break_long_words=True, break_on_hyphens=True, drop_whitespace=True
+    )
     out_str = ""
-    while len(str) > width:
-        index = width - 1
-        # find nearest whitespace to the left of width
-        while not str[index].isspace():
-            index = index - 1
-        chunk = str[:index] + sep  # separate on chunks
-        out_str = out_str + chunk
-        str = str[index + 1:]  # remaining words
-    return out_str + str
-
-
-def word_wrap_for_box(str: str, width: int) -> str:
-    """Word wrap with trailing whitespaces till width
-    (use only to fit in width like boxes).
-    """
-    if len(str) < width:
-        return str
-    out_str = ""
-    text = word_wrap(str, width, "\n")
-    lines = text.splitlines(keepends=True)
-    for line in lines:
-        num_ws = width - len(line) + 1
-        out_str += line.replace("\n", " " * num_ws)
-    # with additional spaces to mask/differentiate from underlying text
-    return out_str + "  "
+    cline = 0
+    for line in title_lines:
+        cline += 1
+        if len(line) == width:
+            out_str += line
+        else:
+            out_str += f"{line}\n"
+    # limit string len
+    if len(out_str) > max_len:
+        out_str = out_str[:max_len]
+    # add mask only if length of last line met condition
+    if len(title_lines[-1]) < width // 2:
+        mask = "  "  # mask to differentiate from underlying text
+        out_str = out_str[:-len(mask) + 1] + mask
+    return out_str
 
 
 def sdate(isodate: str) -> str:

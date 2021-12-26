@@ -124,13 +124,11 @@ class Box:
             viewers = f" {self.viewers}"
             rside = self.w - len(viewers)
             win.addstr(self.last, rside, viewers, curses.A_BOLD)
-        # FIXME: if title contains emoji characters -> "visual width" of one emoji ch may be ~2.
-        # TODO: find a way to detect emoji in text, and recalculate max width of str properly.
         if self.fulltitle:
-            maxw = int(self.w * 3)  # 3 box widths (lines)
-            title = utils.word_wrap_for_box(self.title, self.w, maxw)
+            max_len = int(self.w * 3)  # 3 box widths (lines)
+            title = utils.word_wrap_title(self.title, self.w, max_len)
             try:
-                win.addnstr(self.last - 2, 0, title, maxw)
+                win.addnstr(self.last - 2, 0, title, max_len)
             except Exception:
                 win.box()
         else:
