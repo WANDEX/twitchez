@@ -128,8 +128,11 @@ class Box:
         # TODO: find a way to detect emoji in text, and recalculate max width of str properly.
         if self.fulltitle:
             maxw = int(self.w * 3)  # 3 box widths (lines)
-            title = utils.word_wrap_for_box(self.title, self.w)
-            win.addnstr(self.last - 2, 0, title, maxw)
+            title = utils.word_wrap_for_box(self.title, self.w, maxw)
+            try:
+                win.addnstr(self.last - 2, 0, title, maxw)
+            except Exception:
+                win.box()
         else:
             title = utils.strtoolong(self.title, self.w)
             win.addnstr(self.last - 2, 0, title, self.w)
