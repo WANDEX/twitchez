@@ -18,6 +18,29 @@ class Hints:
     hint_chars = str(conf.setting("hint_chars"))
     active_hints_letters = []
 
+    def gen_hint_seq(self, length_chars=2) -> list:
+        """Generate from hint_chars list of unique sequences."""
+        hint_sequences = []
+
+        # very simple repeated values of length_chars
+        repeated = []
+        for c in self.hint_chars:
+            # nn ee oo ... (if length_chars=2)
+            repeated.append(c * length_chars)
+
+        # start changing last letter by shifting hint_chars by one
+        combinations = []
+        for r in repeated:
+            for c in self.hint_chars:
+                new_elem = r[1:] + c
+                if new_elem == c * length_chars:
+                    continue  # skip
+                combinations.append(new_elem)
+        hint_sequences.extend(repeated)
+        hint_sequences.extend(combinations)
+        return hint_sequences
+
+
     def hint(self):
         """return next letter from hint_chars string."""
         inext = self.prev_hint_index + 1
