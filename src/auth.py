@@ -63,3 +63,8 @@ def get_auth_token():
         print(f"original state: '{state}' not matches state in response!")
         print("^ because of that - to prevent possible 'CSRF attack' on you, application was stopped, so nobody could harm you!")
         exit(666)
+
+
+if __name__ == "__main__":
+    # execute when ran directly
+    get_auth_token()
