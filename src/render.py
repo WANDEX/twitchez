@@ -32,10 +32,12 @@ class Hints:
         combinations = []
         for r in repeated:
             for c in self.hint_chars:
-                new_elem = r[1:] + c
-                if new_elem == c * length_chars:
+                new_seq = r[1:] + c
+                if new_seq in repeated:
                     continue  # skip
-                combinations.append(new_elem)
+                if new_seq in combinations:
+                    continue  # skip
+                combinations.append(new_seq)
         hint_sequences.extend(repeated)
         hint_sequences.extend(combinations)
         return hint_sequences
