@@ -64,11 +64,9 @@ def hints(c, parent):
     """Show hints, and make some action based on key and hint."""
     if c in hint_keys.values():
         hints = render.Hints()
-        hints.show_hints()
+        hint = hints.show_hints_boxes(parent)
         if c == hint_keys.get("hint_clip_url"):
-            c = str(parent.get_wch())
-            if c in hints.active_hints_letters:
-                hints.copy_url(c)
+            hints.copy_url(hint)
         else:
             if c == hint_keys.get("hint_open_stream"):
                 type = "stream"
@@ -78,9 +76,7 @@ def hints(c, parent):
                 type = "extra"
             else:
                 type = "stream"
-            c = str(parent.get_wch())
-            if c in hints.active_hints_letters:
-                hints.open_url(c, type)
+            hints.open_url(hint, type)
         return True
     else:
         return False

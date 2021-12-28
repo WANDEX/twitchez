@@ -111,10 +111,14 @@ class Hints:
         raise Exception(f"value of ATTR:'{attr}' by the HINT:'{hint}' not found!")
 
     def copy_url(self, hint):
+        if not hint:
+            return
         value = self.get_box_attr_hint(hint, "url")
         clip(value)
 
     def open_url(self, hint, type):
+        if not hint:
+            return
         value = self.get_box_attr_hint(hint, "url")
         open_cmd.open_url(value, type)
 
