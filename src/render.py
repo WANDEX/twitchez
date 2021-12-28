@@ -37,6 +37,50 @@ class Hints:
             total_seq = sqr * 2 - hcl
         return total_seq, hint_length
 
+    def shorten_uniq_seq(self, out_seq):
+        """Shorten all unique hint sequences and insert at the beginning."""
+        tmp_seq = out_seq.copy()
+        # shorten all sequences by one character
+        for i, seq in enumerate(tmp_seq):
+            wlc = seq[:-1]  # seq without last char
+            tmp_seq.pop(i)
+            tmp_seq.insert(i, wlc)
+        tmp_seq.sort()
+        # remove all elements that occurs more than once
+        for i, cur in enumerate(tmp_seq):
+            if i + 1 == len(tmp_seq):
+                break
+            nxt = tmp_seq[i + 1]
+            if cur == nxt:
+                while cur in tmp_seq:
+                    tmp_seq.remove(cur)
+        # each letter associated with its position index in self.hint_chars
+        order = {}
+        for i, c in enumerate(self.hint_chars):
+            order[c] = i + 3
+        #  for seq, i, v in zip(tmp_seq, order.keys(), order.values()):
+        scores = {}
+        for seq in tmp_seq:
+            # letters first/second & their indexes from order dict
+            l1, l2 = seq[0], seq[1]
+            s1, s2 = order[l1], order[l2]  # s - stands for score
+            seq_score = s1 * 3 + s2
+            scores[seq] = seq_score
+        # sorted dict of scores by the value
+        sorted_scores = dict(sorted(scores.items(), key=lambda x: x[1]))
+        sorted_short_seq = list(sorted_scores.keys())
+        sorted_short_seq.reverse()  # reverse() => we insert at the beginning
+        # replace original seq by the shorter sequence as it occurs only once
+        for sseq in sorted_short_seq:
+            # original long seq found by the short seq
+            llseq = [s for s in out_seq if re.search(f"^{sseq}.", s)]
+            lseq = str(llseq[0])
+            if lseq and lseq in out_seq:
+                out_seq.remove(lseq)
+            # insert all short sequences at the beginning
+            out_seq.insert(0, sseq)
+        return out_seq
+
     def gen_hint_seq(self, items) -> list:
         """Generate from hint_chars list of unique sequences."""
         _, hint_length = self.total(items)
@@ -69,7 +113,9 @@ class Hints:
         hint_sequences = []
         hint_sequences.extend(repeated)
         hint_sequences.extend(combinations)
-        return hint_sequences[:len(items)]
+        out_seq = hint_sequences[:len(items)]
+        out_seq = self.shorten_uniq_seq(out_seq)
+        return out_seq
 
     def hint(self, items: list) -> list:
         """Return hint sequences for items."""
