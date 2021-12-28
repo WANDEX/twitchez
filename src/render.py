@@ -10,6 +10,7 @@ from time import sleep
 import conf
 import curses
 import open_cmd
+import re
 import utils
 
 
@@ -76,13 +77,28 @@ class Hints:
         self.active_hints = hints
         return hints
 
-    def show_hints_boxes(self, hints, parent):
+    def find_seq(self, hints, parent) -> str:
+        """Input characters until only one hint sequence is found."""
+        cinput = ""
+        select = hints
+        while len(select) > 1:
+            c = str(parent.get_wch())
+            cinput += c
+            select = [s for s in select if re.search(f"^{cinput}", s)]
+        if not select:
+            return ""
+        if len(select) != 1:
+            raise ValueError(f"len:({len(select)}) Only one item should be in the list:\n{select}")
+        return str(select[0])
+
+    def show_hints_boxes(self, parent):
         """Show hints for visible/drawn boxes."""
         boxes = Boxes.drawn_boxes
         hints = self.hint(boxes)
         for box, hint in zip(boxes, hints):
             box.hint = hint
             box.show_hint()
+        return self.find_seq(hints, parent)
 
     def get_box_attr_hint(self, hint, attr):
         """return attribute value of box object found by the hint."""
