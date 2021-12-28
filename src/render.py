@@ -42,7 +42,7 @@ class Hints:
 
         # one letter length hints
         if hint_length == 1:
-            return list(self.hint_chars)
+            return list(self.hint_chars)[:len(items)]
 
         # simple repeated values of hint_length
         repeated = []
@@ -68,8 +68,7 @@ class Hints:
         hint_sequences = []
         hint_sequences.extend(repeated)
         hint_sequences.extend(combinations)
-        return hint_sequences
-
+        return hint_sequences[:len(items)]
 
     def hint(self, items: list) -> list:
         """Return hint sequences for items."""
