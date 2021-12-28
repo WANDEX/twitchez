@@ -14,9 +14,8 @@ import utils
 
 
 class Hints:
-    prev_hint_index = -1
     hint_chars = str(conf.setting("hint_chars"))
-    active_hints_letters = []
+    active_hints = []
 
     def total(self, items) -> tuple[int, int]:
         """Return (total_seq, hint_length) based on hint_chars,
@@ -72,31 +71,19 @@ class Hints:
         return hint_sequences
 
 
-    def hint(self):
-        """return next letter from hint_chars string."""
-        inext = self.prev_hint_index + 1
-        if len(self.hint_chars) > inext:  # FIXME: this check is not complete!
-            hint = self.hint_chars[inext]
-        else:
-            # FIXME: this is temporary!
-            hint = "E"
-            # TODO: maybe i should convert hint_chars to uppercase and start from beginning index?
-            # TODO: OR i should start making two letter length hints if one letter hints are already used.
-            #       ^ same as surfingkeys etc.
-        self.prev_hint_index = inext  # set prev hint index
-        return hint
+    def hint(self, items: list) -> list:
+        """Return hint sequences for items."""
+        hints = self.gen_hint_seq(items)
+        self.active_hints = hints
+        return hints
 
-    def hints_reset_index(self):
-        self.prev_hint_index = -1
-
-    def show_hints(self):
-        self.active_hints_letters.clear()
-        for box in Boxes.drawn_boxes:
-            hint = self.hint()
-            self.active_hints_letters.append(hint)
+    def show_hints_boxes(self, hints, parent):
+        """Show hints for visible/drawn boxes."""
+        boxes = Boxes.drawn_boxes
+        hints = self.hint(boxes)
+        for box, hint in zip(boxes, hints):
             box.hint = hint
             box.show_hint()
-        self.hints_reset_index()
 
     def get_box_attr_hint(self, hint, attr):
         """return attribute value of box object found by the hint."""
