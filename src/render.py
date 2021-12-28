@@ -37,26 +37,36 @@ class Hints:
             total_seq = sqr * 2 - hcl
         return total_seq, hint_length
 
-    def gen_hint_seq(self, length_chars=2) -> list:
+    def gen_hint_seq(self, items) -> list:
         """Generate from hint_chars list of unique sequences."""
-        hint_sequences = []
+        _, hint_length = self.total(items)
 
-        # very simple repeated values of length_chars
+        # one letter length hints
+        if hint_length == 1:
+            return list(self.hint_chars)
+
+        # simple repeated values of hint_length
         repeated = []
         for c in self.hint_chars:
             # nn ee oo ... (if length_chars=2)
-            repeated.append(c * length_chars)
+            repeated.append(c * hint_length)
 
-        # start changing last letter by shifting hint_chars by one
+        # make unique combinations of letters in strict order
+        # generates sequence of 2 or 3 letter length hints
         combinations = []
         for r in repeated:
-            for c in self.hint_chars:
-                new_seq = r[1:] + c
-                if new_seq in repeated:
-                    continue  # skip
-                if new_seq in combinations:
-                    continue  # skip
-                combinations.append(new_seq)
+            new_seq = ""
+            for ci in range(hint_length, 1, -1):
+                pi = ci - 1
+                for c in self.hint_chars:
+                    new_seq = r[:pi] + c + r[ci:]
+                    if new_seq in repeated:
+                        continue  # skip
+                    if new_seq in combinations:
+                        continue  # skip
+                    combinations.append(new_seq)
+
+        hint_sequences = []
         hint_sequences.extend(repeated)
         hint_sequences.extend(combinations)
         return hint_sequences
