@@ -18,6 +18,25 @@ class Hints:
     hint_chars = str(conf.setting("hint_chars"))
     active_hints_letters = []
 
+    def total(self, items) -> tuple[int, int]:
+        """Return (total_seq, hint_length) based on hint_chars,
+        individual hint_length formula and len of items.
+        total_seq = number of possible sequences,
+        hint_length = [1-3] length of each hint.
+        """
+        hcl = len(self.hint_chars)
+        sqr = hcl ** 2
+        if hcl >= len(items):
+            hint_length = 1
+            total_seq = hcl
+        elif sqr >= len(items):
+            hint_length = 2
+            total_seq = sqr
+        else:
+            hint_length = 3
+            total_seq = sqr * 2 - hcl
+        return total_seq, hint_length
+
     def gen_hint_seq(self, length_chars=2) -> list:
         """Generate from hint_chars list of unique sequences."""
         hint_sequences = []
