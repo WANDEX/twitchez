@@ -58,12 +58,13 @@ class Hints:
         order = {}
         for i, c in enumerate(self.hint_chars):
             order[c] = i + 3
-        #  for seq, i, v in zip(tmp_seq, order.keys(), order.values()):
+        # letters first/second & their scores from order dict
         scores = {}
         for seq in tmp_seq:
-            # letters first/second & their indexes from order dict
-            l1, l2 = seq[0], seq[1]
-            s1, s2 = order[l1], order[l2]  # s - stands for score
+            s1 = order[seq[0]]
+            s2 = 0
+            if len(seq) > 1:
+                s2 = order[seq[1]]
             seq_score = s1 * 3 + s2
             scores[seq] = seq_score
         # sorted dict of scores by the value
