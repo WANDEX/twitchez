@@ -58,18 +58,18 @@ class Hints:
         order = {}
         for i, c in enumerate(self.hint_chars):
             order[c] = i + 3
-        # letters first/second & their scores from order dict
-        scores = {}
+        # compute the seq score by the order in which the letters appear in the sequence
+        seq_score = {}
         for seq in tmp_seq:
             s1 = order[seq[0]]
             s2 = 0
             if len(seq) > 1:
                 s2 = order[seq[1]]
-            seq_score = s1 * 3 + s2
-            scores[seq] = seq_score
-        # sorted dict of scores by the value
-        sorted_scores = dict(sorted(scores.items(), key=lambda x: x[1]))
-        sorted_short_seq = list(sorted_scores.keys())
+            score = s1 * 3 + s2
+            seq_score[seq] = score
+        # dict of sequences sorted by the sequence score
+        sorted_by_score = dict(sorted(seq_score.items(), key=lambda x: x[1]))
+        sorted_short_seq = list(sorted_by_score.keys())
         sorted_short_seq.reverse()  # reverse() => we insert at the beginning
         # replace original seq by the shorter sequence as it occurs only once
         for sseq in sorted_short_seq:
