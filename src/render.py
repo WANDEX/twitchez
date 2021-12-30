@@ -45,15 +45,15 @@ class Hints:
             wlc = seq[:-1]  # seq without last char
             tmp_seq.pop(i)
             tmp_seq.insert(i, wlc)
-        tmp_seq.sort()
         # remove all elements that occurs more than once
-        for i, cur in enumerate(tmp_seq):
-            if i + 1 == len(tmp_seq):
-                break
-            nxt = tmp_seq[i + 1]
-            if cur == nxt:
-                while cur in tmp_seq:
-                    tmp_seq.remove(cur)
+        seq_set = set(tmp_seq)  # set() for less loop iterations
+        for seq in seq_set:
+            occurs = tmp_seq.count(seq)  # the number of times an element occurs
+            if occurs > 1:
+                while seq in tmp_seq:
+                    tmp_seq.remove(seq)
+        if not tmp_seq:  # unique sequences not found
+            return out_seq
         # each letter associated with its position index in self.hint_chars
         order = {}
         for i, c in enumerate(self.hint_chars):
