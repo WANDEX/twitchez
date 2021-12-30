@@ -52,7 +52,7 @@ class Hints:
             if occurs > 1:
                 while seq in tmp_seq:
                     tmp_seq.remove(seq)
-        if not tmp_seq:  # unique sequences not found
+        if not tmp_seq:  # short unique sequences not found
             return out_seq
         # each letter associated with its position index in self.hint_chars
         order = {}
