@@ -114,9 +114,14 @@ class Hints:
         hint_sequences = []
         hint_sequences.extend(repeated)
         hint_sequences.extend(combinations)
-        out_seq = hint_sequences[:len(items)]
+        out_seq = hint_sequences
         out_seq = self.shorten_uniq_seq(out_seq)
-        return out_seq
+        # limit number of sequences, strictly after shortening! =>
+        # NOTE: short seq are more convenient to type
+        if len(out_seq) > len(items):
+            return out_seq[:len(items)]
+        else:
+            return out_seq
 
     def hint(self, items: list) -> list:
         """Return hint sequences for items."""
