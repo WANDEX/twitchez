@@ -373,11 +373,13 @@ class Grid:
 
 class Tabs:
     """Tabs."""
-    # list of tab names
-    tabs = literal_eval(conf.tmp_get("tabs", [], "TABS"))
+    try:  # list of tab names
+        tabs = literal_eval(conf.tmp_get("tabs", [], "TABS"))
+    except ValueError:  # handle literal_eval() error with empty list
+        tabs = []
 
     def curtab(self):
-        #  TODO: what page name is fallback? default page set in settings?
+        """Get current page name, or 'Following Live' as fallback."""
         return conf.tmp_get("current_page_name", "Following Live", "TABS")
 
     def fpagedict(self, tab_name="") -> dict:
@@ -386,7 +388,12 @@ class Tabs:
             page_dict_str = conf.tmp_get("page_dict", "", self.curtab())
         else:
             page_dict_str = conf.tmp_get("page_dict", self.curtab(), tab_name)
-        page_dict = literal_eval(page_dict_str)
+        if not page_dict_str or page_dict_str == "Following Live":
+            return {}
+        try:
+            page_dict = literal_eval(page_dict_str)
+        except Exception as e:
+            raise ValueError(f"page_dict_str: '{page_dict_str}'\n{e}")
         return page_dict
 
     def add_tab(self, page_name):
