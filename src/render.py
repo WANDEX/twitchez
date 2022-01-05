@@ -271,12 +271,11 @@ class Grid:
     w, h = container_size()
 
     def __init__(self, key_list: list, page_name: str):
-        """sets coords dict from key_list -> each key will have (X, Y) values on the Grid."""
-        self.__window = Window()
         self.key_list = key_list
         self.page_name = page_name
-        self.area_cols = self.__window.cols
-        self.area_rows = self.__window.rows
+        self.__ba = BodyArea()
+        self.area_cols = self.__ba.cols
+        self.area_rows = self.__ba.rows
         self.key_start_index = self.index()
         self.coords = self.coordinates()
 
@@ -528,8 +527,7 @@ class Page:
 
     def draw_body(self, grid, fulltitle=False):
         """Draw page body."""
-        h, w = STDSCR.getmaxyx()
-        body = STDSCR.derwin(h - self.HEADER_H, w, self.HEADER_H, 0)
+        body = BodyArea().window()
         if fulltitle:
             Boxes().draw(body, grid, fulltitle)
         else:
@@ -546,10 +544,13 @@ class Page:
         return grid
 
 
-class Window:
-    """Window."""
+class BodyArea:
+    """Body area size of the window in the terminal cells."""
 
     def __init__(self):
-        self.__rows, self.__cols = STDSCR.getmaxyx()  # get window size
-        self.rows = self.__rows - Page.HEADER_H
-        self.cols = self.__cols
+        self.rows, self.cols = STDSCR.getmaxyx()
+        self.rows = self.rows - Page.HEADER_H
+
+    def window(self):
+        """Create & return body window."""
+        return STDSCR.derwin(self.rows, self.cols, Page.HEADER_H, 0)
