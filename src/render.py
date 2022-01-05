@@ -206,7 +206,7 @@ class Boxes:
 
 
 class Box:
-    """Box with info about the stream inside the Grid."""
+    """Box with info about the stream/video inside the Grid."""
     w, h = container_size()
     last = h - 2  # last line of the box
 
@@ -460,7 +460,6 @@ class Page:
     HEADER_H = 2
 
     def __init__(self, pages_class):
-        self.parent = STDSCR
         self.pages_class = pages_class
         self.page_name = pages_class.page_name
         self.grid_func = pages_class.grid_func
@@ -474,8 +473,8 @@ class Page:
         between_tabs = indent_between + separator + indent_between
         logo = "[Twitch Curses]"
         c_page = self.page_name  # current page name
-        _, w = self.parent.getmaxyx()
-        head = self.parent.derwin(self.HEADER_H - 1, w, 0, 0)
+        _, w = STDSCR.getmaxyx()
+        head = STDSCR.derwin(self.HEADER_H - 1, w, 0, 0)
         other_tabs = ""
         # tab order where current page is always first in list (to look as carousel)
         taborder = []
@@ -529,8 +528,8 @@ class Page:
 
     def draw_body(self, grid, fulltitle=False):
         """Draw page body."""
-        h, w = self.parent.getmaxyx()
-        body = self.parent.derwin(h - self.HEADER_H, w, self.HEADER_H, 0)
+        h, w = STDSCR.getmaxyx()
+        body = STDSCR.derwin(h - self.HEADER_H, w, self.HEADER_H, 0)
         if fulltitle:
             Boxes().draw(body, grid, fulltitle)
         else:
