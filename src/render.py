@@ -132,12 +132,12 @@ class Hints:
         self.active_hints = hints
         return hints
 
-    def find_seq(self, hints, parent) -> str:
+    def find_seq(self, hints) -> str:
         """Input characters until only one hint sequence is found."""
         cinput = ""
         select = hints
         while len(select) > 1:
-            c = str(parent.get_wch())
+            c = str(STDSCR.get_wch())
             cinput += c
             select = [s for s in select if re.search(f"^{cinput}", s)]
         if not select:
@@ -146,14 +146,14 @@ class Hints:
             raise ValueError(f"len:({len(select)}) Only one item should be in the list:\n{select}")
         return str(select[0])
 
-    def show_hints_boxes(self, parent):
+    def show_hints_boxes(self):
         """Show hints for visible/drawn boxes."""
         boxes = Boxes.drawn_boxes
         hints = self.hint(boxes)
         for box, hint in zip(boxes, hints):
             box.hint = hint
             box.show_hint()
-        return self.find_seq(hints, parent)
+        return self.find_seq(hints)
 
     def get_box_attr_hint(self, hint, attr):
         """return attribute value of box object found by the hint."""

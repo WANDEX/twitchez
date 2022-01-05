@@ -4,6 +4,7 @@
 from clip import clip
 from conf import key as ck
 from notify import notify
+from render import STDSCR
 import data
 import render
 import thumbnails
@@ -38,7 +39,7 @@ scroll_keys = {
 }
 
 
-def scroll(c, rendergrid, parent):
+def scroll(c, rendergrid):
     """Scroll page and redraw."""
     if c in scroll_keys.values():
         thumbnails.Draw().finish()
@@ -55,16 +56,16 @@ def scroll(c, rendergrid, parent):
             grid.shift_index("top")
         elif c == scroll_keys.get("scroll_bot"):
             grid.shift_index("bot")
-        parent.clear()
+        STDSCR.clear()
         rendergrid()  # redraw after shifting grid index
         thumbnails.Draw().start()
 
 
-def hints(c, parent):
+def hints(c):
     """Show hints, and make some action based on key and hint."""
     if c in hint_keys.values():
         hints = render.Hints()
-        hint = hints.show_hints_boxes(parent)
+        hint = hints.show_hints_boxes()
         if c == hint_keys.get("hint_clip_url"):
             hints.copy_url(hint)
         else:

@@ -2,6 +2,7 @@
 # coding=utf-8
 
 from keys import keys as k
+from render import STDSCR  # noqa: F401
 from time import sleep
 import curses
 import keys
@@ -18,13 +19,13 @@ def set_curses_start_defaults():
 
 
 def run(stdscr):
-    render.STDSCR = stdscr  # set global STDSCR constant
+    global STDSCR
+    STDSCR = stdscr  # override global STDSCR by the stdscr from wrapper
     page_dict = render.Tabs().fpagedict()  # last used tab/page
 
     p = pages.Pages(page_dict)
     page = render.Page(p)
 
-    parent = page.parent
     rendergrid = page.draw
 
     set_curses_start_defaults()
@@ -32,26 +33,24 @@ def run(stdscr):
     def redraw():
         """Reinitialize variables & redraw everything."""
         thumbnails.Draw().finish()
-        parent.clear()
-        h, w = parent.getmaxyx()
+        STDSCR.clear()
+        h, w = STDSCR.getmaxyx()
         if h < 3 or w < 3:
             return
         rendergrid()
         thumbnails.Draw().start()
 
-    # draw once just before the loop start
-    rendergrid()
-    thumbnails.Draw().start()
+    redraw()  # draw once just before the loop start
 
     # Infinite loop to read every key press.
     while True:
-        c = parent.get_wch()
+        c = STDSCR.get_wch()
         if isinstance(c, int) and c == curses.KEY_RESIZE:  # terminal resize event
             # fix: handle crazy multiple repeated window resizing initiated by the user
             # NOTE: this introduces slight redraw delay after resize but fixes crashes
             while True:
                 sleep(.25)
-                nlines, ncols = parent.getmaxyx()
+                nlines, ncols = STDSCR.getmaxyx()
                 if curses.is_term_resized(nlines, ncols):
                     sleep(.75)
                     continue
@@ -61,21 +60,20 @@ def run(stdscr):
             redraw()
             continue
         c = str(c)  # convert character to string
-        h, w = parent.getmaxyx()
+        h, w = STDSCR.getmaxyx()
         # Show last pressed key chars at the bottom-right corner.
-        parent.insstr(h - 1, w - 4, c)
+        STDSCR.insstr(h - 1, w - 4, c)
         if c == k.get("quit"):
             break
         if c == k.get("redraw"):
             p = pages.Pages(page_dict)
             page = render.Page(p)
 
-            parent = page.parent
             rendergrid = page.draw
             redraw()
             continue
         if c == k.get("full_title"):
-            page.parent.clear()
+            STDSCR.clear()
             fbox = render.Boxes.drawn_boxes[0]
             # toggle full title drawing
             if not fbox.fulltitle:
@@ -88,7 +86,6 @@ def run(stdscr):
             p = pages.Pages(page_dict)
             page = render.Page(p)
 
-            parent = page.parent
             rendergrid = page.draw
             redraw()
             continue
@@ -98,7 +95,6 @@ def run(stdscr):
             p = pages.Pages(page_dict)
             page = render.Page(p)
 
-            parent = page.parent
             rendergrid = page.draw
             redraw()
             continue
@@ -108,7 +104,6 @@ def run(stdscr):
             p = pages.Pages(page_dict)
             page = render.Page(p)
 
-            parent = page.parent
             rendergrid = page.draw
             redraw()
             continue
@@ -121,19 +116,18 @@ def run(stdscr):
             p = pages.Pages(page_dict)
             page = render.Page(p)
 
-            parent = page.parent
             rendergrid = page.draw
             redraw()
             continue
-        if keys.hints(c, parent):
+        if keys.hints(c):
             # clear possible fulltitle str
             # hide previously shown hints etc.
-            page.parent.clear()
+            STDSCR.clear()
             page.draw()
             continue
         if keys.yank(c):
             continue
-        keys.scroll(c, rendergrid, parent)
+        keys.scroll(c, rendergrid)
     thumbnails.Draw().finish()
     sleep(0.3)
 
