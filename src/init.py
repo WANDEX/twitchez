@@ -26,8 +26,6 @@ def run(stdscr):
     p = pages.Pages(page_dict)
     page = render.Page(p)
 
-    rendergrid = page.draw
-
     set_curses_start_defaults()
 
     def redraw():
@@ -37,7 +35,7 @@ def run(stdscr):
         h, w = STDSCR.getmaxyx()
         if h < 3 or w < 3:
             return
-        rendergrid()
+        page.draw()
         thumbnails.Draw().start()
 
     redraw()  # draw once just before the loop start
@@ -69,7 +67,6 @@ def run(stdscr):
             p = pages.Pages(page_dict)
             page = render.Page(p)
 
-            rendergrid = page.draw
             redraw()
             continue
         if c == k.get("full_title"):
@@ -86,7 +83,6 @@ def run(stdscr):
             p = pages.Pages(page_dict)
             page = render.Page(p)
 
-            rendergrid = page.draw
             redraw()
             continue
         if c == k.get("tab_add"):
@@ -95,7 +91,6 @@ def run(stdscr):
             p = pages.Pages(page_dict)
             page = render.Page(p)
 
-            rendergrid = page.draw
             redraw()
             continue
         if c == k.get("tab_delete"):
@@ -104,7 +99,6 @@ def run(stdscr):
             p = pages.Pages(page_dict)
             page = render.Page(p)
 
-            rendergrid = page.draw
             redraw()
             continue
         if c == k.get("tab_prev") or c == k.get("tab_next"):
@@ -116,7 +110,6 @@ def run(stdscr):
             p = pages.Pages(page_dict)
             page = render.Page(p)
 
-            rendergrid = page.draw
             redraw()
             continue
         if keys.hints(c):
@@ -127,7 +120,7 @@ def run(stdscr):
             continue
         if keys.yank(c):
             continue
-        keys.scroll(c, rendergrid)
+        keys.scroll(c, page.draw)
     thumbnails.Draw().finish()
     sleep(0.3)
 
