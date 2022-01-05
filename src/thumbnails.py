@@ -57,7 +57,7 @@ def container_size(thumbnail=False) -> tuple[int, int]:
         2: (90, 24),
     }
     # use fallback key if div key not found
-    w, h = table.get(rdiv(), table.get(6))
+    w, h = tuple(table.get(rdiv(), table.get(6)))
     tm = text_mode()
     if tm:
         return w, h - tm
