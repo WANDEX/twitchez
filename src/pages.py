@@ -11,7 +11,7 @@ import utils
 
 
 class Pages:
-    HEADER_H = render.Page.HEADER_H
+    HEADER_H = 2
 
     def __init__(self, page_dict: dict):
         self.page_dict = page_dict
@@ -71,7 +71,7 @@ class Pages:
             thumbnail_paths = thumbnails.find_thumbnails(ids, *subdirs)
         return thumbnail_paths
 
-    def grid_func(self) -> render.Grid:
+    def grid_func(self):
         """Return grid class object for prepared objects of thumbnails and boxes."""
         if thumbnails.text_mode():
             if self.time_to_update_cache():

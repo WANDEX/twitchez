@@ -10,6 +10,7 @@ from time import sleep
 import conf
 import curses
 import open_cmd
+import pages
 import re
 import search
 import utils
@@ -456,12 +457,12 @@ class Tabs:
 
 class Page:
     """Page which renders everything."""
-    HEADER_H = 2
+    HEADER_H = pages.Pages.HEADER_H
 
-    def __init__(self, pages_class):
-        self.pages_class = pages_class
-        self.page_name = pages_class.page_name
-        self.grid_func = pages_class.grid_func
+    def __init__(self, page_dict):
+        self.pages_class = pages.Pages(page_dict)
+        self.page_name = self.pages_class.page_name
+        self.grid_func = self.pages_class.grid_func
         self.loaded = False
 
     def draw_header(self):
@@ -546,11 +547,12 @@ class Page:
 
 class BodyArea:
     """Body area size of the window in the terminal cells."""
+    HEADER_H = pages.Pages.HEADER_H
 
     def __init__(self):
         self.rows, self.cols = STDSCR.getmaxyx()
-        self.rows = self.rows - Page.HEADER_H
+        self.rows = self.rows - self.HEADER_H
 
     def window(self):
         """Create & return body window."""
-        return STDSCR.derwin(self.rows, self.cols, Page.HEADER_H, 0)
+        return STDSCR.derwin(self.rows, self.cols, self.HEADER_H, 0)

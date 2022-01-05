@@ -6,7 +6,6 @@ from render import STDSCR  # noqa: F401
 from time import sleep
 import curses
 import keys
-import pages
 import render
 import search
 import thumbnails
@@ -22,9 +21,7 @@ def run(stdscr):
     global STDSCR
     STDSCR = stdscr  # override global STDSCR by the stdscr from wrapper
     page_dict = render.Tabs().fpagedict()  # last used tab/page
-
-    p = pages.Pages(page_dict)
-    page = render.Page(p)
+    page = render.Page(page_dict)
 
     set_curses_start_defaults()
 
@@ -64,9 +61,7 @@ def run(stdscr):
         if c == k.get("quit"):
             break
         if c == k.get("redraw"):
-            p = pages.Pages(page_dict)
-            page = render.Page(p)
-
+            page = render.Page(page_dict)
             redraw()
             continue
         if c == k.get("full_title"):
@@ -80,25 +75,17 @@ def run(stdscr):
             continue
         if c == k.get("tab_find"):
             page_dict = render.Tabs().find_tab()
-            p = pages.Pages(page_dict)
-            page = render.Page(p)
-
+            page = render.Page(page_dict)
             redraw()
             continue
         if c == k.get("tab_add"):
             page_dict = search.select_page(page_dict)
-
-            p = pages.Pages(page_dict)
-            page = render.Page(p)
-
+            page = render.Page(page_dict)
             redraw()
             continue
         if c == k.get("tab_delete"):
             page_dict = render.Tabs().delete_tab()
-
-            p = pages.Pages(page_dict)
-            page = render.Page(p)
-
+            page = render.Page(page_dict)
             redraw()
             continue
         if c == k.get("tab_prev") or c == k.get("tab_next"):
@@ -106,10 +93,7 @@ def run(stdscr):
                 page_dict = render.Tabs().next_tab()
             else:
                 page_dict = render.Tabs().prev_tab()
-
-            p = pages.Pages(page_dict)
-            page = render.Page(p)
-
+            page = render.Page(page_dict)
             redraw()
             continue
         if keys.hints(c):
