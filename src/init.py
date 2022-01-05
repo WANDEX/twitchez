@@ -18,12 +18,11 @@ def set_curses_start_defaults():
 
 
 def run(stdscr):
-    s = search.Search(stdscr)
+    render.STDSCR = stdscr  # set global STDSCR constant
     page_dict = render.Tabs().fpagedict()  # last used tab/page
-    if not page_dict:  # fallback to following live page
-        page_dict = s.following_live()
+
     p = pages.Pages(page_dict)
-    page = render.Page(stdscr, p)
+    page = render.Page(p)
 
     parent = page.parent
     rendergrid = page.draw
@@ -69,7 +68,7 @@ def run(stdscr):
             break
         if c == k.get("redraw"):
             p = pages.Pages(page_dict)
-            page = render.Page(stdscr, p)
+            page = render.Page(p)
 
             parent = page.parent
             rendergrid = page.draw
@@ -87,17 +86,17 @@ def run(stdscr):
         if c == k.get("tab_find"):
             page_dict = render.Tabs().find_tab()
             p = pages.Pages(page_dict)
-            page = render.Page(stdscr, p)
+            page = render.Page(p)
 
             parent = page.parent
             rendergrid = page.draw
             redraw()
             continue
         if c == k.get("tab_add"):
-            page_dict = s.select_page(page_dict)
+            page_dict = search.select_page(page_dict)
 
             p = pages.Pages(page_dict)
-            page = render.Page(stdscr, p)
+            page = render.Page(p)
 
             parent = page.parent
             rendergrid = page.draw
@@ -107,7 +106,7 @@ def run(stdscr):
             page_dict = render.Tabs().delete_tab()
 
             p = pages.Pages(page_dict)
-            page = render.Page(stdscr, p)
+            page = render.Page(p)
 
             parent = page.parent
             rendergrid = page.draw
@@ -120,7 +119,7 @@ def run(stdscr):
                 page_dict = render.Tabs().prev_tab()
 
             p = pages.Pages(page_dict)
-            page = render.Page(stdscr, p)
+            page = render.Page(p)
 
             parent = page.parent
             rendergrid = page.draw

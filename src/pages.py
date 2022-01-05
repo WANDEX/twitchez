@@ -71,7 +71,7 @@ class Pages:
             thumbnail_paths = thumbnails.find_thumbnails(ids, *subdirs)
         return thumbnail_paths
 
-    def grid_func(self, parent) -> render.Grid:
+    def grid_func(self) -> render.Grid:
         """Return grid class object for prepared objects of thumbnails and boxes."""
         if thumbnails.text_mode():
             if self.time_to_update_cache():
@@ -83,7 +83,7 @@ class Pages:
         did = data.create_id_dict(json_data)  # dict with id as the key
         ids = list(did.keys())
         boxes = render.Boxes()
-        grid = render.Grid(parent, ids, self.page_name)
+        grid = render.Grid(ids, self.page_name)
         for id, (x, y) in grid.coords.items():
             d = did[id]
             title = utils.tryencoding(d["title"])

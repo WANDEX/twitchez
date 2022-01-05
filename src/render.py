@@ -11,7 +11,10 @@ import conf
 import curses
 import open_cmd
 import re
+import search
 import utils
+
+STDSCR = curses.initscr()
 
 
 class Hints:
@@ -267,9 +270,9 @@ class Grid:
     """Grid of boxes inside the Window."""
     w, h = container_size()
 
-    def __init__(self, parent, key_list: list, page_name: str):
+    def __init__(self, key_list: list, page_name: str):
         """sets coords dict from key_list -> each key will have (X, Y) values on the Grid."""
-        self.__window = Window(parent)
+        self.__window = Window()
         self.key_list = key_list
         self.page_name = page_name
         self.area_cols = self.__window.cols
@@ -389,7 +392,7 @@ class Tabs:
         else:
             page_dict_str = conf.tmp_get("page_dict", self.curtab(), tab_name)
         if not page_dict_str or page_dict_str == "Following Live":
-            return {}
+            return search.following_live()
         try:
             page_dict = literal_eval(page_dict_str)
         except Exception as e:
@@ -456,8 +459,8 @@ class Page:
     """Page which renders everything."""
     HEADER_H = 2
 
-    def __init__(self, parent, pages_class):
-        self.parent = parent
+    def __init__(self, pages_class):
+        self.parent = STDSCR
         self.pages_class = pages_class
         self.page_name = pages_class.page_name
         self.grid_func = pages_class.grid_func
@@ -537,7 +540,7 @@ class Page:
     def draw(self, fulltitle=False):
         """return grid and draw full page."""
         self.loading()
-        grid = self.grid_func(self.parent)
+        grid = self.grid_func()
         self.draw_body(grid, fulltitle)
         self.draw_header()
         self.loaded = True  # finish loading animation
@@ -547,7 +550,7 @@ class Page:
 class Window:
     """Window."""
 
-    def __init__(self, parent):
-        self.__rows, self.__cols = parent.getmaxyx()  # get window size
+    def __init__(self):
+        self.__rows, self.__cols = STDSCR.getmaxyx()  # get window size
         self.rows = self.__rows - Page.HEADER_H
         self.cols = self.__cols
