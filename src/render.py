@@ -465,6 +465,23 @@ class Page:
         self.grid_func = self.pages_class.grid_func
         self.loaded = False
 
+    @utils.background
+    def loading(self):
+        """Simple animation to show that currently something is being done."""
+        chars = "-\\|/"  # animation chars
+        win = curses.newwin(1, 1, 0, 0)
+        for _ in range(25):
+            for c in chars:
+                win.insstr(c)
+                win.refresh()
+                sleep(.1)
+                if self.loaded:
+                    break
+            if self.loaded:
+                break
+        win.erase()
+        win.refresh()
+
     def draw_header(self):
         """Draw page header."""
         indent = 2  # indent from side
@@ -508,23 +525,6 @@ class Page:
                 head.addnstr(0, icp, other_tabs, wolimit)
         head.refresh()
         return head
-
-    @utils.background
-    def loading(self):
-        """Simple animation to show that currently something is being done."""
-        chars = "-\\|/"  # animation chars
-        win = curses.newwin(1, 1, 0, 0)
-        for _ in range(25):
-            for c in chars:
-                win.insstr(c)
-                win.refresh()
-                sleep(.1)
-                if self.loaded:
-                    break
-            if self.loaded:
-                break
-        win.erase()
-        win.refresh()
 
     def draw_body(self, grid, fulltitle=False):
         """Draw page body."""
