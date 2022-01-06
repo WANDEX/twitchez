@@ -227,10 +227,15 @@ class Draw:
     def __init__(self):
         self.ue_params_list = render.Boxes.thmblist
 
-    def __check_wait(self, loops_num):
-        """Check FINISH condition every sleep interval N loops."""
+    def __check_wait(self):
+        """Check FINISH condition every sleep interval N loops.
+        formula: loops_num * sleep_time = blink interval in sec
+        (time after which thumbnails will blink once and will be redrawn)
+        """
+        loops_num = 1200
+        sleep_time = .25
         for _ in range(loops_num):
-            sleep(0.25)
+            sleep(sleep_time)
             if self.FINISH:
                 return
 
@@ -239,7 +244,7 @@ class Draw:
             with c.lazy_drawing:
                 for thumbnail in self.ue_params_list:
                     ueberzug.Placement(c, **thumbnail)
-            self.__check_wait(240)
+            self.__check_wait()
 
     def __loop(self):
         while not self.FINISH:
