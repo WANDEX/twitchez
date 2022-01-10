@@ -488,7 +488,7 @@ class Page:
         indent_between = " "
         separator = "|"  # separator between tabs
         between_tabs = indent_between + separator + indent_between
-        logo = "[Twitch Curses]"
+        logo = "[twitchez]"
         c_page = self.page_name  # current page name
         _, w = STDSCR.getmaxyx()
         head = STDSCR.derwin(self.HEADER_H - 1, w, 0, 0)

@@ -7,7 +7,7 @@ from tempfile import gettempdir
 
 
 def project_root(*args) -> Path:
-    """ simply return project_root or compose path from args. """
+    """Simply return project_root or compose path from args."""
     if not args:
         return Path(__file__).parent.parent
     else:
@@ -15,10 +15,10 @@ def project_root(*args) -> Path:
 
 
 def get_cache_dir() -> Path:
-    """ check ENV variables, create cache dir and return it's path. """
-    dirname = "twitch-following-live"
-    if "TWITCH_FL_CACHE_DIR" in environ:
-        cache_home = environ["TWITCH_FL_CACHE_DIR"]
+    """Check ENV variables, create cache dir and return it's path."""
+    dirname = "twitchez"
+    if "TWITCHEZ_CACHE_DIR" in environ:
+        cache_home = environ["TWITCHEZ_CACHE_DIR"]
     elif "XDG_CACHE_HOME" in environ:
         cache_home = environ["XDG_CACHE_HOME"]
     else:
@@ -31,7 +31,7 @@ def get_cache_dir() -> Path:
 
 def get_tmp_dir(*subdirs) -> Path:
     """Return path to tmp dir and create optional subdirs if they doesn't already exist."""
-    dirname = "twitch-following-live"
+    dirname = "twitchez"
     if not subdirs:
         tmp_dir_path = Path(gettempdir(), dirname)
     else:
@@ -41,8 +41,8 @@ def get_tmp_dir(*subdirs) -> Path:
 
 
 def get_user_conf_dir() -> Path:
-    """ check ENV variables, get user config dir and return it's path. """
-    dirname = "twitch-following-live"
+    """Check ENV variables, get user config dir and return it's path."""
+    dirname = "twitchez"
     if "XDG_CONFIG_HOME" in environ:
         config_home = environ["XDG_CONFIG_HOME"]
     else:
