@@ -39,11 +39,11 @@ scroll_keys = {
 }
 
 
-def scroll(c, rendergrid):
+def scroll(c, page_draw):
     """Scroll page and redraw."""
     if c in scroll_keys.values():
         thumbnails.Draw().finish()
-        grid = rendergrid()
+        grid = page_draw()
         if c == scroll_keys.get("scroll_down"):
             grid.shift_index("down")
         elif c == scroll_keys.get("scroll_up"):
@@ -57,7 +57,7 @@ def scroll(c, rendergrid):
         elif c == scroll_keys.get("scroll_bot"):
             grid.shift_index("bot")
         STDSCR.clear()
-        rendergrid()  # redraw after shifting grid index
+        page_draw()  # redraw after shifting grid index
         thumbnails.Draw().start()
 
 
