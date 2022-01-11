@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from consts import STDSCR  # noqa: F401
 from keys import keys as k
-from render import STDSCR  # noqa: F401
 from time import sleep
 import curses
 import keys

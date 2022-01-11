@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from consts import STDSCR
 from notify import notify
 import curses
 import data
 import iselect
 import re
-import render
 
 ENCODING = "utf-8"
 
@@ -15,7 +15,7 @@ def inputwin(prompt: str) -> str:
     """Show input window at the last line of the stdscr window,
     return input str after pressing Enter key.
     """
-    h, w = render.STDSCR.getmaxyx()
+    h, w = STDSCR.getmaxyx()
     win = curses.newwin(1, w // 3, h - 1, 0)
     win.addstr(0, 0, prompt, curses.A_REVERSE)
     win.refresh()

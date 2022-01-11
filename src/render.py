@@ -3,6 +3,7 @@
 
 from ast import literal_eval
 from clip import clip
+from consts import STDSCR
 from iselect import iselect
 from itertools import islice
 from thumbnails import container_size
@@ -14,8 +15,6 @@ import pages
 import re
 import search
 import utils
-
-STDSCR = curses.initscr()
 
 
 class Hints:
