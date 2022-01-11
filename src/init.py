@@ -104,7 +104,9 @@ def run(stdscr):
             continue
         if keys.yank(c):
             continue
-        keys.scroll(c, page.draw)
+        if keys.scroll(c, page.draw):
+            redraw()
+            continue
     thumbnails.Draw().finish()
     sleep(0.3)
 

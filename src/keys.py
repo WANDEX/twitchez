@@ -4,10 +4,8 @@
 from clip import clip
 from conf import key as ck
 from notify import notify
-from render import STDSCR
 import data
 import render
-import thumbnails
 
 keys = {
     "quit": ck("quit"),
@@ -40,9 +38,8 @@ scroll_keys = {
 
 
 def scroll(c, page_draw):
-    """Scroll page and redraw."""
+    """Scroll page."""
     if c in scroll_keys.values():
-        thumbnails.Draw().finish()
         grid = page_draw()
         if c == scroll_keys.get("scroll_down"):
             grid.shift_index("down")
@@ -56,9 +53,8 @@ def scroll(c, page_draw):
             grid.shift_index("top")
         elif c == scroll_keys.get("scroll_bot"):
             grid.shift_index("bot")
-        STDSCR.clear()
-        page_draw()  # redraw after shifting grid index
-        thumbnails.Draw().start()
+        return True
+    return False
 
 
 def hints(c):
