@@ -36,3 +36,13 @@ Look inside `config/` dir to see all available settings, those are defaults.\
 **Do not change default config files**, create new in the user config dir: `config.conf`, `keys.conf`.\
 The default user config dir is `$XDG_CONFIG_HOME/twitchez/`, or `$HOME/.config/twitchez/` by default.\
 Settings from default config files are used as fallback for settings you haven't changed in your user config.
+
+## Usage (temporary for pre-alpha stage)
+```sh
+# (you need to do this step every time your auth token expires)
+# get your twitch auth token:
+python auth.py
+# after successful generation of .private file with valid twitch.tv auth token
+# client will be able to get twitch data via API requests, run client:
+python init.py
+```
