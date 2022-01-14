@@ -46,3 +46,12 @@ python auth.py
 # client will be able to get twitch data via API requests, run client:
 python init.py
 ```
+
+## Troubleshooting
+###### If you tried to run client without auth token or if your auth token expired:
+* You are required to get new twitch auth token via `python auth.py`
+* You are required to wait default twitch data update time (5 min)\
+in order to update data for page requested previously without valid auth token.
+
+## License
+[GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/)
