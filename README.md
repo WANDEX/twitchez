@@ -1,6 +1,12 @@
 # twitchez
 TUI client for twitch with thumbnails.
 
+#### [pre-alpha] WIP NOTICE: project development stage
+This project is still in the early stage of development,
+you may, and probably will, experience corrupted terminal state,
+so run this client in a separate terminal window
+so you don't get frustrated if the client accidentally crashes.
+
 ## Features
 * Explore twitch without leaving your terminal. HACKERMANS B)
 * Flexible configuration via user config (including custom cmd)
