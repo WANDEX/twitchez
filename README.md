@@ -28,8 +28,11 @@ or any other program via custom cmd)
 or any other program via custom cmd)
     * Three independent user cmd and keys to open url as (stream, video, extra)
     * Copy url to clipboard
-* Thumbnails are drawn by [ueberzug](https://github.com/seebye/ueberzug) (**X11 only**)\
-*If you do not know what X11 is - for you this means thumbnails will be drawn on Linux only (not exactly).*
+* Thumbnails are drawn by [ueberzug](https://github.com/seebye/ueberzug) (**X11 only**)
+(ueberzug is an **optional dependency**)
+    * If ueberzug is not installed **text mode without thumbnails** will be used.
+
+###### *If you do not know what X11 is - for you this means thumbnails will be drawn on Linux only (not exactly).*
 
 ## Configuration
 Look inside `config/` dir to see all available settings, those are defaults.\
