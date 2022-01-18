@@ -11,9 +11,14 @@ import aiohttp
 import asyncio
 import conf
 import render
-import ueberzug.lib.v0 as ueberzug
 import utils
 import fs
+try:
+    import ueberzug.lib.v0 as ueberzug
+except ImportError:
+    has_ueberzug = False
+else:
+    has_ueberzug = True
 
 
 def text_mode() -> int:
@@ -27,6 +32,9 @@ def text_mode() -> int:
         tm = 0
     elif tm > 3:
         tm = 3
+    # explicit text mode if ueberzug not found (optional dependency)
+    if not has_ueberzug and tm < 1:
+        tm = 1
     return tm
 
 
