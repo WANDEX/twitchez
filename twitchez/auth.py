@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from .data import write_private_data
+from twitchez.data import write_private_data
 from random import randint
 import requests
 
