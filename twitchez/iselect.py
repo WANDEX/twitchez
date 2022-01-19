@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from notify import notify
+from . import command
+from . import conf
+from . import thumbnails
 from shutil import which
-import command
-import conf
 import curses
 import subprocess
-import thumbnails
 
 ENCODING = "utf-8"
 

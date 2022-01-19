@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from . import conf
+from . import open_cmd
+from . import pages
+from . import search
+from . import utils
+from .clip import clip
+from .consts import STDSCR
+from .iselect import iselect
+from .thumbnails import container_size
 from ast import literal_eval
-from clip import clip
-from consts import STDSCR
-from iselect import iselect
 from itertools import islice
-from thumbnails import container_size
 from time import sleep
-import conf
 import curses
-import open_cmd
-import pages
 import re
-import search
-import utils
 
 
 class Hints:

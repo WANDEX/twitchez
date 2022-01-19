@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from consts import STDSCR
-from notify import notify
+from . import data
+from . import iselect
+from .consts import STDSCR
+from .notify import notify
 import curses
-import data
-import iselect
 import re
 
 ENCODING = "utf-8"

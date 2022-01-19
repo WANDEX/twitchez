@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from . import conf
+from . import data
+from . import render
+from . import thumbnails
+from . import utils
+from .utils import strws
 from pathlib import Path
-from utils import strws
-import conf
-import data
-import render
-import thumbnails
-import utils
 
 
 class Pages:

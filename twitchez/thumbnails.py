@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from . import conf
+from . import fs
+from . import render
+from . import utils
 from multiprocessing.pool import ThreadPool
 from os import listdir, sep
 from os.path import basename, splitext
@@ -9,10 +13,6 @@ from sys import version_info
 from time import sleep
 import aiohttp
 import asyncio
-import conf
-import render
-import utils
-import fs
 try:
     import ueberzug.lib.v0 as ueberzug
 except ImportError:

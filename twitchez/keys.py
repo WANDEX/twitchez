@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from clip import clip
-from conf import key as ck
-from notify import notify
-import data
-import render
+from . import data
+from . import render
+from .clip import clip
+from .conf import key as ck
+from .notify import notify
 
 keys = {
     "quit": ck("quit"),

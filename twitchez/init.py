@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from consts import STDSCR  # noqa: F401
-from keys import keys as k
+from . import keys
+from . import render
+from . import search
+from . import thumbnails
+from .consts import STDSCR  # noqa: F401
+from .keys import keys as k
 from time import sleep
 import curses
-import keys
-import render
-import search
-import thumbnails
 
 
 def set_curses_start_defaults():
