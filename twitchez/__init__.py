@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-__version__ = "0.0.1"
+__version__ = "0.0.1a"
 __license__ = "GPLv3"
 __description__ = "TUI client for twitch with thumbnails"
 __url_repository__ = "https://github.com/WANDEX/twitchez"
