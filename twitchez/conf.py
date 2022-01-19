@@ -5,11 +5,13 @@ from configparser import ConfigParser
 from pathlib import Path
 from twitchez import fs
 
-glob_conf = fs.project_root("config", "default.conf")
-user_conf = fs.project_root(fs.get_user_conf_dir(), "config.conf")
+package_dir = Path(__file__).parent.resolve()
 
-glob_keys = fs.project_root("config", "keys.conf")
-user_keys = fs.project_root(fs.get_user_conf_dir(), "keys.conf")
+glob_conf = Path(package_dir, "config", "default.conf").resolve()
+user_conf = Path(fs.get_user_conf_dir(), "config.conf").resolve()
+
+glob_keys = Path(package_dir, "config", "defkeys.conf").resolve()
+user_keys = Path(fs.get_user_conf_dir(), "keys.conf").resolve()
 
 config = ConfigParser()
 config.read(glob_conf)
@@ -19,7 +21,7 @@ keymap = ConfigParser()
 keymap.read(glob_keys)
 keymap.read(user_keys)  # user config takes precedence over global default config
 
-temp_vars = Path(fs.get_tmp_dir(), "vars")
+temp_vars = Path(fs.get_tmp_dir(), "vars").resolve()
 temp = ConfigParser()
 
 
