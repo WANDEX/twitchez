@@ -111,5 +111,9 @@ def run(stdscr):
     sleep(0.3)
 
 
-if __name__ == "__main__":
+def main():
     curses.wrapper(run)
+
+
+if __name__ == "__main__":
+    main()
