@@ -3,3 +3,6 @@ __pycache__
 *.txt
 venv/
 twitchez.egg-info/
+build/
+dist/
+tests/
