@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from . import fs
 from configparser import ConfigParser
 from pathlib import Path
+from twitchez import fs
 
 glob_conf = fs.project_root("config", "default.conf")
 user_conf = fs.project_root(fs.get_user_conf_dir(), "config.conf")

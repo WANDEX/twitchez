@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from . import command
-from . import conf
 from shutil import which
+from twitchez import command
+from twitchez import conf
 import subprocess
 
 ENCODING = "utf-8"

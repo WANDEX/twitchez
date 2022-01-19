@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from . import keys
-from . import render
-from . import search
-from . import thumbnails
-from .consts import STDSCR  # noqa: F401
-from .keys import keys as k
 from time import sleep
+from twitchez import keys
+from twitchez import render
+from twitchez import search
+from twitchez import thumbnails
+from twitchez.consts import STDSCR  # noqa: F401
+from twitchez.keys import keys as k
 import curses
 
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from . import data
-from . import render
-from .clip import clip
-from .conf import key as ck
-from .notify import notify
+from twitchez import data
+from twitchez import render
+from twitchez.clip import clip
+from twitchez.conf import key as ck
+from twitchez.notify import notify
 
 keys = {
     "quit": ck("quit"),

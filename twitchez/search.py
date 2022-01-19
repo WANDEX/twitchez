@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from . import data
-from . import iselect
-from .consts import STDSCR
-from .notify import notify
+from twitchez import data
+from twitchez import iselect
+from twitchez.consts import STDSCR
+from twitchez.notify import notify
 import curses
 import re
 

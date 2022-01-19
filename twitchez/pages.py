@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from . import conf
-from . import data
-from . import render
-from . import thumbnails
-from . import utils
-from .utils import strws
 from pathlib import Path
+from twitchez import conf
+from twitchez import data
+from twitchez import render
+from twitchez import thumbnails
+from twitchez import utils
+from twitchez.utils import strws
 
 
 class Pages:

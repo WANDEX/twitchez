@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from . import fs
 from pathlib import Path
 from requests import get
+from twitchez import fs
 import json
 
 

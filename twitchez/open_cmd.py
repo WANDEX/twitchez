@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from . import command
-from . import conf
-from .notify import notify
 from shutil import which
+from twitchez import command
+from twitchez import conf
+from twitchez.notify import notify
 import subprocess
 
 

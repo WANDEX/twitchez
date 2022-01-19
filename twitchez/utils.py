@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from . import conf
 from datetime import datetime
 from difflib import SequenceMatcher
 from os.path import getmtime
 from re import compile
 from threading import Thread
+from twitchez import conf
 import textwrap
 import time
 
