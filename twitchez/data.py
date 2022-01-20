@@ -11,7 +11,7 @@ def write_private_data(user_id, access_token, client_id):
     """Write private data to file for using in further requests.
     Also set r+w file permissions to owner only.
     """
-    file_path = fs.project_root(".private")
+    file_path = Path(fs.get_data_dir(), ".private")
     data = {
         "u_id": user_id,
         "token": access_token,
@@ -24,7 +24,7 @@ def write_private_data(user_id, access_token, client_id):
 
 def get_private_data(key) -> str:
     """Get value by the key from .private file."""
-    file_path = fs.project_root(".private")
+    file_path = Path(fs.get_data_dir(), ".private")
     with open(file_path, "r") as file:
         data = json.load(file)
     return data[key]
