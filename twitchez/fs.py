@@ -8,7 +8,10 @@ from tempfile import gettempdir
 
 def set_owner_only_permissions(path: Path) -> Path:
     """Set owner only path permissions."""
-    path.chmod(0o600, follow_symlinks=True)
+    if path.is_dir():
+        path.chmod(0o700, follow_symlinks=True)
+    else:
+        path.chmod(0o600, follow_symlinks=True)
     return path
 
 
