@@ -51,9 +51,9 @@ def get_auth_token():
         print("1) Open following url in your browser.")
         print("2) If asked to login into twitch, you are required to do so, in order to get 'access_token' only known by twitch, and now also known by YOU! B)")
         print(f"{bold}After successful login, page is not existing! ALL WORK AS EXPECTED!{end}")
-        print("3) Copy from url 'access_token' content (from '=' to first '&' excluding those symbols!) and paste that as input here.")
+        print("3) Copy from browser url - part of 'access_token' content (from '=' to first '&' excluding those symbols!) and paste that as input here.")
         print(f"'{r.url}'")
-        access_token = input("access_token=")
+        access_token = input("access_token=").strip()
         # try to get user_id by new access_token & validate that user put right access_token
         user_id = get_user_id(access_token, client_id)
         # write to private file for using in further requests
@@ -61,8 +61,8 @@ def get_auth_token():
         print("SUCCESS")
     else:
         print(f"original state: '{state}' not matches state in response!")
-        print("^ because of that - to prevent possible 'CSRF attack' on you, application was stopped, so nobody could harm you!")
-        exit(666)
+        print("^ because of that - to prevent possible 'CSRF attack' on you, application was stopped!")
+        exit(66)
 
 
 if __name__ == "__main__":
