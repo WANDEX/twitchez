@@ -19,12 +19,12 @@ def private_data_path() -> Path:
     """Check that the .private file exists, if not -> create empty file.
     Also set r+w dir & file permissions to owner only & return path to file.
     """
-    # create dir & set dir permissions
-    private_dir = set_owner_only_permissions(get_data_dir(".private"))
+    private_dir = get_data_dir(".private")       # create dir if not exist
     file_path = Path(private_dir, ".private")
     if not file_path.exists():
-        file_path.touch(exist_ok=True)  # create empty file
-        set_owner_only_permissions(file_path)  # set file permissions
+        file_path.touch(exist_ok=True)           # create empty file
+        set_owner_only_permissions(private_dir)  # set dir permissions
+        set_owner_only_permissions(file_path)    # set file permissions
     return file_path
 
 
