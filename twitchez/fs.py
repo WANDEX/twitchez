@@ -21,6 +21,24 @@ def get_cache_dir() -> Path:
     return cache_dir
 
 
+def get_data_dir(*subdirs) -> Path:
+    """Return path to data dir and create optional subdirs if they doesn't already exist."""
+    dirname = "twitchez"
+    if "TWITCHEZ_DATA_DIR" in environ:
+        data_home = environ["TWITCHEZ_DATA_DIR"]
+    elif "XDG_DATA_HOME" in environ:
+        data_home = environ["XDG_DATA_HOME"]
+    else:
+        data_home = Path(Path.home(), ".local", "share")
+    if not subdirs:
+        data_path = Path(data_home, dirname)
+    else:
+        data_path = Path(data_home, dirname, *subdirs)
+    # create data_path dirs if not exist
+    Path(data_path).mkdir(parents=True, exist_ok=True)
+    return data_path
+
+
 def get_tmp_dir(*subdirs) -> Path:
     """Return path to tmp dir and create optional subdirs if they doesn't already exist."""
     dirname = "twitchez"
