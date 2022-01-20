@@ -1,6 +1,5 @@
-__pycache__
-.private
 *.txt
+__pycache__/
 venv/
 twitchez.egg-info/
 build/
