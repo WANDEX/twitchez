@@ -43,8 +43,8 @@ Settings from default config files are used as fallback for settings you haven't
 ## Usage (temporary for pre-alpha stage)
 ```sh
 # (you need to do this step every time your auth token expires)
-# get your twitch auth token:
-python auth.py
+# get your twitch auth user token:
+python auth_user.py
 # after successful generation of .private file with valid twitch.tv auth token
 # client will be able to get twitch data via API requests, run client:
 python init.py
@@ -52,7 +52,7 @@ python init.py
 
 ## Troubleshooting
 ###### If you tried to run client without auth token or if your auth token expired:
-* You are required to get new twitch auth token via `python auth.py`
+* You are required to get new twitch auth token via `python auth_user.py`
 * You are required to wait default twitch data update time (5 min)\
 in order to update data for page requested previously without valid auth token.
 
