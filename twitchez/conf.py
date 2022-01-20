@@ -3,14 +3,12 @@
 
 from configparser import ConfigParser
 from pathlib import Path
-from twitchez import fs
+from twitchez import TWITCHEZDIR, fs
 
-package_dir = Path(__file__).parent.resolve()
-
-glob_conf = Path(package_dir, "config", "default.conf").resolve()
+glob_conf = Path(TWITCHEZDIR, "config", "default.conf").resolve()
 user_conf = Path(fs.get_user_conf_dir(), "config.conf").resolve()
 
-glob_keys = Path(package_dir, "config", "defkeys.conf").resolve()
+glob_keys = Path(TWITCHEZDIR, "config", "defkeys.conf").resolve()
 user_keys = Path(fs.get_user_conf_dir(), "keys.conf").resolve()
 
 config = ConfigParser()
