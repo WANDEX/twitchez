@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-__version__ = "0.0.1a1"
+__version__ = "0.0.1b0"
 __license__ = "GPLv3"
 __description__ = "TUI client for twitch with thumbnails"
 __url_repository__ = "https://github.com/WANDEX/twitchez"
