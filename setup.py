@@ -28,7 +28,7 @@ setup(
         "twitchez": ["config/*.conf", "config/blank.jpg"],
     },
     entry_points={
-        "console_scripts": ["twitchez=twitchez.init:main"]
+        "console_scripts": ["twitchez=twitchez.__main__:main"]
     },
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
