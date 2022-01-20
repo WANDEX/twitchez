@@ -6,6 +6,12 @@ from pathlib import Path
 from tempfile import gettempdir
 
 
+def set_owner_only_permissions(path: Path) -> Path:
+    """Set owner only path permissions."""
+    path.chmod(0o600, follow_symlinks=True)
+    return path
+
+
 def get_cache_dir() -> Path:
     """Check ENV variables, create cache dir and return it's path."""
     dirname = "twitchez"
