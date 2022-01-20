@@ -129,7 +129,7 @@ async def __get_thumbnails_async(ids: list, rawurls: list, *subdirs) -> dict:
     thumbnail_paths = {}
     urls = get_thumbnail_urls(rawurls)
     tmpd = fs.get_tmp_dir("thumbnails", *subdirs)
-    blank_thumbnail = fs.project_root("config", "blank.jpg")
+    blank_thumbnail = Path(conf.glob_conf_dir, "blank.jpg")
     tasks = []
     async with aiohttp.ClientSession() as session:
         for url in urls:
@@ -178,7 +178,7 @@ def download_thumbnails(ids: list, rawurls: list, *subdirs) -> dict:
 def find_thumbnails(ids: list, *subdirs) -> dict:
     """Find and return previously downloaded thumbnails paths."""
     tmpd = fs.get_tmp_dir("thumbnails", *subdirs)
-    blank_thumbnail = fs.project_root("config", "blank.jpg")
+    blank_thumbnail = Path(conf.glob_conf_dir, "blank.jpg")
 
     tnames = utils.replace_pattern_in_all(listdir(tmpd), ".jpg", "")
     differ = list(set(tnames).difference(set(ids)))

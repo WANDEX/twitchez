@@ -6,14 +6,6 @@ from pathlib import Path
 from tempfile import gettempdir
 
 
-def project_root(*args) -> Path:
-    """Simply return project_root or compose path from args."""
-    if not args:
-        return Path(__file__).parent.parent
-    else:
-        return Path(Path(__file__).parent.parent, *args)
-
-
 def get_cache_dir() -> Path:
     """Check ENV variables, create cache dir and return it's path."""
     dirname = "twitchez"
