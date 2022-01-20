@@ -25,7 +25,7 @@ setup(
         "thumbnails": ["ueberzug"],  # (X11 only)
     },
     package_data={
-        "": ["config/*.conf", "config/blank.jpg"],
+        "twitchez": ["config/*.conf", "config/blank.jpg"],
     },
     entry_points={
         "console_scripts": ["twitchez=twitchez.init:main"]
