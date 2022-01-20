@@ -5,10 +5,12 @@ from configparser import ConfigParser
 from pathlib import Path
 from twitchez import TWITCHEZDIR, fs
 
-glob_conf = Path(TWITCHEZDIR, "config", "default.conf").resolve()
+glob_conf_dir = Path(TWITCHEZDIR, "config").resolve()
+
+glob_conf = Path(glob_conf_dir, "default.conf").resolve()
 user_conf = Path(fs.get_user_conf_dir(), "config.conf").resolve()
 
-glob_keys = Path(TWITCHEZDIR, "config", "defkeys.conf").resolve()
+glob_keys = Path(glob_conf_dir, "defkeys.conf").resolve()
 user_keys = Path(fs.get_user_conf_dir(), "keys.conf").resolve()
 
 config = ConfigParser()
