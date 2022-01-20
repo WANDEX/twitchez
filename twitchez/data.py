@@ -8,12 +8,8 @@ import json
 
 
 def write_private_data(user_id, access_token, client_id):
-    """Write private data to file for using in further requests.
-    Also set r+w dir & file permissions to owner only.
-    """
-    # create dir & set dir permissions
-    private_dir = fs.set_owner_only_permissions(fs.get_data_dir(".private"))
-    file_path = Path(private_dir, ".private")
+    """Write private data to file for using in further requests."""
+    file_path = fs.private_data_path()
     data = {
         "u_id": user_id,
         "token": access_token,
@@ -21,13 +17,11 @@ def write_private_data(user_id, access_token, client_id):
     }
     with open(file_path, "w") as file:
         json.dump(data, file, indent=4)
-    # set file permissions
-    fs.set_owner_only_permissions(file_path)
 
 
 def get_private_data(key) -> str:
     """Get value by the key from .private file."""
-    file_path = Path(fs.get_data_dir(".private"), ".private")
+    file_path = fs.private_data_path()
     with open(file_path, "r") as file:
         data = json.load(file)
     return data[key]
