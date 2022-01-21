@@ -1,4 +1,11 @@
 # twitchez
+![PyPI - Status](https://img.shields.io/pypi/status/twitchez?style=flat-square)
+![PyPI](https://img.shields.io/pypi/v/twitchez?style=flat-square)
+![PyPI - License](https://img.shields.io/pypi/l/twitchez?style=flat-square)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/twitchez?style=flat-square)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/WANDEX/twitchez?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/WANDEX/twitchez?style=flat-square)
+
 TUI client for twitch with thumbnails.
 
 #### [pre-alpha] WIP NOTICE: project development stage
