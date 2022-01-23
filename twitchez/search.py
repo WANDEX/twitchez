@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from twitchez import STDSCR
 from twitchez import data
 from twitchez import iselect
-from twitchez.consts import STDSCR
 from twitchez.notify import notify
 import curses
 import re

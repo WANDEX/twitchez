@@ -4,13 +4,13 @@
 from ast import literal_eval
 from itertools import islice
 from time import sleep
+from twitchez import STDSCR
 from twitchez import conf
 from twitchez import open_cmd
 from twitchez import pages
 from twitchez import search
 from twitchez import utils
 from twitchez.clip import clip
-from twitchez.consts import STDSCR
 from twitchez.iselect import iselect
 from twitchez.thumbnails import container_size
 import curses
