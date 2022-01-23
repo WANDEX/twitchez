@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from time import sleep
-from twitchez import STDSCR  # noqa: F401
+from twitchez import STDSCR
 from twitchez import keys
 from twitchez import render
 from twitchez import search
@@ -14,7 +14,8 @@ import curses
 def set_curses_start_defaults():
     """Set curses start defaults."""
     curses.use_default_colors()
-    curses.curs_set(0)  # Turn off cursor
+    curses.curs_set(0)   # Turn off cursor
+    STDSCR.keypad(True)  # human friendly: curses.KEY_LEFT etc.
 
 
 def run(stdscr):
