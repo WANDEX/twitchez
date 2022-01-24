@@ -8,8 +8,8 @@ def check_auth_data():
     private_file = fs.private_data_path()
     # private_file is empty -> get auth token & write to private_file
     if not private_file.stat().st_size:
-        from twitchez import auth_user
-        auth_user.get_auth_token()
+        from twitchez import auth
+        auth.get_auth_token()
         print("Launch me again!")
         exit(69)
     # TODO: also check that the auth token hasn't expired and is still working

@@ -62,7 +62,7 @@ To update, add the `--upgrade` or `-U` option.
 
 ## Troubleshooting
 ###### If you tried to run client without auth token or if your auth token expired:
-* You are required to get new twitch auth token via `python auth_user.py`
+* You are required to get new twitch auth token via `python auth.py`
 * You are required to wait default twitch data update time (5 min)\
 in order to update data for page requested previously without valid auth token.
 
