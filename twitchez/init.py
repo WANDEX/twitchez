@@ -5,7 +5,6 @@ from time import sleep
 from twitchez import STDSCR
 from twitchez import keys
 from twitchez import render
-from twitchez import search
 from twitchez import thumbnails
 from twitchez.keys import keys as k
 import curses
@@ -74,26 +73,8 @@ def run(stdscr):
             else:
                 page.draw()
             continue
-        if c == k.get("tab_find"):
-            page_dict = render.Tabs().find_tab()
-            page = render.Page(page_dict)
-            redraw()
-            continue
-        if c == k.get("tab_add"):
-            page_dict = search.select_page(page_dict)
-            page = render.Page(page_dict)
-            redraw()
-            continue
-        if c == k.get("tab_delete"):
-            page_dict = render.Tabs().delete_tab()
-            page = render.Page(page_dict)
-            redraw()
-            continue
-        if c == k.get("tab_prev") or c == k.get("tab_next"):
-            if c == k.get("tab_next"):
-                page_dict = render.Tabs().next_tab()
-            else:
-                page_dict = render.Tabs().prev_tab()
+        if c in keys.tab_keys.values():
+            page_dict = keys.tabs(c, page_dict)
             page = render.Page(page_dict)
             redraw()
             continue

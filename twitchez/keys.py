@@ -3,6 +3,7 @@
 
 from twitchez import data
 from twitchez import render
+from twitchez import search
 from twitchez.clip import clip
 from twitchez.conf import key as ck
 from twitchez.notify import notify
@@ -11,11 +12,6 @@ keys = {
     "quit": ck("quit"),
     "redraw": ck("redraw"),
     "full_title": ck("full_title"),
-    "tab_find": ck("tab_find"),
-    "tab_add": ck("tab_add"),
-    "tab_delete": ck("tab_delete"),
-    "tab_next": ck("tab_next"),
-    "tab_prev": ck("tab_prev"),
     "yank_urls": ck("yank_urls"),
     "yank_urls_page": ck("yank_urls_page"),
 }
@@ -34,6 +30,14 @@ scroll_keys = {
     "scroll_down": ck("scroll_down"),
     "scroll_up_page": ck("scroll_up_page"),
     "scroll_down_page": ck("scroll_down_page")
+}
+
+tab_keys = {
+    "tab_add": ck("tab_add"),
+    "tab_delete": ck("tab_delete"),
+    "tab_find": ck("tab_find"),
+    "tab_next": ck("tab_next"),
+    "tab_prev": ck("tab_prev"),
 }
 
 
@@ -77,6 +81,23 @@ def hints(c):
         return True
     else:
         return False
+
+
+def tabs(c, curr_page_dict):
+    """Tabs actions."""
+    if c == tab_keys.get("tab_add"):
+        page_dict = search.select_page(curr_page_dict)
+    elif c == tab_keys.get("tab_delete"):
+        page_dict = render.Tabs().delete_tab()
+    elif c == tab_keys.get("tab_find"):
+        page_dict = render.Tabs().find_tab()
+    elif c == tab_keys.get("tab_next"):
+        page_dict = render.Tabs().next_tab()
+    elif c == tab_keys.get("tab_prev"):
+        page_dict = render.Tabs().prev_tab()
+    else:
+        page_dict = curr_page_dict
+    return page_dict
 
 
 def yank_urls(full_page=False):
