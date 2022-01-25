@@ -41,26 +41,6 @@ tab_keys = {
 }
 
 
-def scroll(c, page_draw):
-    """Scroll page."""
-    if c in scroll_keys.values():
-        grid = page_draw()
-        if c == scroll_keys.get("scroll_down"):
-            grid.shift_index("down")
-        elif c == scroll_keys.get("scroll_up"):
-            grid.shift_index("up")
-        elif c == scroll_keys.get("scroll_down_page"):
-            grid.shift_index("down", page=True)
-        elif c == scroll_keys.get("scroll_up_page"):
-            grid.shift_index("up", page=True)
-        elif c == scroll_keys.get("scroll_top"):
-            grid.shift_index("top")
-        elif c == scroll_keys.get("scroll_bot"):
-            grid.shift_index("bot")
-        return True
-    return False
-
-
 def hints(c):
     """Show hints, and make some action based on key and hint."""
     if c in hint_keys.values():
@@ -81,6 +61,26 @@ def hints(c):
         return True
     else:
         return False
+
+
+def scroll(c, page_draw):
+    """Scroll page."""
+    if c in scroll_keys.values():
+        grid = page_draw()
+        if c == scroll_keys.get("scroll_down"):
+            grid.shift_index("down")
+        elif c == scroll_keys.get("scroll_up"):
+            grid.shift_index("up")
+        elif c == scroll_keys.get("scroll_down_page"):
+            grid.shift_index("down", page=True)
+        elif c == scroll_keys.get("scroll_up_page"):
+            grid.shift_index("up", page=True)
+        elif c == scroll_keys.get("scroll_top"):
+            grid.shift_index("top")
+        elif c == scroll_keys.get("scroll_bot"):
+            grid.shift_index("bot")
+        return True
+    return False
 
 
 def tabs(c, curr_page_dict):

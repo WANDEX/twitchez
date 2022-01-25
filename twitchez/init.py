@@ -73,6 +73,9 @@ def run(stdscr):
             else:
                 page.draw()
             continue
+        if keys.scroll(c, page.draw):
+            redraw()
+            continue
         if c in keys.tab_keys.values():
             page_dict = keys.tabs(c, page_dict)
             page = render.Page(page_dict)
@@ -85,9 +88,6 @@ def run(stdscr):
             page.draw()
             continue
         if keys.yank(c):
-            continue
-        if keys.scroll(c, page.draw):
-            redraw()
             continue
     thumbnails.Draw().finish()
     sleep(0.3)
