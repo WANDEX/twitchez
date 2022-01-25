@@ -2,12 +2,11 @@
 # coding=utf-8
 
 from shutil import which
+from twitchez import ENCODING
 from twitchez import command
 from twitchez import conf
 from twitchez.notify import notify
 import subprocess
-
-ENCODING = "utf-8"
 
 clip_cmd = conf.setting("clip_cmd")
 executable = command.first_cmd_word(clip_cmd)

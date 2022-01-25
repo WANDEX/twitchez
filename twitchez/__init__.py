@@ -13,6 +13,7 @@ __url_project__ = __url_repository__
 __author__ = "WANDEX"
 
 # Constants
+ENCODING = "utf-8"
 TWITCHEZDIR = Path(__file__).parent.resolve()
 
 # NOTE: STDSCR defined here for ease of reuse, to be able to see actual curses funcs

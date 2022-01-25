@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from twitchez import ENCODING
 from twitchez import STDSCR
 from twitchez import data
 from twitchez import iselect
 from twitchez.notify import notify
 import curses
 import re
-
-ENCODING = "utf-8"
 
 
 def inputwin(prompt: str) -> str:

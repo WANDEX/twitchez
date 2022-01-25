@@ -2,11 +2,10 @@
 # coding=utf-8
 
 from shutil import which
+from twitchez import ENCODING
 from twitchez import command
 from twitchez import conf
 import subprocess
-
-ENCODING = "utf-8"
 
 notify_cmd = conf.setting("notify_cmd")
 executable = command.first_cmd_word(notify_cmd)
