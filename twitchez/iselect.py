@@ -61,8 +61,9 @@ def iselect(multilinestr: str, fallback):
         return 130
     text = multilinestr.strip()
     cmd = get_select_cmd()
-    if cmd[0] == "fzf":
-        # fix: clearing of the terminal after calling subprocess
+    # for fzf and similar console selectors working directly in terminal
+    if cmd[0] != "dmenu" and cmd[0] != "rofi":
+        # fix: hide application to be able to see selector after calling subprocess
         curses.endwin()
         # hide thumbnails, they will be redrawn in the next redraw() call.
         thumbnails.Draw().finish()
