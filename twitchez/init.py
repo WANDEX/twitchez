@@ -6,7 +6,7 @@ from twitchez import STDSCR
 from twitchez import keys
 from twitchez import render
 from twitchez import thumbnails
-from twitchez.keys import keys as k
+from twitchez.keys import other_keys as k
 import curses
 
 

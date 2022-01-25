@@ -8,14 +8,6 @@ from twitchez.clip import clip
 from twitchez.conf import key as ck
 from twitchez.notify import notify
 
-keys = {
-    "quit": ck("quit"),
-    "redraw": ck("redraw"),
-    "full_title": ck("full_title"),
-    "yank_urls": ck("yank_urls"),
-    "yank_urls_page": ck("yank_urls_page"),
-}
-
 hint_keys = {
     "hint_clip_url": ck("hint_clip_url"),
     "hint_open_stream": ck("hint_open_stream"),
@@ -38,6 +30,14 @@ tab_keys = {
     "tab_find": ck("tab_find"),
     "tab_next": ck("tab_next"),
     "tab_prev": ck("tab_prev"),
+}
+
+other_keys = {
+    "quit": ck("quit"),
+    "redraw": ck("redraw"),
+    "full_title": ck("full_title"),
+    "yank_urls": ck("yank_urls"),
+    "yank_urls_page": ck("yank_urls_page"),
 }
 
 
@@ -120,10 +120,10 @@ def yank_urls(full_page=False):
 
 
 def yank(c):
-    if c == keys.get("yank_urls") or c == keys.get("yank_urls_page"):
-        if c == keys.get("yank_urls"):
+    if c == other_keys.get("yank_urls") or c == other_keys.get("yank_urls_page"):
+        if c == other_keys.get("yank_urls"):
             yank_urls()
-        elif c == keys.get("yank_urls_page"):
+        elif c == other_keys.get("yank_urls_page"):
             yank_urls(full_page=True)
         return True
     else:
