@@ -8,8 +8,6 @@ from twitchez import thumbnails
 import curses
 import subprocess
 
-ENCODING = "utf-8"
-
 select_cmd = conf.setting("select_cmd")
 executable = command.first_cmd_word(select_cmd)
 without_funcs = command.without_funcs(executable)
@@ -31,7 +29,7 @@ def raise_user_note():
     if without_funcs:
         return
     a = "A program for selecting of one line from all was not found at your 'PATH'."
-    b = "You can install 'dmenu' or 'fzf' and it will be working by default."
+    b = "You can install 'fzf' or 'dmenu' and it will be working by default."
     c = "Also you can set your own program cmd via 'select_cmd = your cmd' in config."
     d = "If you want to use this program without using it's interactive select functions,"
     e = "simply paste next line in your config:"
