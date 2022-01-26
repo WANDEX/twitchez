@@ -4,6 +4,7 @@
 from ast import literal_eval
 from itertools import islice
 from time import sleep
+from twitchez import HEADER_H
 from twitchez import STDSCR
 from twitchez import conf
 from twitchez import open_cmd
@@ -457,7 +458,6 @@ class Tabs:
 
 class Page:
     """Page which renders everything."""
-    HEADER_H = pages.Pages.HEADER_H
 
     def __init__(self, page_dict):
         self.pages_class = pages.Pages(page_dict)
@@ -491,7 +491,7 @@ class Page:
         logo = "[twitchez]"
         c_page = self.page_name  # current page name
         _, w = STDSCR.getmaxyx()
-        head = STDSCR.derwin(self.HEADER_H - 1, w, 0, 0)
+        head = STDSCR.derwin(HEADER_H - 1, w, 0, 0)
         other_tabs = ""
         # tab order where current page is always first in list (to look as carousel)
         taborder = []
@@ -547,12 +547,11 @@ class Page:
 
 class BodyArea:
     """Body area size of the window in the terminal cells."""
-    HEADER_H = pages.Pages.HEADER_H
 
     def __init__(self):
         self.rows, self.cols = STDSCR.getmaxyx()
-        self.rows = self.rows - self.HEADER_H
+        self.rows = self.rows - HEADER_H
 
     def window(self):
         """Create & return body window."""
-        return STDSCR.derwin(self.rows, self.cols, self.HEADER_H, 0)
+        return STDSCR.derwin(self.rows, self.cols, HEADER_H, 0)

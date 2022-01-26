@@ -2,6 +2,7 @@
 # coding=utf-8
 
 from pathlib import Path
+from twitchez import HEADER_H
 from twitchez import conf
 from twitchez import data
 from twitchez import render
@@ -11,7 +12,6 @@ from twitchez.utils import strws
 
 
 class Pages:
-    HEADER_H = 2
 
     def __init__(self, page_dict: dict):
         self.page_dict = page_dict
@@ -120,7 +120,7 @@ class Pages:
             box.viewers = str(views)
             if thumbnail_paths:
                 box.img_path = thumbnail_paths[id]
-                thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + self.HEADER_H).ue_params
+                thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + HEADER_H).ue_params
                 boxes.add_thmb(thmb)
             boxes.add(box)
         return grid

@@ -14,6 +14,7 @@ __author__ = "WANDEX"
 
 # Constants
 ENCODING = "utf-8"
+HEADER_H = 2
 TWITCHEZDIR = Path(__file__).parent.resolve()
 
 # NOTE: STDSCR defined here for ease of reuse, to be able to see actual curses funcs
