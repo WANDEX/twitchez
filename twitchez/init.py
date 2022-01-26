@@ -4,6 +4,7 @@
 from time import sleep
 from twitchez import STDSCR
 from twitchez import keys
+from twitchez import keys_help
 from twitchez import render
 from twitchez import thumbnails
 from twitchez.keys import other_keys as k
@@ -62,6 +63,10 @@ def run(stdscr):
             break
         if c == k.get("redraw"):
             page = render.Page(page_dict)
+            redraw()
+            continue
+        if c == k.get("keys_help") or c == str(curses.KEY_F1):
+            keys_help.help()
             redraw()
             continue
         if c == k.get("full_title"):

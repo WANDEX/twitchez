@@ -36,6 +36,7 @@ other_keys = {
     "quit": ck("quit"),
     "redraw": ck("redraw"),
     "full_title": ck("full_title"),
+    "keys_help": ck("keys_help"),
     "yank_urls": ck("yank_urls"),
     "yank_urls_page": ck("yank_urls_page"),
 }
