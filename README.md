@@ -18,7 +18,7 @@ so you don't get frustrated if the client accidentally crashes.
 * Explore twitch without leaving your terminal. HACKERMANS B)
 * Flexible configuration via user config (including custom cmd)
 * Completely keyboard driven workflow
-    * Zero mouse interaction
+    * Zero mouse interaction. `F1 / ?` for help about key mappings
     * Redefine keys and hint chars for your keyboard layout
     * Link hints similar as in (Vimium, Surfingkeys, etc.)
     * Interactive select of one entry from all
