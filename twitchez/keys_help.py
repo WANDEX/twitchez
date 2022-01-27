@@ -63,17 +63,22 @@ def dumb_table(pad):
         longest_line = max(str(t).splitlines())  # longest line in table
         maxlen = max(maxlen, len(longest_line))  # max length of longest line
         maxln = max(maxln, t.count("\n"))  # max total lines in table
-    _, W = pad.getmaxyx()
+    H, W = pad.getmaxyx()
     # spacing between elements
     spacing = maxlen + 4
     cols = W // spacing
-    # for more even spacing between elements
-    sc = (W - int(cols * spacing)) // cols
+    try:  # for more even spacing between elements
+        sc = (W - int(cols * spacing)) // cols
+    except ZeroDivisionError:
+        sc = 0
     spacing += sc
     y, x = 1, sc
     current_col = 1
+    next_row = maxln + 1
     for t in tables:
-        # FIXME: if there is not enough space it will crash
+        # fix: if not enough space -> do not try to create subwin
+        if cols < 1 or W < x or H < y + next_row:
+            break
         subwin = pad.derwin(y, x)
         subwin.addstr(t)
         subwin.refresh()
@@ -83,7 +88,7 @@ def dumb_table(pad):
         else:
             current_col = 1
             x = sc
-            y += maxln + 1
+            y += next_row
     return maxln
 
 
