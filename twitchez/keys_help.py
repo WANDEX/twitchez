@@ -63,13 +63,27 @@ def dumb_table(pad):
         longest_line = max(str(t).splitlines())  # longest line in table
         maxlen = max(maxlen, len(longest_line))  # max length of longest line
         maxln = max(maxln, t.count("\n"))  # max total lines in table
-    # TODO make additional table rows if width is not enough to fit all tables
-    x = 0
+    _, W = pad.getmaxyx()
+    # spacing between elements
+    spacing = maxlen + 4
+    cols = W // spacing
+    # for more even spacing between elements
+    sc = (W - int(cols * spacing)) // cols
+    spacing += sc
+    y, x = 1, sc
+    current_col = 1
     for t in tables:
-        subwin = pad.derwin(1, x)
+        # FIXME: if there is not enough space it will crash
+        subwin = pad.derwin(y, x)
         subwin.addstr(t)
         subwin.refresh()
-        x += maxlen + 4
+        if current_col < cols:
+            current_col += 1
+            x += spacing
+        else:
+            current_col = 1
+            x = sc
+            y += maxln + 1
     return maxln
 
 
