@@ -35,6 +35,28 @@ def table_generate(dict, header=""):
     return table
 
 
+def table_lines(keysdict, header) -> list:
+    """Generate simple list of strings with key and short description.
+    Each line in the list is the same length (trailing whitespaces).
+    """
+    kws = 4  # num of ws after key char
+    maxlen = 15
+    for t in keysdict.keys():
+        maxlen = max(maxlen, len(t))  # max length of longest line
+    # TODO: DOUBTS: maybe i should calculate maxlen of short_desc
+    hlws = " " * 4  # header leading whitespaces
+    htws = " " * (maxlen - len(header) - len(hlws) + kws + 1)  # header trailing whitespaces
+    outheader = hlws + header + htws
+    list_of_lines = []
+    list_of_lines.append(outheader)
+    frmtstr = "{:" + str(kws) + "} {:" + str(maxlen) + "}"
+    for name, key in keysdict.items():
+        desc = short_desc(name)
+        string = frmtstr.format(key, desc)
+        list_of_lines.append(string)
+    return list_of_lines
+
+
 def table_join(*args):
     """Join tables from multiple args."""
     tables = ""
