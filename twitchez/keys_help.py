@@ -57,6 +57,17 @@ def table_lines(keysdict, header) -> list:
     return list_of_lines
 
 
+def append_blank_lines(table: list, num_of_out_lines: int) -> list:
+    """Append to the table empty lines of the same max width till num of total lines.
+    Used to make all tables of equal line count.
+    """
+    maxlen = len(max(table))  # max length of longest line (max len of element)
+    blank_line = " " * maxlen
+    while len(table) < num_of_out_lines:
+        table.append(blank_line)
+    return table
+
+
 def table_join(*args):
     """Join tables from multiple args."""
     tables = ""
