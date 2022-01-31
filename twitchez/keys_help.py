@@ -7,6 +7,7 @@ from twitchez import __version__
 from twitchez import keys
 from twitchez import thumbnails
 import curses
+import re
 
 
 def short_desc(string: str) -> str:
@@ -57,21 +58,84 @@ def append_blank_lines(table: list, num_of_out_lines: int) -> list:
     return table
 
 
-def table_join(*args):
-    """Join tables from multiple args."""
-    tables = ""
-    for arg in args:
-        tables += "\n{0}".format(arg)
-    return tables
+def check_lines_len(lines: str) -> tuple[int, int]:
+    """Return first & last line length."""
+    out_lines = lines.splitlines()
+    first_line = "".join(out_lines[0])
+    first_line_len = len(first_line)
+    last_line = "".join(out_lines[-1])
+    last_line_len = len(last_line)
+    return first_line_len, last_line_len
 
 
-def simple_tables():
-    sk = table_generate(keys.scroll_keys, "SCROLL")
-    tk = table_generate(keys.tab_keys, "TABS")
-    hk = table_generate(keys.hint_keys, "HINTS")
-    ok = table_generate(keys.other_keys, "OTHER")
-    tables = table_join(sk, tk, hk, ok)
-    return tables
+def simple_tables(area_width) -> tuple[int, str]:
+    """Simple string tables as grid that fit in area_width.
+    returns: total line count, multiline string as table.
+    """
+    sk = table_lines(keys.scroll_keys, "SCROLL")
+    tk = table_lines(keys.tab_keys, "TABS")
+    hk = table_lines(keys.hint_keys, "HINTS")
+    ok = table_lines(keys.other_keys, "OTHER")
+    tables = [sk, tk, hk, ok]
+    maxln = len(max(tables, key=len))  # max num of lines in table (max num of elements in list)
+    # make all tables of equal line count
+    sk = append_blank_lines(sk, maxln)
+    tk = append_blank_lines(tk, maxln)
+    hk = append_blank_lines(hk, maxln)
+    ok = append_blank_lines(ok, maxln)
+    tables = [sk, tk, hk, ok]
+    strtemplateraw = "{:<" + "20" + "}"
+    strtemplate = strtemplateraw * len(tables)
+    out = ""
+    add_row = "\n\n"  # new lines for the new row of tables
+    for num in range(len(tables), 0, -1):
+        strtemplate = strtemplateraw * num
+        if num == 4:
+            out += "\n".join(strtemplate.format(t1, t2, t3, t4) for t1, t2, t3, t4 in zip(sk, tk, hk, ok))
+            out += add_row
+        elif num == 3:
+            out += "\n".join(strtemplate.format(t1, t2, t3) for t1, t2, t3 in zip(sk, tk, hk))
+            out += add_row
+            out += "\n".join(strtemplateraw.format(t4) for t4 in ok)
+        elif num == 2:
+            out += "\n".join(strtemplate.format(t1, t2) for t1, t2 in zip(sk, tk))
+            out += add_row
+            out += "\n".join(strtemplate.format(t3, t4) for t3, t4 in zip(hk, ok))
+        elif num == 1:
+            for _t in tables:
+                out += "\n".join(strtemplateraw.format(t1) for t1 in _t)
+                out += add_row
+        else:
+            out = "E" * (area_width - 1)
+        out = out.rstrip()  # trim empty lines from the end of the out string & trailing ws
+        fll, lll = check_lines_len(out)
+        # first/last line length is fitting inside area_width
+        if fll < area_width and lll < area_width:
+            break
+        else:
+            out = ""  # clear
+    # replace repeating empty lines by a single empty line
+    out = re.sub(r'\n\s*\n', '\n\n', out, re.MULTILINE)
+    tln = out.count("\n") + 1  # total lines count
+    return tln, out
+
+
+def push_text(win, text: str, pos=0):
+    """Add text str into window respecting it's height.
+    Also update text after changing scroll position.
+    (simple text string scrolling).
+    """
+    win.clear()
+    h, _ = win.getmaxyx()
+    lines = text.splitlines()
+    if h >= len(lines):
+        # all lines of text can simply be placed inside a win
+        win.addstr(text)
+    else:
+        # addstr only slice of text that can fit inside a win
+        text_slice = "\n".join(lines[pos:h + pos])
+        win.addstr(text_slice)
+    win.refresh()
 
 
 def table_generate(keysdict, header) -> str:
@@ -206,5 +270,7 @@ def help():
 
 
 if __name__ == "__main__":
-    table = simple_tables()
+    area_width = 50
+    ln, table = simple_tables(area_width)
     print(table)
+    print(ln)
