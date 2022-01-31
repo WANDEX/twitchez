@@ -24,17 +24,6 @@ def short_desc(string: str) -> str:
     return out
 
 
-def table_generate(dict, header=""):
-    """Generate simple string as table of keys and their description."""
-    table = ""
-    if header:
-        table += f"\t{header}\n"
-    for name, key in dict.items():
-        desc = short_desc(name)
-        table += "{:4} {:10}\n".format(key, desc)
-    return table
-
-
 def table_lines(keysdict, header) -> list:
     """Generate simple list of strings with key and short description.
     Each line in the list is the same length (trailing whitespaces).
@@ -85,7 +74,20 @@ def simple_tables():
     return tables
 
 
-def dumb_table(pad):
+def table_generate(keysdict, header) -> str:
+    """Generate simple string as table of keys and their description.
+    (for table using curses windows)
+    """
+    table = ""
+    if header:
+        table += f"\t{header}\n"
+    for name, key in keysdict.items():
+        desc = short_desc(name)
+        table += "{:4} {:10}\n".format(key, desc)
+    return table
+
+
+def curse_tables(pad):
     sk = table_generate(keys.scroll_keys, "SCROLL")
     tk = table_generate(keys.tab_keys, "TABS")
     hk = table_generate(keys.hint_keys, "HINTS")
