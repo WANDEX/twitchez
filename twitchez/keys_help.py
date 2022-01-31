@@ -9,6 +9,8 @@ from twitchez import thumbnails
 import curses
 import re
 
+SIMPLE_TEXT = True
+
 
 def short_desc(string: str) -> str:
     """Make short readable description by removing one of specific patterns from string.
@@ -151,7 +153,8 @@ def table_generate(keysdict, header) -> str:
     return table
 
 
-def curse_tables(pad):
+def curse_tables(pad, pos=0):
+    pad.clear()
     sk = table_generate(keys.scroll_keys, "SCROLL")
     tk = table_generate(keys.tab_keys, "TABS")
     hk = table_generate(keys.hint_keys, "HINTS")
@@ -188,6 +191,8 @@ def curse_tables(pad):
             current_col = 1
             x = sc
             y += next_row
+    pad.scroll(pos)
+    pad.refresh()
     return maxln
 
 
@@ -226,20 +231,21 @@ def help():
 
     pad = win.subpad(pad_h, pad_w, pad_y, pad_x)
     pad.scrollok(True)
-    tln = dumb_table(pad)
-    pad.refresh()
 
-    end = tln
-    if tln > pad_h:
-        end = tln - pad_h
+    table = ""
+    if SIMPLE_TEXT:
+        tln, table = simple_tables(pad_w)
+        push_text(pad, table)
     else:
-        end = 0
+        tln = curse_tables(pad)
+
+    end = tln - pad_h
     pos = 0
 
     while True:
         c = STDSCR.get_wch()
         # enable scrolling only if content doesn't fit in height entirely
-        if tln < end:
+        if tln > pad_h:
             if c in scroll_help_keys:
                 if c == keys.scroll_keys.get("scroll_down"):
                     pos += 1
@@ -258,10 +264,10 @@ def help():
                     pos = 0
                 elif pos > end:
                     pos = end
-                pad.clear()
-                dumb_table(pad)
-                pad.scroll(pos)
-                pad.refresh()
+                if SIMPLE_TEXT:
+                    push_text(pad, table, pos)
+                else:
+                    curse_tables(pad, pos)
                 continue
         if c in close_help_keys:
             pad.clear()
