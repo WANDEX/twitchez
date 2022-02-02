@@ -34,8 +34,7 @@ def table_lines(keysdict, header) -> list:
     kws = 4  # num of ws after key char
     maxlen = 15
     for t in keysdict.keys():
-        maxlen = max(maxlen, len(t))  # max length of longest line
-    # TODO: DOUBTS: maybe i should calculate maxlen of short_desc
+        maxlen = max(maxlen, len(short_desc(t)))  # max length of longest line
     hlws = " " * 4  # header leading whitespaces
     htws = " " * (maxlen - len(header) - len(hlws) + kws + 1)  # header trailing whitespaces
     outheader = hlws + header + htws
