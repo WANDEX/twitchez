@@ -276,7 +276,17 @@ def help():
 
 
 if __name__ == "__main__":
-    area_width = 50
-    ln, table = simple_tables(area_width)
-    print(table)
-    print(ln)
+    def print_w_info(width):
+        ln, table = simple_tables(width)
+        fstring = "w:[{0}] h:({1})"
+        statstr = fstring.format(width, ln)
+        # to be able to see where are width limit
+        boxendstr = "─" * (width - len(statstr) - 1) + "┐"
+        ststr = statstr + boxendstr
+        print(ststr)
+        print(table)
+
+    print("=" * 100)
+    print_w_info(70)
+    print_w_info(100)
+    print_w_info(130)
