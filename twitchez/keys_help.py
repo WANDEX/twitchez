@@ -71,14 +71,29 @@ def simple_tables(area_width) -> tuple[int, str]:
     ok = table_lines(keys.other_keys, "OTHER")
     tables = [sk, tk, hk, ok]
     maxln = len(max(tables, key=len))  # max num of lines in table (max num of elements in list)
+    maxlen = len(max(max(t, key=len) for t in tables))  # max length of longest line
     # make all tables of equal line count
     sk = append_blank_lines(sk, maxln)
     tk = append_blank_lines(tk, maxln)
     hk = append_blank_lines(hk, maxln)
     ok = append_blank_lines(ok, maxln)
     tables = [sk, tk, hk, ok]
-    strtemplateraw = "{:<" + "20" + "}"
-    strtemplate = strtemplateraw * len(tables)
+
+    # even spacing and indent from left
+    maxcolnum = area_width // maxlen
+    if maxcolnum > 4:  # limit max number of table columns
+        maxcolnum = 4
+    free_cols = area_width - int(maxlen * maxcolnum)
+    if free_cols < maxcolnum or maxcolnum < 2:
+        rem_on_col = 0
+    else:
+        rem_on_col = free_cols // maxcolnum - 1
+    if rem_on_col == 0 or maxcolnum < 2:
+        indentstr = ""
+    else:
+        indentstr = " " * rem_on_col
+    strtemplateraw = indentstr + "{}"
+
     out = ""
     add_row = "\n\n"  # new lines for the new row of tables
     for num in range(len(tables), 0, -1):
