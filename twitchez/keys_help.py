@@ -59,16 +59,6 @@ def append_blank_lines(table: list, num_of_out_lines: int) -> list:
     return table
 
 
-def check_lines_len(lines: str) -> tuple[int, int]:
-    """Return first & last line length."""
-    out_lines = lines.splitlines()
-    first_line = "".join(out_lines[0])
-    first_line_len = len(first_line)
-    last_line = "".join(out_lines[-1])
-    last_line_len = len(last_line)
-    return first_line_len, last_line_len
-
-
 def simple_tables(area_width) -> tuple[int, str]:
     """Simple string tables as grid that fit in area_width.
     returns: total line count, multiline string as table.
@@ -107,11 +97,10 @@ def simple_tables(area_width) -> tuple[int, str]:
                 out += "\n".join(strtemplateraw.format(t1) for t1 in _t)
                 out += add_row
         else:
-            out = "E" * (area_width - 1)
+            out = "E" * area_width
         out = out.rstrip()  # trim empty lines from the end of the out string & trailing ws
-        fll, lll = check_lines_len(out)
-        # first/last line length is fitting inside area_width
-        if fll < area_width and lll < area_width:
+        maxlinelen = len(max(out.splitlines(), key=len))  # max length of longest line
+        if maxlinelen <= area_width:
             break
         else:
             out = ""  # clear
