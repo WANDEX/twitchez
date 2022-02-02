@@ -91,8 +91,10 @@ def simple_tables(area_width) -> tuple[int, str]:
     if rem_on_col == 0 or maxcolnum < 2:
         indentstr = ""
     else:
-        indentstr = " " * rem_on_col
-    strtemplateraw = indentstr + "{}"
+        # NOTE: the difference with one non-half indent is especially noticeable
+        #       that the center is shifted at large terminal widths (200-239 cols)
+        indentstr = " " * (rem_on_col // 2)
+    strtemplateraw = indentstr + "{}" + indentstr
 
     out = ""
     add_row = "\n\n"  # new lines for the new row of tables
