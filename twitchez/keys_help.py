@@ -282,13 +282,16 @@ def help():
 
 if __name__ == "__main__":
     def print_w_info(width):
+        """To be able to see where are: width limit, center."""
         ln, table = simple_tables(width)
-        fstring = "w:[{0}] h:({1})"
-        statstr = fstring.format(width, ln)
-        # to be able to see where are width limit
-        boxendstr = "─" * (width - len(statstr) - 1) + "┐"
-        ststr = statstr + boxendstr
-        print(ststr)
+        fstring = " w:[{0}] ln:({1}) "
+        info = fstring.format(width, ln)
+        half = width // 2  # approx (as this is terminal cells)
+        halfs = "─" * (half - 2)  # 2 = "x" as center + extra "─" in beg
+        beg = "┌─" + info + halfs[len(info):]
+        end = halfs + "┐"
+        bar = beg + "x" + end
+        print(bar)
         print(table)
 
     print("=" * 100)
