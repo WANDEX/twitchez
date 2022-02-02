@@ -31,12 +31,14 @@ def table_lines(keysdict, header) -> list:
     """Generate simple list of strings with key and short description.
     Each line in the list is the same length (trailing whitespaces).
     """
-    kws = 4  # num of ws after key char
+    kws = 4        # num of ws after key char
+    hws = kws + 1  # num of ws before header
     maxlen = 15
     for t in keysdict.keys():
         maxlen = max(maxlen, len(short_desc(t)))  # max length of longest line
-    hlws = " " * 4  # header leading whitespaces
-    htws = " " * (maxlen - len(header) - len(hlws) + kws + 1)  # header trailing whitespaces
+    # header leading & trailing whitespaces
+    hlws = " " * hws
+    htws = " " * (maxlen - len(header) - len(hlws) + hws)
     outheader = hlws + header + htws
     list_of_lines = []
     list_of_lines.append(outheader)
