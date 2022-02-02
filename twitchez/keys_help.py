@@ -65,10 +65,10 @@ def simple_tables(area_width) -> tuple[int, str]:
     """Simple string tables as grid that fit in area_width.
     returns: total line count, multiline string as table.
     """
-    sk = table_lines(keys.scroll_keys, "SCROLL")
-    tk = table_lines(keys.tab_keys, "TABS")
-    hk = table_lines(keys.hint_keys, "HINTS")
-    ok = table_lines(keys.other_keys, "OTHER")
+    sk = table_lines(keys.scroll_keys, "[SCROLL]")
+    tk = table_lines(keys.tab_keys, "[TABS]")
+    hk = table_lines(keys.hint_keys, "[HINTS]")
+    ok = table_lines(keys.other_keys, "[OTHER]")
     tables = [sk, tk, hk, ok]
     maxln = len(max(tables, key=len))  # max num of lines in table (max num of elements in list)
     maxlen = len(max(max(t, key=len) for t in tables))  # max length of longest line
