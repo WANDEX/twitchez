@@ -278,5 +278,6 @@ if __name__ == "__main__":
 
     print("=" * 100)
     print_w_info(70)
+    print_w_info(80)
     print_w_info(100)
     print_w_info(130)
