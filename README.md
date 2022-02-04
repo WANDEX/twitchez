@@ -35,6 +35,7 @@ or any other program via custom cmd)
 or any other program via custom cmd)
     * Three independent user cmd and keys to open url as (stream, video, extra)
     * Copy url to clipboard
+    * Open chat url in default browser or via custom cmd
 * Thumbnails are drawn by [ueberzug](https://github.com/seebye/ueberzug) (**X11 only**)
 (ueberzug is an **optional dependency**)
     * If ueberzug is not installed **text mode without thumbnails** will be used.
