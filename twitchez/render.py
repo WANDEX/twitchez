@@ -7,6 +7,7 @@ from time import sleep
 from twitchez import HEADER_H
 from twitchez import STDSCR
 from twitchez import conf
+from twitchez import open_chat
 from twitchez import open_cmd
 from twitchez import pages
 from twitchez import search
@@ -178,6 +179,12 @@ class Hints:
             return
         value = self.get_box_attr_hint(hint, "url")
         open_cmd.open_url(value, type)
+
+    def open_chat(self, hint):
+        if not hint:
+            return
+        value = self.get_box_attr_hint(hint, "user_login")
+        open_chat.open_chat(value)
 
 
 class Boxes:

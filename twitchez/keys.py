@@ -10,6 +10,7 @@ from twitchez.notify import notify
 
 hint_keys = {
     "hint_clip_url": ck("hint_clip_url"),
+    "hint_open_chat": ck("hint_open_chat"),
     "hint_open_stream": ck("hint_open_stream"),
     "hint_open_extra": ck("hint_open_extra"),
     "hint_open_video": ck("hint_open_video"),
@@ -49,6 +50,8 @@ def hints(c):
         hint = hints.show_hints_boxes()
         if c == hint_keys.get("hint_clip_url"):
             hints.copy_url(hint)
+        elif c == hint_keys.get("hint_open_chat"):
+            hints.open_chat(hint)
         else:
             if c == hint_keys.get("hint_open_stream"):
                 type = "stream"
