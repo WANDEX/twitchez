@@ -8,7 +8,7 @@
 
 TUI client for twitch with thumbnails.
 
-https://user-images.githubusercontent.com/15724752/152702496-77875dbd-403c-4bf2-84fa-34273fdbc4d5.mp4
+https://user-images.githubusercontent.com/15724752/152787467-dc2a8871-43e5-4530-94b1-e14383c8b18e.mp4
 
 #### [pre-alpha] WIP NOTICE: project development stage
 This project is still in the early stage of development,
