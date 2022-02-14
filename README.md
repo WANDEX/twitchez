@@ -69,6 +69,8 @@ If [ueberzug](https://github.com/seebye/ueberzug#installation)
 is not installed or not supported by your platform  **text mode without thumbnails** will be used.
 
 ## Troubleshooting
+##### If thumbnails partially overlap underlying text:
+* Adjust your terminal font size by +1 etc or try with different terminal font. (It's very font dependent)
 ##### If you tried to run client without auth token or if your auth token expired:
 * You are required to get new twitch auth token via `python auth.py`
 * You are required to wait default twitch data update time (5 min)\
