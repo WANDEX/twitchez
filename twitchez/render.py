@@ -352,7 +352,7 @@ class Grid:
                 start_index = 0
             elif start_index > end_of_page:
                 start_index = end_of_page
-        self.index(start_index)
+        self.index(str(start_index))
         return start_index
 
     def coordinates(self) -> dict:
