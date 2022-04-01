@@ -15,12 +15,15 @@ def set_owner_only_permissions(path: Path) -> Path:
     return path
 
 
-def private_data_path() -> Path:
+def private_data_path(recreate=False) -> Path:
     """Check that the .private file exists, if not -> create empty file.
     Also set r+w dir & file permissions to owner only & return path to file.
     """
     private_dir = get_data_dir(".private")       # create dir if not exist
     file_path = Path(private_dir, ".private")
+    # remove file with old private data for authentication
+    if recreate and file_path.exists():
+        file_path.unlink(missing_ok=True)
     if not file_path.exists():
         file_path.touch(exist_ok=True)           # create empty file
         set_owner_only_permissions(private_dir)  # set dir permissions
