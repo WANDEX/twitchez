@@ -12,7 +12,6 @@ def check_auth_data():
         auth.get_auth_token()
         print("Launch me again!")
         exit(69)
-    # TODO: also check that the auth token hasn't expired and is still working
 
 
 def main():

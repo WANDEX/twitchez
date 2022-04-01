@@ -7,6 +7,26 @@ from twitchez import fs
 import json
 
 
+def validate_data(d :dict):
+    """Check and handle status code if found in data."""
+    status = 0 # initial status code (ALL OK)
+    if "status" in d:
+        status = int(d["status"])
+    if not status:
+        return
+    # ^ if status code not 0 -> status code processing
+    if status == 401: # Invalid OAuth token
+        fs.private_data_path(recreate=True)
+        # message to the user
+        a = "Invalid OAuth token! (probably the old token has expired)"
+        b = "Launch application again to generate new OAuth token."
+        raise Exception(f"{str(d)}\n^{a}\n{b}")
+    else:
+        a = "returned request data:"
+        b = "*** Unhandled status code! ***"
+        raise Exception(f"{a}\n{str(d)}\n{b} ({status})")
+
+
 def write_private_data(user_id, access_token, client_id):
     """Write private data to file for using in further requests."""
     file_path = fs.private_data_path()
@@ -88,7 +108,9 @@ def following_live_data() -> dict:
         "Client-Id": c_id
     }
     r = get(url, headers=headers)
-    return r.json()
+    d = r.json()
+    validate_data(d)
+    return d
 
 
 def get_categories(query: str) -> list:
@@ -102,8 +124,9 @@ def get_categories(query: str) -> list:
         "Client-Id": c_id
     }
     r = get(url, headers=headers)
-    j = r.json()
-    return j["data"]
+    d = r.json()
+    validate_data(d)
+    return d["data"]
 
 
 def get_categories_terse_data(query: str) -> dict:
@@ -141,7 +164,9 @@ def category_data(category_id) -> dict:
         "Client-Id": c_id
     }
     r = get(url, headers=headers)
-    return r.json()
+    d = r.json()
+    validate_data(d)
+    return d
 
 
 def get_channels(query: str, live_only=False) -> dict:
@@ -157,8 +182,9 @@ def get_channels(query: str, live_only=False) -> dict:
         "Client-Id": c_id
     }
     r = get(url, headers=headers)
-    j = r.json()
-    return j["data"]
+    d = r.json()
+    validate_data(d)
+    return d["data"]
 
 
 def get_channels_terse_data(query: str, live_only=False) -> dict:
@@ -193,7 +219,9 @@ def get_channel_videos(user_id, type="all") -> dict:
         "Client-Id": c_id
     }
     r = get(url, headers=headers)
-    return r.json()
+    d = r.json()
+    validate_data(d)
+    return d
 
 
 def get_channel_clips(broadcaster_id) -> dict:
@@ -207,7 +235,9 @@ def get_channel_clips(broadcaster_id) -> dict:
         "Client-Id": c_id
     }
     r = get(url, headers=headers)
-    return r.json()
+    d = r.json()
+    validate_data(d)
+    return d
 
 
 def page_data(page_dict) -> dict:
