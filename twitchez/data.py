@@ -29,7 +29,7 @@ def validate_data(d :dict):
 
 def write_private_data(user_id, access_token, client_id):
     """Write private data to file for using in further requests."""
-    file_path = fs.private_data_path()
+    file_path = fs.private_data_path(recreate=True)
     data = {
         "u_id": user_id,
         "token": access_token,
