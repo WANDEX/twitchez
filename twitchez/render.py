@@ -3,7 +3,7 @@
 
 from ast import literal_eval
 from itertools import islice
-from time import sleep
+from threading import Thread
 from twitchez import HEADER_H
 from twitchez import STDSCR
 from twitchez import conf
@@ -472,22 +472,48 @@ class Page:
         self.grid_func = self.pages_class.grid_func
         self.loaded = False
 
-    @utils.background
     def loading(self):
-        """Simple animation to show that currently something is being done."""
-        chars = "-\\|/"  # animation chars
-        win = curses.newwin(1, 1, 0, 0)
-        for _ in range(25):
-            for c in chars:
-                win.insstr(c)
-                win.refresh()
-                sleep(.1)
-                if self.loaded:
-                    break
+        """Simple animation to show that something is being done (Page loading).
+        Currently the animation cycle is very short and ends even
+        if the loading is not yet finished, '*' - static indicator of this.
+
+        This is done intentionally to not ruin everything
+        if raise() or crash occurred while thread is not yet finished and etc.
+        The animation is short to quickly return to the terminal if an error is raised.
+        """
+        def animation():
+            """Animation length is intentionally short."""
+            chars = "-\\|/"  # animation chars
+            for _ in range(8):
+                for c in chars:
+                    win.insstr(c)
+                    win.refresh()
+                    curses.napms(25)
+                    # finish animation right now!
+                    if self.loaded:
+                        return
+
+        def anima_thread():
+            t = Thread(target=animation())
+            t.start()
+            t.join()
+
+        try:
+            win = curses.newwin(1, 1, 0, 0)
+        except Exception:
+            return
+
+        try:
+            anima_thread()
+        finally:
             if self.loaded:
-                break
-        win.erase()
-        win.refresh()
+                win.erase()
+            else:
+                # leave a static indicator about not yet finished loading
+                # it probably will be cleared by some clear of the screen
+                # so we do not bother much about clearing of the static indicator :)
+                win.insstr("*")
+            win.refresh()
 
     def draw_header(self):
         """Draw page header."""
@@ -544,12 +570,11 @@ class Page:
 
     def draw(self, fulltitle=False):
         """return grid and draw full page."""
-        # FIXME: loading() -> ruins everything if raise() or crash occurred
-        #  self.loading()
+        self.loading()
         grid = self.grid_func()
         self.draw_body(grid, fulltitle)
         self.draw_header()
-        self.loaded = True  # finish loading animation
+        self.loaded = True  # finish animation of loading if not yet ended
         return grid
 
 

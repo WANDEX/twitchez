@@ -5,7 +5,6 @@ from datetime import datetime
 from difflib import SequenceMatcher
 from os.path import getmtime
 from re import compile
-from threading import Thread
 from twitchez import conf
 import textwrap
 import time
@@ -203,10 +202,3 @@ def duration(duration: str, simple=False, noprocessing=False) -> str:
     idur = datetime.strptime(duration, ifmt)
     odur = str(idur.strftime(ofmt))
     return odur
-
-
-def background(func):
-    """use @background decorator above the function to run in the background."""
-    def background_func(*args, **kwargs):
-        Thread(target=func, args=args, kwargs=kwargs).start()
-    return background_func
