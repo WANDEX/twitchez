@@ -544,7 +544,8 @@ class Page:
 
     def draw(self, fulltitle=False):
         """return grid and draw full page."""
-        self.loading()
+        # FIXME: loading() -> ruins everything if raise() or crash occurred
+        #  self.loading()
         grid = self.grid_func()
         self.draw_body(grid, fulltitle)
         self.draw_header()
