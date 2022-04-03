@@ -66,6 +66,9 @@ def container_size(thumbnail=False) -> tuple[int, int]:
     }
     # use fallback key if div key not found
     w, h = tuple(table.get(rdiv(), table.get(6)))
+    # width/height modifier for perfect placement of thumbnails in the grid (very font dependent)
+    w += int(conf.setting("wmod"))
+    h += int(conf.setting("hmod"))
     tm = text_mode()
     if tm:
         return w, h - tm
