@@ -69,8 +69,10 @@ If [ueberzug](https://github.com/seebye/ueberzug#installation)
 is not installed or not supported by your platform  **text mode without thumbnails** will be used.
 
 ## Troubleshooting
-##### If thumbnails partially overlap underlying text:
-* Adjust your terminal font size by +1 etc or try with different terminal font. (It's very font dependent)
+##### If thumbnails partially overlap underlying text (it is very font dependent):
+* set width/height modifier in user config
+* adjust your terminal font size by +1 etc
+* try different terminal font
 
 ## License
 [GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/)
