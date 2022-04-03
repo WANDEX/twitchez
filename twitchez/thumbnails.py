@@ -122,7 +122,7 @@ async def fetch_image(session, url):
         return await response.read()
 
 
-async def __get_thumbnails_async(ids: list, rawurls: list, *subdirs) -> dict:
+async def get_thumbnails_async(ids: list, rawurls: list, *subdirs) -> dict:
     """Asynchronously download thumbnails and return paths.
     (Actual realization)
     """
@@ -166,11 +166,11 @@ def download_thumbnails(ids: list, rawurls: list, *subdirs) -> dict:
     (Wrapper with asyncio run/run_until_complete)
     """
     if version_info >= (3, 7):  # Python 3.7+
-        return asyncio.run(__get_thumbnails_async(ids, rawurls, *subdirs))
+        return asyncio.run(get_thumbnails_async(ids, rawurls, *subdirs))
     else:  # Python 3.5-3.6
         loop = asyncio.get_event_loop()
         try:
-            return loop.run_until_complete(__get_thumbnails_async(ids, rawurls, *subdirs))
+            return loop.run_until_complete(get_thumbnails_async(ids, rawurls, *subdirs))
         finally:
             loop.close()
 
