@@ -38,7 +38,7 @@ def raise_user_note():
     raise Exception(full_text)
 
 
-def get_clip_cmd():
+def get_clip_cmd(show_note: bool):
     """Check & return cmd if executable is on PATH."""
     cmd = []
     # prefer clip_cmd if set in config and found at PATH
@@ -49,16 +49,22 @@ def get_clip_cmd():
     elif which("xsel"):
         cmd = xsel_cmd()
     else:
-        raise_user_note()
+        if show_note:
+            raise_user_note()
+        else:
+            return
     return cmd
 
 
-def clip(content: str):
+def clip(content: str, show_note=True):
     """Copy content to clipboard."""
     if without_funcs:
         return
+    cmd = get_clip_cmd(show_note=show_note)
+    if not cmd:
+        return
     text = content.strip()
-    p = subprocess.Popen(get_clip_cmd(), stdin=subprocess.PIPE, close_fds=True)
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, close_fds=True)
     p.communicate(input=text.encode(ENCODING))
     p.wait()  # wait for process to finish
     if p.returncode == 0:
