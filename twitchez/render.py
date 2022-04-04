@@ -481,6 +481,10 @@ class Page:
         if raise() or crash occurred while thread is not yet finished and etc.
         The animation is short to quickly return to the terminal if an error is raised.
         """
+        # NOTE: currently ANIMATION introduces extra wait time during draw() calls
+        # on simple and fast operations like redraw() => so animation is disabled.
+        # It does not feel like the fancy animation is worth it.
+        ANIMATION=False
         def animation():
             """Animation length is intentionally short."""
             chars = "-\\|/"  # animation chars
@@ -504,7 +508,10 @@ class Page:
             return
 
         try:
-            anima_thread()
+            if ANIMATION:
+                anima_thread()
+            else:
+                win.insstr("*")
         finally:
             if self.loaded:
                 win.erase()
