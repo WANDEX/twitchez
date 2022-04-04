@@ -23,7 +23,7 @@ def dunstify_cmd() -> list:
     # (requires creating matching rule in dunst config)
     t = expire_time()
     DST = "string:x-dunst-stack-tag"
-    cmd = f"dunstify -t {t} -u low -h {DST}:TFL -h {DST}:hi"
+    cmd = f"dunstify -t {t} -u low -h {DST}:twitchez -h {DST}:hi"
     return cmd.split()
 
 
@@ -50,7 +50,7 @@ def raise_user_note():
 def get_notify_cmd() -> list:
     """Check & return cmd if executable is on PATH."""
     cmd = []
-    # prefer notify_cmd if set in config and found at PATH
+    # prefer notify_cmd if set in config and executable found at PATH
     if cmd_check:
         cmd = notify_cmd.split()
     elif which("dunstify"):
@@ -71,8 +71,8 @@ def notify(body="", summary="", error=False):
     cmd = get_notify_cmd()
     if not cmd:
         return
-    # FIXME: if user specified custom notify_cmd that does not support additional args
-    #        like we do here, it will break. (because we add -u & -t options after getting cmd)
+    # NOTE: if user specified custom notify_cmd that does not support additional args
+    # => cmd will break. Because we append variable amount of options after getting cmd.
     if error:
         cmd.append("-u")
         cmd.append("critical")
