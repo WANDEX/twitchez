@@ -2,6 +2,7 @@
 # coding=utf-8
 
 from random import randint
+from twitchez.clip import clip
 from twitchez.data import write_private_data
 import requests
 
@@ -48,6 +49,9 @@ def get_auth_token():
     if state in r.url:  # for safety check that 'state' is substring in response url
         bold = "\033[1m"
         end = "\033[0;0m"
+        # copy url to the clipboard if we can
+        # do not show user note if clipboard cmd is not set or executable is not found
+        clip(r.url, show_note=False)
         print("1) Open following url in your browser.")
         print("2) If asked to login into twitch, you are required to do so, in order to get 'access_token' only known by twitch, and now also known by YOU! B)")
         print(f"{bold}After successful login, page is not existing! ALL WORK AS EXPECTED!{end}")
