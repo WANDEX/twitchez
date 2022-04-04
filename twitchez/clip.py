@@ -38,10 +38,10 @@ def raise_user_note():
     raise Exception(full_text)
 
 
-def get_clip_cmd(show_note: bool):
+def get_clip_cmd(show_note: bool) -> list:
     """Check & return cmd if executable is on PATH."""
     cmd = []
-    # prefer clip_cmd if set in config and found at PATH
+    # prefer clip_cmd if set in config and executable found at PATH
     if cmd_check:
         cmd = clip_cmd.split()
     elif which("xclip"):
@@ -52,7 +52,7 @@ def get_clip_cmd(show_note: bool):
         if show_note:
             raise_user_note()
         else:
-            return
+            return []
     return cmd
 
 
@@ -68,6 +68,7 @@ def clip(content: str, show_note=True):
     p.communicate(input=text.encode(ENCODING))
     p.wait()  # wait for process to finish
     if p.returncode == 0:
-        notify(text, "C:")
+        notify(text, "C:", show_note=show_note)
     else:
-        notify(f"ERROR({p.returncode}): probably malformed cmd!", "NOT copied:", error=True)
+        notify(f"ERROR({p.returncode}): probably malformed cmd!",
+                "NOT copied:", error=True, show_note=show_note)
