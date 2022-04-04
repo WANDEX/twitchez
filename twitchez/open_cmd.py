@@ -50,8 +50,8 @@ def mpv_cmd(url) -> list:
 
 def raise_user_note():
     """raise exception for regular user without traceback."""
-    a = "A program for opening stream url was not found at your 'PATH'."
-    b = "You can install 'streamlink' and/or 'mpv' and it will be working by default."
+    a = "A program for opening url was not found at your 'PATH'."
+    b = "You can install 'streamlink' and/or 'mpv' + 'youtube-dl/yt-dlp' and it will be working by default."
     c = "Also you can set your own program cmd via 'open_*_cmd = your cmd' in config."
     full_text = f"\n{a}\n{b}\n{c}\n"
     raise Exception(full_text)
