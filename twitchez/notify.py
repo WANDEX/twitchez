@@ -47,7 +47,7 @@ def raise_user_note():
     raise Exception(full_text)
 
 
-def get_notify_cmd() -> list:
+def get_notify_cmd(show_note: bool) -> list:
     """Check & return cmd if executable is on PATH."""
     cmd = []
     # prefer notify_cmd if set in config and executable found at PATH
@@ -58,19 +58,22 @@ def get_notify_cmd() -> list:
     elif which("notify-send"):
         cmd = notify_send_cmd()
     else:
-        raise_user_note()
+        if show_note:
+            raise_user_note()
+        else:
+            return []
     return cmd
 
 
-def notify(body="", summary="", error=False):
+def notify(body="", summary="", error=False, show_note=True):
     """Show user notification."""
     if without_funcs:
         return
-    s = f"[TFL] {summary}"
-    b = f"{body}"
-    cmd = get_notify_cmd()
+    cmd = get_notify_cmd(show_note=show_note)
     if not cmd:
         return
+    s = f"{summary}"
+    b = f"{body}"
     # NOTE: if user specified custom notify_cmd that does not support additional args
     # => cmd will break. Because we append variable amount of options after getting cmd.
     if error:
