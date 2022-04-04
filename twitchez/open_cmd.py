@@ -60,8 +60,6 @@ def raise_user_note():
 def get_open_cmd(url, type):
     """Check & return cmd if executable is on PATH."""
     cmd = []
-    # DOUBTS TODO: also add built-in support for youtube-dl/yt-dlp
-    #  ^ RESEARCH: already work like that with simple mpv call?
     # prefer custom open_cmd if set in config and found at PATH
     cmd_check, type_cmd = custom_cmd_check(type)
     if cmd_check and type_cmd:
@@ -79,6 +77,8 @@ def get_open_cmd(url, type):
 def open_url(url, type):
     """Open stream/video url with external/custom program."""
     cmd = get_open_cmd(url, type)
+    if not cmd:
+        return
     notify(url, "opening:")
     sub = subprocess.Popen
     sub(cmd,
