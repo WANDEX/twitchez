@@ -82,6 +82,7 @@ def open_url(url, type):
     notify(url, "opening:")
     sub = subprocess.Popen
     sub(cmd,
+        start_new_session=True,     # to not close video/stream after closing twitchez (POSIX only)
         stdin=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL)
