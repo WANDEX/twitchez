@@ -6,7 +6,7 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/WANDEX/twitchez?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/WANDEX/twitchez?style=flat-square)
 
-TUI client for twitch with thumbnails.
+TUI client for twitch.tv with thumbnails.
 
 https://user-images.githubusercontent.com/15724752/152787467-dc2a8871-43e5-4530-94b1-e14383c8b18e.mp4
 
