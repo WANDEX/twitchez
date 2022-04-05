@@ -79,7 +79,7 @@ def open_url(url, type):
     cmd = get_open_cmd(url, type)
     if not cmd:
         return
-    notify(url, "opening:")
+    notify(url, "opening:", show_note=False)
     sub = subprocess.Popen
     sub(cmd,
         start_new_session=True,     # to not close video/stream after closing twitchez (POSIX only)
