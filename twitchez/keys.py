@@ -64,8 +64,7 @@ def hints(c):
                 type = "stream"
             hints.open_url(hint, type)
         return True
-    else:
-        return False
+    return False
 
 
 def scroll(c, page_draw):
@@ -131,5 +130,4 @@ def yank(c):
         elif c == other_keys.get("yank_urls_page"):
             yank_urls(full_page=True)
         return True
-    else:
-        return False
+    return False

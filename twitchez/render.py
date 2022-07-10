@@ -401,7 +401,8 @@ class Page:
         # NOTE: currently ANIMATION introduces extra wait time during draw() calls
         # on simple and fast operations like redraw() => so animation is disabled.
         # It does not feel like the fancy animation is worth it.
-        ANIMATION=False
+        ANIMATION = False
+
         def animation():
             """Animation length is intentionally short."""
             chars = "-\\|/"  # animation chars
