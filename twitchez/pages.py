@@ -121,7 +121,6 @@ class Pages:
             box.viewers = str(views)
             if thumbnail_paths:
                 box.img_path = thumbnail_paths[id]
-                thmb = thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + HEADER_H).ue_params
-                boxes.add_thmb(thmb)
+                thumbnails.Thumbnail(id, thumbnail_paths[id], x, y + HEADER_H)
             boxes.add(box)
         return grid

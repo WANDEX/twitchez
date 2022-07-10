@@ -9,7 +9,6 @@ from sys import version_info
 from time import sleep
 from twitchez import conf
 from twitchez import fs
-from twitchez import render
 from twitchez import utils
 import aiohttp
 import asyncio
@@ -203,6 +202,10 @@ def find_thumbnails(ids: list, *subdirs) -> dict:
     return thumbnail_paths
 
 
+class Thumbnails:
+    uepl = []
+
+
 class Thumbnail:
     """Prepare Thumbnail object."""
     w, h = container_size(thumbnail=True)
@@ -215,8 +218,10 @@ class Thumbnail:
         self.ue_params = self.__ue_params()
 
     def __ue_params(self) -> dict:
-        """Return dict for thumbnail with all parameters required by ueberzug."""
-        ueberzug_parameters = {
+        """Return dict for thumbnail with all parameters required by ueberzug.
+        Append parameters of the Thumbnail to the list of Thumbnails parameters.
+        """
+        uep = {
             "identifier": self.identifier,
             "height": self.h,
             "width": self.w,
@@ -226,7 +231,8 @@ class Thumbnail:
             "path": self.img_path,
             "visibility": ueberzug.Visibility.VISIBLE
         }
-        return ueberzug_parameters
+        Thumbnails.uepl.append(uep)
+        return uep
 
 
 class Draw:
@@ -236,7 +242,7 @@ class Draw:
     tm = text_mode()
 
     def __init__(self):
-        self.ue_params_list = render.Boxes.thmblist
+        self.uepl = Thumbnails.uepl
 
     def __check_wait(self):
         """Check FINISH condition every sleep interval N loops.
@@ -253,7 +259,7 @@ class Draw:
     def __draw(self):
         with ueberzug.Canvas() as c:
             with c.lazy_drawing:
-                for thumbnail in self.ue_params_list:
+                for thumbnail in self.uepl:
                     ueberzug.Placement(c, **thumbnail)
             self.__check_wait()
 
@@ -284,4 +290,4 @@ class Draw:
         for img in self.images:
             img.FINISH = True  # finish __back_loop()
             self.images.remove(img)
-        self.ue_params_list.clear()
+        self.uepl.clear()

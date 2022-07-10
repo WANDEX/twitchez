@@ -20,16 +20,11 @@ import curses
 class Boxes:
     """Operate on list of Boxes"""
     boxlist = []
-    thmblist = []
     drawn_boxes = []
 
     def add(self, obj):
         """Add box object to list."""
         self.boxlist.append(obj)
-
-    def add_thmb(self, obj):
-        """Add thumbnail ue params to list."""
-        self.thmblist.append(obj)
 
     def draw(self, parent, grid, fulltitle=False):
         """Draw boxes."""
@@ -322,10 +317,10 @@ class Page:
         other_tabs = ""
         # tab order where current page is always first in list (to look as carousel)
         taborder = []
-        tabs = tab_names()
-        cpni = tabs.index(c_page)
-        taborder.extend(tabs[cpni:])
-        taborder.extend(tabs[:cpni])
+        tnames = tab_names()
+        cpni = tnames.index(c_page)
+        taborder.extend(tnames[cpni:])
+        taborder.extend(tnames[:cpni])
         for tab in taborder:
             if tab == c_page:
                 continue  # skip current tab
