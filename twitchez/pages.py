@@ -9,6 +9,7 @@ from twitchez import render
 from twitchez import thumbnails
 from twitchez import utils
 from twitchez.utils import strws
+from twitchez.tabs import Tabs
 
 
 class Pages:
@@ -21,7 +22,7 @@ class Pages:
         conf.tmp_set("page_dict", self.page_dict, self.page_name)
         conf.tmp_set("current_page_name", self.page_name, "TABS")
         # each new Pages instance -> add to tabs page_name (if not already in tabs)
-        render.Tabs().add_tab(self.page_name)
+        Tabs().add_tab(self.page_name)
 
     def cache_subdirs(self):
         """Return list of subdirs (to unpack them later as args)."""
