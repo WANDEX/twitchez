@@ -7,7 +7,7 @@ from twitchez import search
 from twitchez.clip import clip
 from twitchez.conf import key as ck
 from twitchez.notify import notify
-from twitchez.tabs import Tabs
+from twitchez import tabs
 
 hint_keys = {
     "hint_clip_url": ck("hint_clip_url"),
@@ -87,18 +87,18 @@ def scroll(c, page_draw):
     return False
 
 
-def tabs(c, curr_page_dict):
+def tabs_action(c, curr_page_dict):
     """Tabs actions."""
     if c == tab_keys.get("tab_add"):
         page_dict = search.select_page(curr_page_dict)
     elif c == tab_keys.get("tab_delete"):
-        page_dict = Tabs().delete_tab()
+        page_dict = tabs.delete_tab()
     elif c == tab_keys.get("tab_find"):
-        page_dict = Tabs().find_tab()
+        page_dict = tabs.find_tab()
     elif c == tab_keys.get("tab_next"):
-        page_dict = Tabs().next_tab()
+        page_dict = tabs.next_tab()
     elif c == tab_keys.get("tab_prev"):
-        page_dict = Tabs().prev_tab()
+        page_dict = tabs.prev_tab()
     else:
         page_dict = curr_page_dict
     return page_dict
@@ -108,7 +108,7 @@ def yank_urls(full_page=False):
     """Yank urls of visible boxes or all urls of the page."""
     urls = ""
     if full_page:
-        page_dict = Tabs().fpagedict()  # current tab/page
+        page_dict = tabs.fpagedict()  # current tab/page
         json_data = data.page_data(page_dict)
         if "url" in json_data["data"][0]:
             page_urls = data.get_entries(json_data, "url")

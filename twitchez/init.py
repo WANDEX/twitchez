@@ -8,7 +8,7 @@ from twitchez import keys_help
 from twitchez import render
 from twitchez import thumbnails
 from twitchez.keys import other_keys as k
-from twitchez.tabs import Tabs
+from twitchez import tabs
 import curses
 
 
@@ -22,7 +22,7 @@ def set_curses_start_defaults():
 def run(stdscr):
     global STDSCR
     STDSCR = stdscr  # override global STDSCR by the stdscr from wrapper
-    page_dict = Tabs().fpagedict()  # last used tab/page
+    page_dict = tabs.fpagedict()  # last used tab/page
     page = render.Page(page_dict)
 
     set_curses_start_defaults()
@@ -83,7 +83,7 @@ def run(stdscr):
             redraw()
             continue
         if c in keys.tab_keys.values():
-            page_dict = keys.tabs(c, page_dict)
+            page_dict = keys.tabs_action(c, page_dict)
             page = render.Page(page_dict)
             redraw()
             continue
