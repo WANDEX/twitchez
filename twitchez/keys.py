@@ -4,10 +4,11 @@
 from twitchez import data
 from twitchez import render
 from twitchez import search
+from twitchez import tabs
 from twitchez.clip import clip
 from twitchez.conf import key as ck
 from twitchez.notify import notify
-from twitchez import tabs
+from twitchez.render import Boxes
 
 hint_keys = {
     "hint_clip_url": ck("hint_clip_url"),
@@ -47,12 +48,12 @@ other_keys = {
 def hints(c):
     """Show hints, and make some action based on key and hint."""
     if c in hint_keys.values():
-        hints = render.Hints()
-        hint = hints.show_hints_boxes()
+        boxes = Boxes()
+        hint = boxes.show_hints_boxes()
         if c == hint_keys.get("hint_clip_url"):
-            hints.copy_url(hint)
+            boxes.copy_url(hint)
         elif c == hint_keys.get("hint_open_chat"):
-            hints.open_chat(hint)
+            boxes.open_chat(hint)
         else:
             if c == hint_keys.get("hint_open_stream"):
                 type = "stream"
@@ -62,7 +63,7 @@ def hints(c):
                 type = "extra"
             else:
                 type = "stream"
-            hints.open_url(hint, type)
+            boxes.open_url(hint, type)
         return True
     return False
 
