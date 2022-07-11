@@ -3,7 +3,6 @@
 
 from ast import literal_eval
 from twitchez import conf
-from twitchez import search
 from twitchez.iselect import iselect
 
 
@@ -28,7 +27,9 @@ def fpagedict(tab_name="") -> dict:
     else:
         page_dict_str = conf.tmp_get("page_dict", curtab(), tab_name)
     if not page_dict_str or page_dict_str == "Following Live":
-        return search.following_live()
+        # fix: to bypass probable circular import error
+        from twitchez.search import following_live
+        return following_live()
     try:
         page_dict = literal_eval(page_dict_str)
     except Exception as e:
