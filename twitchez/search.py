@@ -50,7 +50,7 @@ def following_live() -> dict:
     return page_dict
 
 
-def selected_category(fallback) -> dict:
+def selected_category(fallback: dict) -> dict:
     input = inputwin("category:")
     if not input:
         return fallback
@@ -72,7 +72,7 @@ def selected_category(fallback) -> dict:
     return page_dict
 
 
-def selected_channel(video_type, fallback) -> dict:
+def selected_channel(video_type, fallback: dict) -> dict:
     input = inputwin("channel:")
     if not input:
         return fallback
@@ -96,12 +96,11 @@ def selected_channel(video_type, fallback) -> dict:
     return page_dict
 
 
-def select_page(fallback) -> dict:
+def select_page(fallback: dict) -> dict:
     """Interactive select of page to open, return page_dict of that page or fallback page."""
     msel = "category streams\nchannel videos\nfollowing live"
     main_sel = iselect.iselect(msel, 130)
-    if main_sel == 130:
-        # handle cancel of the command
+    if main_sel == 130:  # handle cancel of the command
         return fallback
     if "following" in main_sel:
         return following_live()
@@ -111,6 +110,5 @@ def select_page(fallback) -> dict:
     vtypes = "archive\nclips\nhighlight\nupload"
     video_type = iselect.iselect(vtypes, 130)
     if video_type == 130:
-        # handle cancel of the command
         return fallback
     return selected_channel(video_type, fallback)

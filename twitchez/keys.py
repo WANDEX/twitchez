@@ -87,10 +87,10 @@ def scroll(c, page_draw):
     return False
 
 
-def tabs_action(c, curr_page_dict):
+def tabs_action(c, fallback: dict):
     """Tabs actions."""
     if c == tab_keys.get("tab_add"):
-        page_dict = search.select_page(curr_page_dict)
+        page_dict = search.select_page(fallback)
     elif c == tab_keys.get("tab_delete"):
         page_dict = tabs.delete_tab()
     elif c == tab_keys.get("tab_find"):
@@ -100,7 +100,7 @@ def tabs_action(c, curr_page_dict):
     elif c == tab_keys.get("tab_prev"):
         page_dict = tabs.prev_tab()
     else:
-        page_dict = curr_page_dict
+        page_dict = fallback
     return page_dict
 
 
