@@ -10,10 +10,10 @@ from twitchez.conf import key as ck
 from twitchez.notify import notify
 from twitchez.render import Boxes
 
-bookmark_keys = {
-    "bookmark_add": ck("bookmark_add"),
-    "bookmark_delete": ck("bookmark_delete"),
-    "bookmark_open": ck("bookmark_open"),
+bmark_keys = {
+    "bmark_add": ck("bmark_add"),
+    "bmark_delete": ck("bmark_delete"),
+    "bmark_open": ck("bmark_open"),
 }
 
 hint_keys = {
@@ -54,11 +54,11 @@ other_keys = {
 def bmark_action(c, fallback: dict):
     """Bookmark action based on key."""
     page_dict = fallback
-    if c == bookmark_keys.get("bookmark_add"):
+    if c == bmark_keys.get("bmark_add"):
         bmark.bmark_add()
-    elif c == bookmark_keys.get("bookmark_delete"):
+    elif c == bmark_keys.get("bmark_delete"):
         bmark.bmark_del()
-    elif c == bookmark_keys.get("bookmark_open"):
+    elif c == bmark_keys.get("bmark_open"):
         page_dict = bmark.bmark_open(fallback)
     return page_dict
 

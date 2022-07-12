@@ -79,7 +79,7 @@ def run(stdscr):
             else:
                 page.draw()
             continue
-        if c in keys.bookmark_keys.values():
+        if c in keys.bmark_keys.values():
             page_dict = keys.bmark_action(c, page_dict)
             page = render.Page(page_dict)
             redraw()
