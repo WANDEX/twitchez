@@ -16,7 +16,7 @@ def short_desc(string: str) -> str:
     """
     # Python 3.10.1 BUG:
     # >>> "tab_add".lstrip("tab_") => produces "dd" while it should be "add"
-    patterns_to_strip = ["scroll_", "hint_", "tab"]
+    patterns_to_strip = ["scroll_", "hint_", "tab", "bmark"]
     for pattern in patterns_to_strip:
         if string.startswith(pattern):
             string = string.lstrip(pattern)
@@ -67,7 +67,8 @@ def simple_tables(area_width) -> tuple[int, str]:
     tk = table_lines(keys.tab_keys, "[TABS]")
     hk = table_lines(keys.hint_keys, "[HINTS]")
     ok = table_lines(keys.other_keys, "[OTHER]")
-    tables = [sk, tk, hk, ok]
+    bk = table_lines(keys.bmark_keys, "[BMARK]")
+    tables = [sk, tk, hk, ok, bk]
     maxln = len(max(tables, key=len))  # max num of lines in table (max num of elements in list)
     maxlen = len(max(max(t, key=len) for t in tables))  # max length of longest line
     # make all tables of equal line count
@@ -75,12 +76,13 @@ def simple_tables(area_width) -> tuple[int, str]:
     tk = append_blank_lines(tk, maxln)
     hk = append_blank_lines(hk, maxln)
     ok = append_blank_lines(ok, maxln)
-    tables = [sk, tk, hk, ok]
+    bk = append_blank_lines(bk, maxln)
+    tables = [sk, tk, hk, ok, bk]
 
     # even spacing and indent from left
     maxcolnum = area_width // maxlen
-    if maxcolnum > 4:  # limit max number of table columns
-        maxcolnum = 4
+    if maxcolnum > 5:  # limit max number of table columns
+        maxcolnum = 5
     free_cols = area_width - int(maxlen * maxcolnum)
     if free_cols < maxcolnum or maxcolnum < 2:
         rem_on_col = 0
@@ -96,19 +98,26 @@ def simple_tables(area_width) -> tuple[int, str]:
 
     out = ""
     add_row = "\n\n"  # new lines for the new row of tables
+    # TODO: figure out how to make following code less ugly... (currently it is more like hardcoded)
     for num in range(len(tables), 0, -1):
         strtemplate = strtemplateraw * num
-        if num == 4:
+        if num == 5:
+            out += "\n".join(strtemplate.format(t1, t2, t3, t4, t5) for t1, t2, t3, t4, t5 in zip(sk, tk, hk, ok, bk))
+        elif num == 4:
             out += "\n".join(strtemplate.format(t1, t2, t3, t4) for t1, t2, t3, t4 in zip(sk, tk, hk, ok))
             out += add_row
+            out += "\n".join(strtemplateraw.format(t5) for t5 in bk)
         elif num == 3:
+            # FIXME
             out += "\n".join(strtemplate.format(t1, t2, t3) for t1, t2, t3 in zip(sk, tk, hk))
             out += add_row
-            out += "\n".join(strtemplateraw.format(t4) for t4 in ok)
+            out += "\n".join((strtemplateraw * 2).format(t4, t5) for t4, t5 in zip(ok, bk))
         elif num == 2:
             out += "\n".join(strtemplate.format(t1, t2) for t1, t2 in zip(sk, tk))
             out += add_row
             out += "\n".join(strtemplate.format(t3, t4) for t3, t4 in zip(hk, ok))
+            out += add_row
+            out += "\n".join(strtemplateraw.format(t5) for t5 in bk)
         elif num == 1:
             for _t in tables:
                 out += "\n".join(strtemplateraw.format(t1) for t1 in _t)
