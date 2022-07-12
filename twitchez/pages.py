@@ -20,8 +20,8 @@ class Pages:
         self.cache_file_name = f"{strws(self.page_name)}.json"
         # set page tmp vars for reusing in next/prev tab movement etc.
         conf.tmp_set("page_dict", self.page_dict, self.page_name)
-        conf.tmp_set("current_page_name", self.page_name, "TABS")
-        # each new Pages instance -> add to tabs page_name (if not already in tabs)
+        # each new Pages instance -> set as the current page
+        # and add to tabs page_name (if not already in tabs)
         add_tab(self.page_name)
 
     def cache_subdirs(self):

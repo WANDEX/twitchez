@@ -15,9 +15,15 @@ def tab_names() -> list:
     return tabs
 
 
+def cpnset(page_name):
+    """Set current page name."""
+    conf.tmp_set("current_page_name", page_name, "TABS")
+    return page_name
+
+
 def cpname():
-    """Get current page name, or 'Following Live' as fallback."""
-    return conf.tmp_get("current_page_name", "Following Live", "TABS")
+    """Get current page name."""
+    return conf.tmp_get("current_page_name", "", "TABS")
 
 
 def fpagedict(tab_name="") -> dict:
@@ -38,14 +44,19 @@ def fpagedict(tab_name="") -> dict:
 
 
 def add_tab(page_name):
-    cpn = cpname()
+    """Add page to the tabs list, set/update current page."""
     tabs = tab_names()
-    # don't add the same tab twice
-    if page_name not in tabs:
-        if not tabs or cpn not in tabs:
+    cpn = cpname()
+    # set/update current page name
+    if not cpn or cpn != page_name:
+        cpn = cpnset(page_name)
+        if cpn not in tabs:
             tabs.append(cpn)
-            if page_name not in tabs:
-                tabs.append(page_name)
+            conf.tmp_set("tabs", tabs, "TABS")
+    # do not add the same tab twice
+    if page_name not in tabs:
+        if not tabs:
+            tabs.append(page_name)
         else:
             # find index of current page name and insert new tab after that index
             cindex = tabs.index(cpn)
