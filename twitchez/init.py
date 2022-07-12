@@ -92,13 +92,20 @@ def run(stdscr):
             page = render.Page(page_dict)
             redraw()
             continue
-        if keys.hints(c):
-            # clear possible fulltitle str
-            # hide previously shown hints etc.
-            STDSCR.clear()
-            page.draw()
-            continue
         if keys.yank(c):
+            continue
+        if c in keys.hint_keys.values():
+            # FIXME: redraw all if resize occurred after hints drawing!
+            #  if STDSCR.get_wch() == curses.KEY_RESIZE:
+            #      redraw()
+            if keys.hints(c):
+                # clear possible fulltitle str
+                # hide previously shown hints etc.
+                STDSCR.clear()
+                page.draw()
+            else:
+                # redraw all especially thumbnails!
+                redraw()
             continue
     thumbnails.Draw().finish()
     sleep(0.3)
