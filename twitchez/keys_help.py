@@ -9,8 +9,6 @@ from twitchez import thumbnails
 import curses
 import re
 
-SIMPLE_TEXT = True
-
 
 def short_desc(string: str) -> str:
     """Make short readable description by removing one of specific patterns from string.
@@ -147,62 +145,6 @@ def push_text(win, text: str, pos=0):
     win.refresh()
 
 
-def table_generate(keysdict, header) -> str:
-    """Generate simple string as table of keys and their description.
-    (for table using curses windows)
-    """
-    table = ""
-    if header:
-        table += f"\t{header}\n"
-    for name, key in keysdict.items():
-        desc = short_desc(name)
-        table += "{:4} {:10}\n".format(key, desc)
-    return table
-
-
-def curse_tables(pad, pos=0):
-    pad.clear()
-    sk = table_generate(keys.scroll_keys, "SCROLL")
-    tk = table_generate(keys.tab_keys, "TABS")
-    hk = table_generate(keys.hint_keys, "HINTS")
-    ok = table_generate(keys.other_keys, "OTHER")
-    tables = [sk, tk, hk, ok]
-    maxln, maxlen = 0, 16
-    for t in tables:
-        longest_line = max(str(t).splitlines())  # longest line in table
-        maxlen = max(maxlen, len(longest_line))  # max length of longest line
-        maxln = max(maxln, t.count("\n"))  # max total lines in table
-    H, W = pad.getmaxyx()
-    # spacing between elements
-    spacing = maxlen + 4
-    cols = W // spacing
-    try:  # for more even spacing between elements
-        sc = (W - int(cols * spacing)) // cols
-    except ZeroDivisionError:
-        sc = 0
-    spacing += sc
-    y, x = 1, sc
-    current_col = 1
-    next_row = maxln + 1
-    for t in tables:
-        # fix: if not enough space -> do not try to create subwin
-        if cols < 1 or W < x or H < y + next_row:
-            break
-        subwin = pad.derwin(y, x)
-        subwin.addstr(t)
-        subwin.refresh()
-        if current_col < cols:
-            current_col += 1
-            x += spacing
-        else:
-            current_col = 1
-            x = sc
-            y += next_row
-    pad.scroll(pos)
-    pad.refresh()
-    return maxln
-
-
 def help():
     """Draw help window with key mappings and their description."""
     H, W = STDSCR.getmaxyx()
@@ -239,12 +181,8 @@ def help():
     pad = win.subpad(pad_h, pad_w, pad_y, pad_x)
     pad.scrollok(True)
 
-    table = ""
-    if SIMPLE_TEXT:
-        tln, table = simple_tables(pad_w)
-        push_text(pad, table)
-    else:
-        tln = curse_tables(pad)
+    tln, table = simple_tables(pad_w)
+    push_text(pad, table)
 
     end = tln - pad_h
     pos = 0
@@ -271,10 +209,7 @@ def help():
                     pos = 0
                 elif pos > end:
                     pos = end
-                if SIMPLE_TEXT:
-                    push_text(pad, table, pos)
-                else:
-                    curse_tables(pad, pos)
+                push_text(pad, table, pos)
                 continue
         if c in close_help_keys:
             pad.clear()
