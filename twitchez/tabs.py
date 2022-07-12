@@ -15,7 +15,7 @@ def tab_names() -> list:
     return tabs
 
 
-def curtab():
+def cpname():
     """Get current page name, or 'Following Live' as fallback."""
     return conf.tmp_get("current_page_name", "Following Live", "TABS")
 
@@ -23,9 +23,9 @@ def curtab():
 def fpagedict(tab_name="") -> dict:
     """Find and return page dict by the tab name or for current tab."""
     if not tab_name:  # return page_dict of current tab/page
-        page_dict_str = conf.tmp_get("page_dict", "", curtab())
+        page_dict_str = conf.tmp_get("page_dict", "", cpname())
     else:
-        page_dict_str = conf.tmp_get("page_dict", curtab(), tab_name)
+        page_dict_str = conf.tmp_get("page_dict", cpname(), tab_name)
     if not page_dict_str or page_dict_str == "Following Live":
         # fix: to bypass probable circular import error
         from twitchez.search import following_live
@@ -38,29 +38,38 @@ def fpagedict(tab_name="") -> dict:
 
 
 def add_tab(page_name):
-    current_page_name = curtab()
+    cpn = cpname()
     tabs = tab_names()
     # don't add the same tab twice
     if page_name not in tabs:
-        if not tabs or current_page_name not in tabs:
-            tabs.append(current_page_name)
+        if not tabs or cpn not in tabs:
+            tabs.append(cpn)
             if page_name not in tabs:
                 tabs.append(page_name)
         else:
             # find index of current page name and insert new tab after that index
-            cindex = tabs.index(current_page_name)
+            cindex = tabs.index(cpn)
             nindex = cindex + 1
             tabs.insert(nindex, page_name)
         conf.tmp_set("tabs", tabs, "TABS")
 
 
-def delete_tab():
-    """Delete current tab and return page_dict of the previous tab."""
-    ptabname = prev_tab(tab_name=True)
+def delete_tab(page_name=""):
+    """Delete tab by page name or current tab/page and return page_dict of the previous tab."""
+    ctab = cpname()
     tabs = tab_names()
-    tabs.remove(curtab())
+    if (page_name != ctab and page_name in tabs):
+        tab_to_delete = page_name
+        tab_to_jump = ctab
+    else:
+        tab_to_delete = ctab
+        tab_to_jump = prev_tab(tab_name=True)
+
+    if (tab_to_delete in tabs):
+        tabs.remove(tab_to_delete)
+
     conf.tmp_set("tabs", tabs, "TABS")
-    return fpagedict(ptabname)
+    return fpagedict(tab_to_jump)
 
 
 def find_tab() -> dict:
@@ -71,14 +80,14 @@ def find_tab() -> dict:
     # handle cancel of the command
     if tabname == 130:
         # fallback to current tab
-        return fpagedict(curtab())
+        return fpagedict(cpname())
     return fpagedict(tabname)
 
 
 def next_tab(tab_name=False):
     """Return page_dict for the next tab name (carousel) or simply tab_name."""
     tabs = tab_names()
-    cindex = tabs.index(curtab())
+    cindex = tabs.index(cpname())
     nindex = cindex + 1
     if nindex > len(tabs) - 1:
         ntabname = tabs[0]
@@ -93,7 +102,7 @@ def next_tab(tab_name=False):
 def prev_tab(tab_name=False):
     """Return page_dict for the prev tab name (carousel) or simply tab_name."""
     tabs = tab_names()
-    cindex = tabs.index(curtab())
+    cindex = tabs.index(cpname())
     pindex = cindex - 1
     ptabname = tabs[pindex]
     if tab_name:
