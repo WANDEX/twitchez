@@ -26,6 +26,11 @@ def cpname():
     return conf.tmp_get("current_page_name", "", "TABS")
 
 
+def cpdict():
+    """Get current page dict."""
+    return fpagedict(cpname())
+
+
 def fpagedict(tab_name="") -> dict:
     """Find and return page dict by the tab name or for current tab."""
     if not tab_name:  # return page_dict of current tab/page
@@ -83,15 +88,14 @@ def delete_tab(page_name=""):
     return fpagedict(tab_to_jump)
 
 
-def find_tab() -> dict:
-    """Find and return page dict of selected tab."""
+def find_tab(fallback=cpdict()) -> dict:
+    """Find and return page dict of selected tab or fallback to current tab (by default)."""
     tabs = tab_names()
     mulstr = "\n".join(tabs)  # each list element on it's own line
     tabname = iselect(mulstr, 130)
     # handle cancel of the command
     if tabname == 130:
-        # fallback to current tab
-        return fpagedict(cpname())
+        return fallback
     return fpagedict(tabname)
 
 

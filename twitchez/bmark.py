@@ -29,7 +29,10 @@ def bmark_save(page_name: str, page_dict: dict):
 
 def bmark_add():
     """Find tab and save as bookmark."""
-    page_dict = find_tab()
+    page_dict = find_tab({})
+    # handle cancel of the command
+    if not page_dict:
+        return
     page_name = page_dict.get("page_name")
     bmark_save(page_name, page_dict)
 
