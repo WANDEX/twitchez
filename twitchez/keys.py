@@ -2,7 +2,6 @@
 # coding=utf-8
 
 from twitchez import data
-from twitchez import render
 from twitchez import search
 from twitchez import tabs
 from twitchez.clip import clip
@@ -116,7 +115,7 @@ def yank_urls(full_page=False):
             for url in page_urls:
                 urls += f"{url}\n"
     else:
-        for box in render.Boxes.drawn_boxes:
+        for box in Boxes.drawn_boxes:
             urls += f"{box.url}\n"
     if urls:
         clip(urls)
