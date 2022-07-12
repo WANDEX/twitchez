@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from twitchez import bmark
 from twitchez import data
 from twitchez import search
 from twitchez import tabs
@@ -8,6 +9,12 @@ from twitchez.clip import clip
 from twitchez.conf import key as ck
 from twitchez.notify import notify
 from twitchez.render import Boxes
+
+bookmark_keys = {
+    "bookmark_add": ck("bookmark_add"),
+    "bookmark_delete": ck("bookmark_delete"),
+    "bookmark_open": ck("bookmark_open"),
+}
 
 hint_keys = {
     "hint_clip_url": ck("hint_clip_url"),
@@ -42,6 +49,18 @@ other_keys = {
     "yank_urls": ck("yank_urls"),
     "yank_urls_page": ck("yank_urls_page"),
 }
+
+
+def bmark_action(c, fallback: dict):
+    """Bookmark action based on key."""
+    page_dict = fallback
+    if c == bookmark_keys.get("bookmark_add"):
+        bmark.bmark_add()
+    elif c == bookmark_keys.get("bookmark_delete"):
+        bmark.bmark_del()
+    elif c == bookmark_keys.get("bookmark_open"):
+        page_dict = bmark.bmark_open(fallback)
+    return page_dict
 
 
 def hints(c):
