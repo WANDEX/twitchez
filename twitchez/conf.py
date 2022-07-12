@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from configparser import ConfigParser
+from configparser import ConfigParser, NoSectionError
 from pathlib import Path
 from twitchez import TWITCHEZDIR, fs
 
@@ -129,4 +129,7 @@ def dta_list(section="GENERAL", fpath="") -> list:
     """Return a list of (name, value) tuples for each option in a section."""
     fpath = dta_file(fpath)
     dta, _ = cp_dta(fpath)
-    return dta.items(section)
+    try:
+        return dta.items(section)
+    except NoSectionError:
+        return []
