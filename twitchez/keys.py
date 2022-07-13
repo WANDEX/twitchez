@@ -115,9 +115,9 @@ def tabs_action(ch: str, fallback: dict):
     elif ch == tab_keys.get("tab_find"):
         page_dict = tabs.find_tab()
     elif ch == tab_keys.get("tab_next"):
-        page_dict = tabs.next_tab()
+        page_dict, _ = tabs.next_tab()
     elif ch == tab_keys.get("tab_prev"):
-        page_dict = tabs.prev_tab()
+        page_dict, _ = tabs.prev_tab()
     else:
         page_dict = fallback
     return page_dict
@@ -127,7 +127,7 @@ def yank_urls(full_page=False):
     """Yank urls of visible boxes or all urls of the page."""
     urls = ""
     if full_page:
-        page_dict = tabs.fpagedict()  # current tab/page
+        page_dict = tabs.cpdict()  # current page/tab
         json_data = data.page_data(page_dict)
         if "url" in json_data["data"][0]:
             page_urls = data.get_entries(json_data, "url")

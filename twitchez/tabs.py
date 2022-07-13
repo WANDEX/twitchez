@@ -5,11 +5,13 @@ from ast import literal_eval
 from twitchez import conf
 from twitchez.iselect import iselect
 
+SECT = "TABS"
+
 
 def tab_names() -> list:
     """Return list of tab names"""
     try:
-        tabs = literal_eval(conf.tmp_get("tabs", [], "TABS"))
+        tabs = literal_eval(conf.tmp_get("tabs", [], SECT))
     except ValueError:  # handle literal_eval() error with empty list
         tabs = []
     return tabs
@@ -23,45 +25,45 @@ def tab_upd(page_name: str, page_dict: dict):
     add_tab(page_name)
 
 
-def cpnset(page_name):
+def cpnset(page_name: str) -> str:
     """Set current page name."""
-    conf.tmp_set("current_page_name", page_name, "TABS")
+    conf.tmp_set("current_page_name", page_name, "CTAB")
     return page_name
 
 
-def cpname():
+def cpname() -> str:
     """Get current page name."""
-    return conf.tmp_get("current_page_name", "", "TABS")
+    return conf.tmp_get("current_page_name", "", "CTAB")
 
 
-def cpdict():
+def cpdict() -> dict:
     """Get current page dict."""
-    return fpagedict(cpname())
+    return pdict(cpname())
 
 
 def tabs_upd(tabs: list):
     """Update/set list of tabs."""
-    conf.tmp_set("tabs", tabs, "TABS")
+    conf.tmp_set("tabs", tabs, SECT)
 
 
-def fpagedict(tab_name="") -> dict:
-    """Find and return page dict by the tab name or for current tab."""
-    if not tab_name:  # return page_dict of current tab/page
-        page_dict_str = conf.tmp_get("page_dict", "", cpname())
+def pdict(page_name="") -> dict:
+    """Return page dict by the page name or (current tab/page by default)."""
+    if not page_name:  # return page_dict of current tab/page
+        pdict_str = conf.tmp_get("page_dict", "", cpname())
     else:
-        page_dict_str = conf.tmp_get("page_dict", cpname(), tab_name)
-    if not page_dict_str or page_dict_str == "Following Live":
+        pdict_str = conf.tmp_get("page_dict", cpname(), page_name)
+    if not pdict_str:  # fallback to following live page
         # fix: to bypass probable circular import error
         from twitchez.search import following_live
         return following_live()
     try:
-        page_dict = literal_eval(page_dict_str)
+        page_dict = literal_eval(pdict_str)
     except Exception as e:
-        raise ValueError(f"page_dict_str: '{page_dict_str}'\n{e}")
+        raise ValueError(f"pdict_str: '{pdict_str}'\n{e}")
     return page_dict
 
 
-def add_tab(page_name):
+def add_tab(page_name: str):
     """Add page to the tabs list, set/update current page."""
     tabs = tab_names()
     cpn = cpname()
@@ -83,7 +85,7 @@ def add_tab(page_name):
         tabs_upd(tabs)
 
 
-def delete_tab(page_name=""):
+def delete_tab(page_name="") -> dict:
     """Delete tab by page name or current tab/page and return page_dict of the previous tab."""
     ctab = cpname()
     tabs = tab_names()
@@ -92,13 +94,13 @@ def delete_tab(page_name=""):
         tab_to_jump = ctab
     else:
         tab_to_delete = ctab
-        tab_to_jump = prev_tab(tab_name=True)
+        _, tab_to_jump = prev_tab()
 
     if (tab_to_delete in tabs):
         tabs.remove(tab_to_delete)
 
     tabs_upd(tabs)
-    return fpagedict(tab_to_jump)
+    return pdict(tab_to_jump)
 
 
 def find_tab(fallback=cpdict()) -> dict:
@@ -109,11 +111,11 @@ def find_tab(fallback=cpdict()) -> dict:
     # handle cancel of the command
     if tabname == 130:
         return fallback
-    return fpagedict(tabname)
+    return pdict(tabname)
 
 
-def next_tab(tab_name=False):
-    """Return page_dict for the next tab name (carousel) or simply tab_name."""
+def next_tab() -> tuple[dict, str]:
+    """Return (page_dict, page_name) tuple of the next tab (carousel)."""
     tabs = tab_names()
     cindex = tabs.index(cpname())
     nindex = cindex + 1
@@ -121,19 +123,13 @@ def next_tab(tab_name=False):
         ntabname = tabs[0]
     else:
         ntabname = tabs[nindex]
-    if tab_name:
-        return ntabname
-    else:
-        return fpagedict(ntabname)
+    return pdict(ntabname), ntabname
 
 
-def prev_tab(tab_name=False):
-    """Return page_dict for the prev tab name (carousel) or simply tab_name."""
+def prev_tab() -> tuple[dict, str]:
+    """Return (page_dict, page_name) tuple of the prev tab (carousel)."""
     tabs = tab_names()
     cindex = tabs.index(cpname())
     pindex = cindex - 1
     ptabname = tabs[pindex]
-    if tab_name:
-        return ptabname
-    else:
-        return fpagedict(ptabname)
+    return pdict(ptabname), ptabname

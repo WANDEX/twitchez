@@ -22,7 +22,7 @@ def set_curses_start_defaults():
 def run(stdscr):
     global STDSCR
     STDSCR = stdscr  # override global STDSCR by the stdscr from wrapper
-    page_dict = tabs.fpagedict()  # last used tab/page
+    page_dict = tabs.cpdict()  # last used page/tab
     page = render.Page(page_dict)
 
     set_curses_start_defaults()
