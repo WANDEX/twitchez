@@ -41,8 +41,11 @@ def run(stdscr):
 
     # Infinite loop to read every key press.
     while True:
-        c = STDSCR.get_wch()
-        if isinstance(c, int) and c == curses.KEY_RESIZE:  # terminal resize event
+        wch = STDSCR.get_wch()
+        # explicit type conversion to be absolutely sure about character type!
+        ci = int(wch) if isinstance(wch, int) else 0  # int else fallback to 0
+        ch = str(wch)
+        if ci == curses.KEY_RESIZE:  # terminal resize event
             # fix: handle crazy multiple repeated window resizing initiated by the user
             # NOTE: this introduces slight redraw delay after resize but fixes crashes
             while True:
@@ -56,21 +59,20 @@ def run(stdscr):
             # redraw & start loop again without further more complex execution
             redraw()
             continue
-        c = str(c)  # convert character to string
         h, w = STDSCR.getmaxyx()
         # Show last pressed key chars at the bottom-right corner.
-        STDSCR.insstr(h - 1, w - 4, c)
-        if c == k.get("quit"):
+        STDSCR.insstr(h - 1, w - 4, ch)
+        if ch == k.get("quit"):
             break
-        if c == k.get("redraw"):
+        if ch == k.get("redraw"):
             page = render.Page(page_dict)
             redraw()
             continue
-        if c == k.get("keys_help") or c == str(curses.KEY_F1):
+        if ch == k.get("keys_help") or ci == curses.KEY_F1:
             keys_help.help()
             redraw()
             continue
-        if c == k.get("full_title"):
+        if ch == k.get("full_title"):
             STDSCR.clear()
             fbox = render.Boxes.drawn_boxes[0]
             # toggle full title drawing
@@ -79,26 +81,26 @@ def run(stdscr):
             else:
                 page.draw()
             continue
-        if c in keys.bmark_keys.values():
-            page_dict = keys.bmark_action(c, page_dict)
+        if ch in keys.bmark_keys.values():
+            page_dict = keys.bmark_action(ch, page_dict)
             page = render.Page(page_dict)
             redraw()
             continue
-        if keys.scroll(c, page.draw):
+        if keys.scroll(ch, page.draw):
             redraw()
             continue
-        if c in keys.tab_keys.values():
-            page_dict = keys.tabs_action(c, page_dict)
+        if ch in keys.tab_keys.values():
+            page_dict = keys.tabs_action(ch, page_dict)
             page = render.Page(page_dict)
             redraw()
             continue
-        if keys.yank(c):
+        if keys.yank(ch):
             continue
-        if c in keys.hint_keys.values():
+        if ch in keys.hint_keys.values():
             # FIXME: redraw all if resize occurred after hints drawing!
             #  if STDSCR.get_wch() == curses.KEY_RESIZE:
             #      redraw()
-            if keys.hints(c):
+            if keys.hints(ch):
                 # clear possible fulltitle str
                 # hide previously shown hints etc.
                 STDSCR.clear()

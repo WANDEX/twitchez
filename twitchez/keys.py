@@ -51,33 +51,33 @@ other_keys = {
 }
 
 
-def bmark_action(c, fallback: dict):
+def bmark_action(ch: str, fallback: dict):
     """Bookmark action based on key."""
     page_dict = fallback
-    if c == bmark_keys.get("bmark_add"):
+    if ch == bmark_keys.get("bmark_add"):
         bmark.bmark_add()
-    elif c == bmark_keys.get("bmark_delete"):
+    elif ch == bmark_keys.get("bmark_delete"):
         bmark.bmark_del()
-    elif c == bmark_keys.get("bmark_open"):
+    elif ch == bmark_keys.get("bmark_open"):
         page_dict = bmark.bmark_open(fallback)
     return page_dict
 
 
-def hints(c):
+def hints(ch: str):
     """Show hints, and make some action based on key and hint."""
-    if c in hint_keys.values():
+    if ch in hint_keys.values():
         boxes = Boxes()
         hint = boxes.show_hints_boxes()
-        if c == hint_keys.get("hint_clip_url"):
+        if ch == hint_keys.get("hint_clip_url"):
             boxes.copy_url(hint)
-        elif c == hint_keys.get("hint_open_chat"):
+        elif ch == hint_keys.get("hint_open_chat"):
             boxes.open_chat(hint)
         else:
-            if c == hint_keys.get("hint_open_stream"):
+            if ch == hint_keys.get("hint_open_stream"):
                 type = "stream"
-            elif c == hint_keys.get("hint_open_video"):
+            elif ch == hint_keys.get("hint_open_video"):
                 type = "video"
-            elif c == hint_keys.get("hint_open_extra"):
+            elif ch == hint_keys.get("hint_open_extra"):
                 type = "extra"
             else:
                 type = "stream"
@@ -86,37 +86,37 @@ def hints(c):
     return False
 
 
-def scroll(c, page_draw):
+def scroll(ch: str, page_draw):
     """Scroll page."""
-    if c in scroll_keys.values():
+    if ch in scroll_keys.values():
         grid = page_draw()
-        if c == scroll_keys.get("scroll_down"):
+        if ch == scroll_keys.get("scroll_down"):
             grid.shift_index("down")
-        elif c == scroll_keys.get("scroll_up"):
+        elif ch == scroll_keys.get("scroll_up"):
             grid.shift_index("up")
-        elif c == scroll_keys.get("scroll_down_page"):
+        elif ch == scroll_keys.get("scroll_down_page"):
             grid.shift_index("down", page=True)
-        elif c == scroll_keys.get("scroll_up_page"):
+        elif ch == scroll_keys.get("scroll_up_page"):
             grid.shift_index("up", page=True)
-        elif c == scroll_keys.get("scroll_top"):
+        elif ch == scroll_keys.get("scroll_top"):
             grid.shift_index("top")
-        elif c == scroll_keys.get("scroll_bot"):
+        elif ch == scroll_keys.get("scroll_bot"):
             grid.shift_index("bot")
         return True
     return False
 
 
-def tabs_action(c, fallback: dict):
+def tabs_action(ch: str, fallback: dict):
     """Tabs actions."""
-    if c == tab_keys.get("tab_add"):
+    if ch == tab_keys.get("tab_add"):
         page_dict = search.select_page(fallback)
-    elif c == tab_keys.get("tab_delete"):
+    elif ch == tab_keys.get("tab_delete"):
         page_dict = tabs.delete_tab()
-    elif c == tab_keys.get("tab_find"):
+    elif ch == tab_keys.get("tab_find"):
         page_dict = tabs.find_tab()
-    elif c == tab_keys.get("tab_next"):
+    elif ch == tab_keys.get("tab_next"):
         page_dict = tabs.next_tab()
-    elif c == tab_keys.get("tab_prev"):
+    elif ch == tab_keys.get("tab_prev"):
         page_dict = tabs.prev_tab()
     else:
         page_dict = fallback
@@ -142,11 +142,11 @@ def yank_urls(full_page=False):
         notify("This page does not have 'url' entries in json data.")
 
 
-def yank(c):
-    if c == other_keys.get("yank_urls") or c == other_keys.get("yank_urls_page"):
-        if c == other_keys.get("yank_urls"):
+def yank(ch: str):
+    if ch == other_keys.get("yank_urls") or ch == other_keys.get("yank_urls_page"):
+        if ch == other_keys.get("yank_urls"):
             yank_urls()
-        elif c == other_keys.get("yank_urls_page"):
+        elif ch == other_keys.get("yank_urls_page"):
             yank_urls(full_page=True)
         return True
     return False
