@@ -3,6 +3,7 @@
 
 from ast import literal_eval
 from twitchez import conf
+from twitchez import paged
 from twitchez.iselect import iselect
 
 SECT = "TABS"
@@ -52,10 +53,8 @@ def pdict(page_name="") -> dict:
         pdict_str = conf.tmp_get("page_dict", "", cpname())
     else:
         pdict_str = conf.tmp_get("page_dict", cpname(), page_name)
-    if not pdict_str:  # fallback to following live page
-        # fix: to bypass probable circular import error
-        from twitchez.search import following_live
-        return following_live()
+    if not pdict_str or pdict_str == paged.FLPN or page_name == paged.FLPN:
+        return paged.following_live()  # fallback to following live page
     try:
         page_dict = literal_eval(pdict_str)
     except Exception as e:

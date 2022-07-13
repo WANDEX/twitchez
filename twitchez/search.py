@@ -5,6 +5,7 @@ from twitchez import ENCODING
 from twitchez import STDSCR
 from twitchez import data
 from twitchez import iselect
+from twitchez import paged
 from twitchez.notify import notify
 import curses
 import re
@@ -39,17 +40,6 @@ def inputwin(prompt: str) -> str:
     return decoded
 
 
-def following_live() -> dict:
-    """Following Live page dict."""
-    page_name = "Following Live"
-    page_dict = {
-        "type": "streams",
-        "category": page_name,
-        "page_name": page_name,
-    }
-    return page_dict
-
-
 def selected_category(fallback: dict) -> dict:
     input = inputwin("category:")
     if not input:
@@ -63,12 +53,7 @@ def selected_category(fallback: dict) -> dict:
     sel_id = re.search(id_pattern, selection).group(1)
     category_id = sel_id
     category_name = sel_name
-    page_dict = {
-        "type": "streams",
-        "category": category_name,
-        "page_name": category_name,
-        "category_id": category_id
-    }
+    page_dict = paged.stream(category_name, category_id)
     return page_dict
 
 
@@ -86,13 +71,7 @@ def selected_channel(video_type, fallback: dict) -> dict:
     sel_user = re.sub(r"^.*\s", "", __sel_user).strip()
     user_id = sel_id
     user_name = sel_user
-    page_dict = {
-        "type": "videos",
-        "category": video_type,
-        "page_name": f"{user_name} ({video_type})",
-        "user_name": user_name,
-        "user_id": user_id
-    }
+    page_dict = paged.video(video_type, user_id, user_name)
     return page_dict
 
 
@@ -103,7 +82,7 @@ def select_page(fallback: dict) -> dict:
     if main_sel == 130:  # handle cancel of the command
         return fallback
     if "following" in main_sel:
-        return following_live()
+        return paged.following_live()
     elif "streams" in main_sel:
         return selected_category(fallback)
     # => videos page
