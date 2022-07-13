@@ -39,6 +39,11 @@ def cpdict():
     return fpagedict(cpname())
 
 
+def tabs_upd(tabs: list):
+    """Update/set list of tabs."""
+    conf.tmp_set("tabs", tabs, "TABS")
+
+
 def fpagedict(tab_name="") -> dict:
     """Find and return page dict by the tab name or for current tab."""
     if not tab_name:  # return page_dict of current tab/page
@@ -65,7 +70,7 @@ def add_tab(page_name):
         cpn = cpnset(page_name)
         if cpn not in tabs:
             tabs.append(cpn)
-            conf.tmp_set("tabs", tabs, "TABS")
+            tabs_upd(tabs)
     # do not add the same tab twice
     if page_name not in tabs:
         if not tabs:
@@ -75,7 +80,7 @@ def add_tab(page_name):
             cindex = tabs.index(cpn)
             nindex = cindex + 1
             tabs.insert(nindex, page_name)
-        conf.tmp_set("tabs", tabs, "TABS")
+        tabs_upd(tabs)
 
 
 def delete_tab(page_name=""):
@@ -92,7 +97,7 @@ def delete_tab(page_name=""):
     if (tab_to_delete in tabs):
         tabs.remove(tab_to_delete)
 
-    conf.tmp_set("tabs", tabs, "TABS")
+    tabs_upd(tabs)
     return fpagedict(tab_to_jump)
 
 
