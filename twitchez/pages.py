@@ -3,13 +3,12 @@
 
 from pathlib import Path
 from twitchez import HEADER_H
-from twitchez import conf
 from twitchez import data
 from twitchez import render
 from twitchez import thumbnails
 from twitchez import utils
 from twitchez.utils import strws
-from twitchez.tabs import add_tab
+from twitchez.tabs import tab_upd
 
 
 class Pages:
@@ -18,11 +17,7 @@ class Pages:
         self.page_dict = page_dict
         self.page_name = page_dict["page_name"]
         self.cache_file_name = f"{strws(self.page_name)}.json"
-        # set page tmp vars for reusing in next/prev tab movement etc.
-        conf.tmp_set("page_dict", self.page_dict, self.page_name)
-        # each new Pages instance -> set as the current page
-        # and add to tabs page_name (if not already in tabs)
-        add_tab(self.page_name)
+        tab_upd(self.page_name, self.page_dict)  # => update tabs
 
     def cache_subdirs(self):
         """Return list of subdirs (to unpack them later as args)."""

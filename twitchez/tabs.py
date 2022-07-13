@@ -15,6 +15,14 @@ def tab_names() -> list:
     return tabs
 
 
+def tab_upd(page_name: str, page_dict: dict):
+    """Update tabs, update current & add page as the new tab (if not exist)."""
+    # set page tmp vars for reusing in next/prev tab movement etc.
+    conf.tmp_set("page_dict", page_dict, page_name)
+    # add/set current/new tab as page_name (if not already in tabs)
+    add_tab(page_name)
+
+
 def cpnset(page_name):
     """Set current page name."""
     conf.tmp_set("current_page_name", page_name, "TABS")
