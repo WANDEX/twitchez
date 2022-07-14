@@ -246,8 +246,10 @@ class Draw:
 
     def __check_wait(self):
         """Check FINISH condition every sleep interval N loops.
+        NOTE: this is to make the thumbnails blink less frequently,
+        but also at the same time be able to quickly stop drawing at any time.
         formula: loops_num * sleep_time = blink interval in sec
-        (time after which thumbnails will blink once and will be redrawn)
+        (time after which thumbnails will blink once - will be redrawn)
         """
         loops_num = 1200
         sleep_time = .25
