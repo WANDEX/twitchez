@@ -6,7 +6,7 @@ from pathlib import Path
 from twitchez import conf
 from twitchez import fs
 from twitchez.iselect import iselect
-from twitchez.tabs import find_tab
+from twitchez.tabs import find_tab, cpname_set, tab_add_new
 
 bmsf = Path(fs.get_data_dir("data"), "bookmarks").resolve().as_posix()
 SECT = "BMARKS"
@@ -67,4 +67,6 @@ def bmark_open(fallback: dict) -> dict:
     bname, bdict = bmark_find()
     if (not bname or not bdict):
         return fallback
+    tab_add_new(bname)
+    cpname_set(bname)
     return bdict

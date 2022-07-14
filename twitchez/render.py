@@ -12,7 +12,7 @@ from twitchez import open_cmd
 from twitchez import pages
 from twitchez import utils
 from twitchez.clip import clip
-from twitchez.tabs import tab_names
+from twitchez.tabs import tab_names_ordered
 from twitchez.thumbnails import container_size
 import curses
 
@@ -317,7 +317,7 @@ class Page:
         other_tabs = ""
         # tab order where current page is always first in list (to look as carousel)
         taborder = []
-        tnames = tab_names()
+        tnames = tab_names_ordered()
         cpni = tnames.index(c_page)
         taborder.extend(tnames[cpni:])
         taborder.extend(tnames[:cpni])
