@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from time import sleep
 from twitchez import STDSCR
 from twitchez import keys
 from twitchez import keys_help
 from twitchez import render
+from twitchez import tabs
 from twitchez import thumbnails
 from twitchez.keys import other_keys as k
-from twitchez import tabs
+
+from collections.abc import Callable
 import curses
 
 
@@ -17,6 +18,54 @@ def set_curses_start_defaults():
     curses.use_default_colors()
     curses.curs_set(0)   # Turn off cursor
     STDSCR.keypad(True)  # human friendly: curses.KEY_LEFT etc.
+
+
+def wch() -> tuple[str, int, bool]:
+    """Handle exceptions, and return character variables with explicit type."""
+    try:
+        wch = STDSCR.get_wch()
+    except KeyboardInterrupt:
+        thumbnails.Draw().finish()
+        STDSCR.clear()
+        curses.endwin()
+        curses.napms(300)
+        return "", 0, True  # fail/interrupt is True => break
+    # explicit type conversion to be absolutely sure about character type!
+    ci = int(wch) if isinstance(wch, int) else 0  # int else fallback to 0
+    ch = str(wch)
+    return ch, ci, False
+
+
+def handle_resize(ci: int, redrawall: Callable):
+    """Handle resize events, short pause(in case many), redraw everything."""
+    if ci == curses.KEY_RESIZE:  # terminal resize event
+        # fix: handle crazy multiple repeated window resizing initiated by the user
+        # NOTE: this introduces slight redraw delay after resize but fixes crashes
+        while True:
+            curses.napms(250)
+            nlines, ncols = STDSCR.getmaxyx()
+            if curses.is_term_resized(nlines, ncols):
+                curses.napms(750)
+                continue
+            else:
+                break
+        # redraw -> True -> continue -> start loop from beginning
+        # without further more complex execution
+        redrawall()
+        return True
+    return False
+
+
+def show_pressed_chars(ch: str, ci: int):
+    """Show last pressed key chars at the bottom-right corner."""
+    h, w = STDSCR.getmaxyx()
+    try:
+        if ci != 0:
+            STDSCR.insstr(h - 1, w - 8, f" ci:{ci} ")
+        else:
+            STDSCR.insstr(h - 1, w - 8, ch)
+    except ValueError:  # bypass ValueError: embedded null character
+        pass
 
 
 def run(stdscr):
@@ -41,27 +90,13 @@ def run(stdscr):
 
     # Infinite loop to read every key press.
     while True:
-        wch = STDSCR.get_wch()
-        # explicit type conversion to be absolutely sure about character type!
-        ci = int(wch) if isinstance(wch, int) else 0  # int else fallback to 0
-        ch = str(wch)
-        if ci == curses.KEY_RESIZE:  # terminal resize event
-            # fix: handle crazy multiple repeated window resizing initiated by the user
-            # NOTE: this introduces slight redraw delay after resize but fixes crashes
-            while True:
-                sleep(.25)
-                nlines, ncols = STDSCR.getmaxyx()
-                if curses.is_term_resized(nlines, ncols):
-                    sleep(.75)
-                    continue
-                else:
-                    break
-            # redraw & start loop again without further more complex execution
-            redraw()
+        ch, ci, interrupt = wch()
+        if interrupt:
+            break
+        if handle_resize(ci, redraw):
             continue
-        h, w = STDSCR.getmaxyx()
-        # Show last pressed key chars at the bottom-right corner.
-        STDSCR.insstr(h - 1, w - 4, ch)
+        show_pressed_chars(ch, ci)
+
         if ch == k.get("quit"):
             break
         if ch == k.get("redraw"):
@@ -110,7 +145,7 @@ def run(stdscr):
                 redraw()
             continue
     thumbnails.Draw().finish()
-    sleep(0.3)
+    curses.napms(300)
 
 
 def main():
