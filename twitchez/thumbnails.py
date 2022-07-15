@@ -22,10 +22,13 @@ else:
 
 def text_mode() -> int:
     """Text mode: 0 => thumbnails mode (min: 0, max: 3).
-    [1-3] => don't do anything with thumbnails don't even download them!
+    [1-3] => do not do anything with thumbnails do not even download them!
     The higher the value, the more rows of cells there will be in the grid.
     """
     # TODO: if not X11 (Wayland) -> return 1 (only X11 supported by ueberzug)
+    # DOUBTS: i actually do not know - maybe Wayland has some special X11 compatibility mode or smth.
+    # Maybe it is actually possible to use ueberzug under Wayland somehow,
+    # if you know, or you actually see thumbnails on Wayland machine -> let me know via gh Issue, thx.
     tm = int(conf.setting("text_mode"))
     if tm < 0:
         tm = 0
