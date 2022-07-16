@@ -6,7 +6,7 @@ import curses
 
 __version__ = "0.0.5"
 __license__ = "GPLv3"
-__description__ = "TUI client for twitch.tv with thumbnails"
+__description__ = "twitchez - TUI client for twitch.tv with thumbnails support that works right in your terminal"
 __url_repository__ = "https://github.com/WANDEX/twitchez"
 __url_bug_reports__ = "https://github.com/WANDEX/twitchez/issues"
 __url_project__ = __url_repository__
