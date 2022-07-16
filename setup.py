@@ -2,12 +2,34 @@
 # coding=utf-8
 
 from setuptools import find_packages, setup
+import re
 import twitchez
+
+
+def remove_gif(text: str):
+    return re.sub(r"\n^<img src=.*>$\n\n", "", text, flags=re.DOTALL | re.MULTILINE)
+
+
+def remove_video(text: str):
+    return re.sub(r"http.*\.mp4\n\n", "", text)
+
+
+def clean_md(text: str):
+    """Clean the markdown text for pypi.org.
+    Embedded github videos is not supported by pypi.org,
+    html subset is probably either.
+    """
+    text = remove_gif(text)
+    text = remove_video(text)
+    return text
+
 
 with open("README.md", "r") as f:
     long_description = f.read()
 with open("requirements.txt", "r") as f:
     requirements = [line.strip() for line in f]
+
+long_description = clean_md(long_description)
 
 setup(
     name="twitchez",
@@ -36,7 +58,7 @@ setup(
         "Environment :: Console :: Curses",
         "Operating System :: POSIX",
         "Operating System :: Unix",
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
     ],
     keywords="twitch TUI terminal ui curses client thumbnail image twitch.tv",
     project_urls={
