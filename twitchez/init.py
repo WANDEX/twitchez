@@ -25,10 +25,9 @@ def wch() -> tuple[str, int, bool]:
     try:
         wch = STDSCR.get_wch()
     except KeyboardInterrupt:  # Ctrl+c etc.
-        thumbnails.draw_stop()
+        thumbnails.draw_stop(safe=True)
         STDSCR.clear()
         curses.endwin()
-        curses.napms(300)
         return "", 0, True  # fail/interrupt is True => break
     # explicit type conversion to be absolutely sure about character type!
     ci = int(wch) if isinstance(wch, int) else 0  # int else fallback to 0
@@ -144,12 +143,14 @@ def run(stdscr):
                 # redraw all especially thumbnails!
                 redraw()
             continue
-    thumbnails.draw_stop()
-    curses.napms(300)
+    # end of the infinite while loop
 
 
 def main():
-    curses.wrapper(run)
+    try:
+        curses.wrapper(run)
+    finally:
+        thumbnails.draw_stop(safe=True)
 
 
 if __name__ == "__main__":

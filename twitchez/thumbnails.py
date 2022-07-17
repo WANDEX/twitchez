@@ -254,6 +254,8 @@ class Thumbnails:
         self.FINISH = False
         while not self._canvas():
             continue
+        # since we left drawing loop => ueberzug file descriptors were closed
+        self.self_set.remove(self)  # remove no longer needed self instance
 
     def start(self):
         """Start drawing images asynchronously in the background."""
@@ -263,7 +265,7 @@ class Thumbnails:
         self.r = self.pool.apply_async(self._loop)
         self.self_set.add(self)
 
-    def finish(self):
+    def finish(self, safe=False):
         """Finish drawing of all images.
         Makes sure that all ueberzug file descriptors was closed."""
         if self.tm:
@@ -273,11 +275,22 @@ class Thumbnails:
         # set property value which finishes drawing in all class instances
         for t in self.self_set:
             t.FINISH = True
-        # wait() to make sure that all ueberzug file descriptors was closed properly
-        for t in self.self_set:
-            t.r.wait()
-        self.self_set.clear()
 
+        # it is under optional flag since it introduces delay which is not appropriate during fast scrolling
+        if safe:
+            ssc = self.self_set.copy()  # to not get RuntimeError: Set changed size during iteration
+            for t in ssc:
+                t.FINISH = True
+            # wait() with timeout to balance between: absolutely sure vs we waited enough - just kill it already!
+            # to be more sure that all ueberzug file descriptors were closed
+            for t in ssc:
+                try:
+                    t.r.wait(.6)
+                except KeyboardInterrupt:  # Ctrl+c etc.
+                    self.pool.terminate()
+                    raise KeyboardInterrupt
+
+        # clear list of the thumbnails parameters in the view
         self.uepl.clear()
 
 
@@ -317,7 +330,7 @@ def draw_start():
     Thumbnails().start()
 
 
-def draw_stop():
+def draw_stop(safe=False):
     if not has_ueberzug:
         return
-    Thumbnails().finish()
+    Thumbnails().finish(safe)
