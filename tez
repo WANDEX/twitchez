@@ -1,0 +1,14 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# I included this file just for those who do not know about the setup.py entry point
+# I can not guarantee that this launcher will work on your machine!
+# better install twitchez from pip and use the original launcher = 'twitchez'
+
+# NOTE: this launcher in not tested! Do not forget to: chmod +x ./tez
+
+import re
+import sys
+from twitchez.__main__ import main
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    sys.exit(main())
