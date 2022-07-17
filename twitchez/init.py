@@ -35,21 +35,22 @@ def wch() -> tuple[str, int, bool]:
     return ch, ci, False
 
 
-def handle_resize(ci: int, redrawall: Callable):
-    """Handle resize events, short pause(in case many), redraw everything."""
+def handle_resize(ci: int, redraw: Callable, redrawall: Callable):
+    """Handle resize events, especially repeated resize -> simple redraw,
+    when repeated resize stopped -> redraw everything including thumbnails."""
     if ci == curses.KEY_RESIZE:  # terminal resize event
-        # fix: handle crazy multiple repeated window resizing initiated by the user
-        # NOTE: this introduces slight redraw delay after resize but fixes crashes
-        while True:
-            curses.napms(250)
-            nlines, ncols = STDSCR.getmaxyx()
-            if curses.is_term_resized(nlines, ncols):
-                curses.napms(750)
-                continue
-            else:
-                break
-        # redraw -> True -> continue -> start loop from beginning
-        # without further more complex execution
+        thumbnails.draw_stop()
+        _rew = STDSCR.derwin(0, 0)  # resize event window (invisible)
+        _rew.timeout(300)
+        c = _rew.getch()
+        # if next character is also a resize event
+        if c == curses.KEY_RESIZE:
+            _rew.timeout(150)
+            # -> loop in simple redraw without thumbnails
+            while c == curses.KEY_RESIZE:
+                c = _rew.getch()
+                STDSCR.clear()
+                redraw()
         redrawall()
         return True
     return False
@@ -92,7 +93,7 @@ def run(stdscr):
         ch, ci, interrupt = wch()
         if interrupt:
             break
-        if handle_resize(ci, redraw):
+        if handle_resize(ci, page.draw, redraw):
             continue
         show_pressed_chars(ch, ci)
 
