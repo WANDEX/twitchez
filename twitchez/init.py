@@ -24,8 +24,8 @@ def wch() -> tuple[str, int, bool]:
     """Handle exceptions, and return character variables with explicit type."""
     try:
         wch = STDSCR.get_wch()
-    except KeyboardInterrupt:
-        thumbnails.Draw().finish()
+    except KeyboardInterrupt:  # Ctrl+c etc.
+        thumbnails.draw_stop()
         STDSCR.clear()
         curses.endwin()
         curses.napms(300)
@@ -78,13 +78,13 @@ def run(stdscr):
 
     def redraw():
         """Reinitialize variables & redraw everything."""
-        thumbnails.Draw().finish()
+        thumbnails.draw_stop()
         STDSCR.clear()
         h, w = STDSCR.getmaxyx()
         if h < 3 or w < 3:
             return
         page.draw()
-        thumbnails.Draw().start()
+        thumbnails.draw_start()
 
     redraw()  # draw once just before the loop start
 
@@ -144,7 +144,7 @@ def run(stdscr):
                 # redraw all especially thumbnails!
                 redraw()
             continue
-    thumbnails.Draw().finish()
+    thumbnails.draw_stop()
     curses.napms(300)
 
 

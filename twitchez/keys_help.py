@@ -160,7 +160,7 @@ def help():
     if H < 10 or W < 20:
         return
 
-    thumbnails.Draw().finish()
+    thumbnails.draw_stop()
 
     y, x = HEADER_H - 1, 2
     h, w = H - y * 2, W - x * 2

@@ -64,7 +64,7 @@ def iselect(multilinestr: str, fallback):
         # fix: hide application to be able to see selector after calling subprocess
         curses.endwin()
         # hide thumbnails, they will be redrawn in the next redraw() call.
-        thumbnails.Draw().finish()
+        thumbnails.draw_stop()
     #  p = subprocess.run(cmd, input=text, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     #  ^ FIXME: Why with stderr=subprocess.PIPE - we cannot see fzf?
     #  => How to get stderr then? (bug or what?)

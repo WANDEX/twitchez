@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from multiprocessing.pool import ThreadPool
+from multiprocessing.pool import AsyncResult, ThreadPool
 from os import listdir, sep
 from os.path import basename, splitext
 from pathlib import Path
@@ -205,49 +205,29 @@ def find_thumbnails(ids: list, *subdirs) -> dict:
     return thumbnail_paths
 
 
+def Ares() -> tuple[AsyncResult, ThreadPool]:
+    """Function mostly needed to set variables to the right return type.
+    Olympian case style naming:
+        - Ares is the Greek god of war, bloodlust, and courage.
+    """
+    def _dummyf():
+        return 0
+    pool = ThreadPool(processes=1)
+    r = pool.apply_async(_dummyf)
+    r.wait()
+    return r, pool
+
+
 class Thumbnails:
     uepl = []
-
-
-class Thumbnail:
-    """Prepare Thumbnail object."""
-    w, h = container_size(thumbnail=True)
-
-    def __init__(self, identifier, img_path, x, y):
-        self.identifier = identifier
-        self.img_path = img_path
-        self.x = x
-        self.y = y
-        self.ue_params = self.__ue_params()
-
-    def __ue_params(self) -> dict:
-        """Return dict for thumbnail with all parameters required by ueberzug.
-        Append parameters of the Thumbnail to the list of Thumbnails parameters.
-        """
-        uep = {
-            "identifier": self.identifier,
-            "height": self.h,
-            "width": self.w,
-            "y": self.y,
-            "x": self.x,
-            "scaler": ueberzug.ScalerOption.FIT_CONTAIN.value,
-            "path": self.img_path,
-            "visibility": ueberzug.Visibility.VISIBLE
-        }
-        Thumbnails.uepl.append(uep)
-        return uep
-
-
-class Draw:
-    """Draw all images from list of ue_params with ueberzug."""
-    FINISH = False
-    images = []
     tm = text_mode()
 
-    def __init__(self):
-        self.uepl = Thumbnails.uepl
+    FINISH = False
 
-    def __check_wait(self):
+    r, pool = Ares()  # -> AsyncResult type
+    self_set = set()  # set of self instances of the class
+
+    def _check_wait(self) -> bool:
         """Check FINISH condition every sleep interval N loops.
         NOTE: this is to make the thumbnails blink less frequently,
         but also at the same time be able to quickly stop drawing at any time.
@@ -259,40 +239,85 @@ class Draw:
         for _ in range(loops_num):
             sleep(sleep_time)
             if self.FINISH:
-                return
+                return True
+        return False
 
-    def __draw(self):
+    def _canvas(self) -> bool:
+        """Draw images on the canvas."""
         with ueberzug.Canvas() as c:
             with c.lazy_drawing:
                 for thumbnail in self.uepl:
-                    ueberzug.Placement(c, **thumbnail)
-            self.__check_wait()
+                    c.create_placement(**thumbnail)
+            return self._check_wait()  # NOTE: indentation matters!
 
-    def __loop(self):
-        while not self.FINISH:
-            self.__draw()
-
-    def __back_loop(self):
-        """Draw images in background."""
-        ue = ThreadPool(processes=1)
-        ue.apply_async(self.__loop)
-        return ue
+    def _loop(self):
+        self.FINISH = False
+        while not self._canvas():
+            continue
 
     def start(self):
-        """Start drawing images in background,
-        add new object to the images list.
-        """
+        """Start drawing images asynchronously in the background."""
         if self.tm:
             return
-        img = Draw()
-        self.images.append(img)
-        return img.__back_loop()
+
+        self.r = self.pool.apply_async(self._loop)
+        self.self_set.add(self)
 
     def finish(self):
-        """Finish all what was start()."""
+        """Finish drawing of all images.
+        Makes sure that all ueberzug file descriptors was closed."""
         if self.tm:
             return
-        for img in self.images:
-            img.FINISH = True  # finish __back_loop()
-            self.images.remove(img)
+
+        # NOTE: currently it does not work directly -> without iterating over self set instances
+        # set property value which finishes drawing in all class instances
+        for t in self.self_set:
+            t.FINISH = True
+        # wait() to make sure that all ueberzug file descriptors was closed properly
+        for t in self.self_set:
+            t.r.wait()
+        self.self_set.clear()
+
         self.uepl.clear()
+
+
+class Thumbnail:
+    """Prepare Thumbnail ueberzug parameters and add to Thumbnails."""
+    w, h = container_size(thumbnail=True)
+
+    def __init__(self, identifier, img_path, x, y):
+        self.identifier = identifier
+        self.img_path = img_path
+        self.x = x
+        self.y = y
+        self.ue_params = self._ue_params()
+
+    def _ue_params(self) -> dict:
+        """Return dict for thumbnail with all parameters required by ueberzug.
+        Append parameters of the Thumbnail to the list of Thumbnails parameters.
+        """
+        uep = {
+            "identifier": self.identifier,
+            "height": self.h,
+            "width": self.w,
+            "y": self.y,
+            "x": self.x,
+            "scaler": ueberzug.ScalerOption.FIT_CONTAIN.value,
+            "path": self.img_path,
+            "visibility": ueberzug.Visibility.VISIBLE,
+        }
+        if not text_mode():
+            Thumbnails.uepl.append(uep)
+        return uep
+
+
+def draw_start():
+    if not has_ueberzug:
+        return
+    Thumbnails().start()
+
+
+def draw_stop():
+    if not has_ueberzug:
+        return
+    Thumbnails().finish()
