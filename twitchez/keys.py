@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from twitchez import STDSCR
 from twitchez import bmark
 from twitchez import data
 from twitchez import search
 from twitchez import tabs
+from twitchez import thumbnails
 from twitchez.clip import clip
 from twitchez.conf import key as ck
 from twitchez.notify import notify
 from twitchez.render import Boxes
+
+from collections.abc import Callable
+import curses
 
 bmark_keys = {
     "bmark_add": ck("bmark_add"),
@@ -51,6 +56,19 @@ other_keys = {
 }
 
 
+def rkt(timeout=500, fallback="") -> str:
+    """Read key with timeout, without raising exception.
+    (No exception if no input -> return fallback key or empty string.)
+    """
+    _rsw = STDSCR.derwin(0, 0)
+    _rsw.timeout(timeout)
+    try:
+        c = str(_rsw.get_wch())
+    except curses.error:  # "no input" etc.
+        c = fallback
+    return c
+
+
 def bmark_action(ch: str, fallback: dict):
     """Bookmark action based on key."""
     page_dict = fallback
@@ -86,22 +104,41 @@ def hints(ch: str):
     return False
 
 
-def scroll(ch: str, page_draw):
-    """Scroll page."""
+def scroll_grid(redraw: Callable) -> str:
+    """Scroll page grid based on the input key."""
+    c = rkt(100)
+    STDSCR.clear()
+    grid = redraw()
+    if c == scroll_keys.get("scroll_down"):
+        grid.shift_index("down")
+    elif c == scroll_keys.get("scroll_up"):
+        grid.shift_index("up")
+    elif c == scroll_keys.get("scroll_down_page"):
+        grid.shift_index("down", page=True)
+    elif c == scroll_keys.get("scroll_up_page"):
+        grid.shift_index("up", page=True)
+    elif c == scroll_keys.get("scroll_top"):
+        grid.shift_index("top")
+    elif c == scroll_keys.get("scroll_bot"):
+        grid.shift_index("bot")
+    return c
+
+
+def scroll(ch: str, redraw: Callable, redrawall: Callable):
+    """Scroll page, especially handle repeated scroll keys."""
     if ch in scroll_keys.values():
-        grid = page_draw()
-        if ch == scroll_keys.get("scroll_down"):
-            grid.shift_index("down")
-        elif ch == scroll_keys.get("scroll_up"):
-            grid.shift_index("up")
-        elif ch == scroll_keys.get("scroll_down_page"):
-            grid.shift_index("down", page=True)
-        elif ch == scroll_keys.get("scroll_up_page"):
-            grid.shift_index("up", page=True)
-        elif ch == scroll_keys.get("scroll_top"):
-            grid.shift_index("top")
-        elif ch == scroll_keys.get("scroll_bot"):
-            grid.shift_index("bot")
+        thumbnails.draw_stop()
+        c = rkt(100)
+        curses.unget_wch(ch)
+        # if no next input key after timeout -> scroll once
+        if not c:
+            c = scroll_grid(redraw)
+        else:
+            # if next character is also a scroll key
+            # -> loop in simple redraw without thumbnails
+            while c in scroll_keys.values():
+                c = scroll_grid(redraw)
+        redrawall()
         return True
     return False
 

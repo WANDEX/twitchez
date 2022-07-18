@@ -121,8 +121,7 @@ def run(stdscr):
             page = render.Page(page_dict)
             redraw()
             continue
-        if keys.scroll(ch, page.draw):
-            redraw()
+        if keys.scroll(ch, page.draw, redraw):
             continue
         if ch in keys.tab_keys.values():
             page_dict = keys.tabs_action(ch, page_dict)
