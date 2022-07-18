@@ -13,7 +13,7 @@ style="width: 112px; height: 112px">
 
 twitchez - TUI client for twitch.tv with thumbnails support that works right in your terminal.
 
-Terminal is not required to support image rendering, ueberzug will handle that.\
+Support of rendering images by the terminal is not required, ueberzug will handle that.\
 You may ask -- **"Is this magic?"** -- Well **YES**, the black magic! Welcome to the club!
 
 https://user-images.githubusercontent.com/15724752/152787467-dc2a8871-43e5-4530-94b1-e14383c8b18e.mp4
