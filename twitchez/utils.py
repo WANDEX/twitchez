@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from twitchez import STDSCR
 from datetime import datetime
 from difflib import SequenceMatcher
 from os.path import getmtime
@@ -60,6 +61,25 @@ def tlen(str: str) -> int:
         return len(str)
     else:
         return EMOJI_CELLS * emoji_count(str) + len(demojize(str))
+
+
+def was_resized(xysum=0) -> int:
+    """HACK: to be able to check if terminal was resized
+    between calls of the function inside some function (long running).
+    Compares sum of xy between the initial
+    and the actual xy sum at the call time of the function.
+    """
+    def sumyx() -> int:
+        return sum(STDSCR.getmaxyx())  # sum of tuple[x, y]
+
+    def was_resized_between_calls() -> int:
+        return 0 if xysum == sumyx() else 1
+
+    # just return the initial xysum at the call time
+    if xysum == 0:
+        return sumyx()
+    else:
+        return was_resized_between_calls()
 
 
 def secs_since_mtime(path):
