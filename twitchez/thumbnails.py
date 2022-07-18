@@ -251,10 +251,11 @@ class Thumbnails:
             return self._check_wait()  # NOTE: indentation matters!
 
     def _loop(self):
+        self.self_set.add(self)
         self.FINISH = False
         while not self._canvas():
             continue
-        # since we left drawing loop => ueberzug file descriptors were closed
+        # since we left drawing loop => ueberzug file descriptors were closed properly
         self.self_set.remove(self)  # remove no longer needed self instance
 
     def start(self):
@@ -263,7 +264,6 @@ class Thumbnails:
             return
 
         self.r = self.pool.apply_async(self._loop)
-        self.self_set.add(self)
 
     def finish(self, safe=False):
         """Finish drawing of all images.
