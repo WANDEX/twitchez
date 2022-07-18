@@ -130,8 +130,14 @@ def run(stdscr):
             continue
         if keys.yank(ch):
             continue
-        if keys.hints(ch):
-            redraw()
+        if ch in keys.hint_keys.values():
+            if keys.hints(ch):
+                # redraw all including thumbnails
+                redraw()
+            else:
+                # simple redraw without thumbnails
+                STDSCR.clear()
+                page.draw()
             continue
     # end of the infinite while loop
 

@@ -7,6 +7,7 @@ from twitchez import data
 from twitchez import search
 from twitchez import tabs
 from twitchez import thumbnails
+from twitchez import utils
 from twitchez.clip import clip
 from twitchez.conf import key as ck
 from twitchez.notify import notify
@@ -82,26 +83,38 @@ def bmark_action(ch: str, fallback: dict):
 
 
 def hints(ch: str):
-    """Show hints, and make some action based on key and hint."""
-    if ch in hint_keys.values():
-        boxes = Boxes()
-        hint = boxes.show_hints_boxes()
-        if ch == hint_keys.get("hint_clip_url"):
-            boxes.copy_url(hint)
-        elif ch == hint_keys.get("hint_open_chat"):
-            boxes.open_chat(hint)
-        else:
-            if ch == hint_keys.get("hint_open_stream"):
-                type = "stream"
-            elif ch == hint_keys.get("hint_open_video"):
-                type = "video"
-            elif ch == hint_keys.get("hint_open_extra"):
-                type = "extra"
-            else:
-                type = "stream"
-            boxes.open_url(hint, type)
-        return True
-    return False
+    """Show box hints, and make some action based on key and hint.
+    If terminal was resized while hints were being shown -> cancel & redraw all.
+    """
+    # get the initial sum to check later if terminal was resized
+    xysum = utils.was_resized(0)
+
+    boxes, hint = Boxes().show_boxes_hint()
+    type = ""
+
+    if ch == hint_keys.get("hint_clip_url"):
+        type = "copy_url"
+    elif ch == hint_keys.get("hint_open_chat"):
+        type = "open_chat"
+    elif ch == hint_keys.get("hint_open_stream"):
+        type = "stream"
+    elif ch == hint_keys.get("hint_open_video"):
+        type = "video"
+    elif ch == hint_keys.get("hint_open_extra"):
+        type = "extra"
+
+    if type == "copy_url":
+        if not boxes.copy_url(hint) and not utils.was_resized(xysum):
+            return False
+    elif type == "open_chat":
+        if not boxes.open_chat(hint) and not utils.was_resized(xysum):
+            return False
+    elif type:
+        if not boxes.open_url(hint, type) and not utils.was_resized(xysum):
+            return False
+
+    # redraw all including thumbnails
+    return True
 
 
 def scroll_grid(redraw: Callable) -> str:
