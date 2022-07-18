@@ -3,6 +3,7 @@
 
 from itertools import islice
 from threading import Thread
+from typing import TypeVar
 from twitchez import HEADER_H
 from twitchez import STDSCR
 from twitchez import conf
@@ -15,6 +16,9 @@ from twitchez.clip import clip
 from twitchez.tabs import tab_names_ordered
 from twitchez.thumbnails import container_size
 import curses
+
+
+SelfBoxes = TypeVar("SelfBoxes", bound="Boxes")
 
 
 class Boxes:
@@ -46,6 +50,9 @@ class Boxes:
             box.hint = hint
             box.show_hint()
         return hints.find_seq(hseq)
+
+    def show_boxes_hint(self: SelfBoxes) -> tuple[SelfBoxes, str]:
+        return self, self.show_hints_boxes()
 
     def get_box_attr_hint(self, hint, attr):
         """return attribute value of box object found by the hint."""
