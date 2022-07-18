@@ -130,18 +130,8 @@ def run(stdscr):
             continue
         if keys.yank(ch):
             continue
-        if ch in keys.hint_keys.values():
-            # FIXME: redraw all if resize occurred after hints drawing!
-            #  if STDSCR.get_wch() == curses.KEY_RESIZE:
-            #      redraw()
-            if keys.hints(ch):
-                # clear possible fulltitle str
-                # hide previously shown hints etc.
-                STDSCR.clear()
-                page.draw()
-            else:
-                # redraw all especially thumbnails!
-                redraw()
+        if keys.hints(ch):
+            redraw()
             continue
     # end of the infinite while loop
 
