@@ -6,6 +6,7 @@ from twitchez import command
 from twitchez import conf
 from twitchez import thumbnails
 
+from os import environ
 from shutil import which
 
 import curses
@@ -24,7 +25,8 @@ def dmenu_cmd() -> list:
 
 
 def fzf_cmd() -> list:
-    cmd = "fzf --no-multi"
+    cmd = environ.get("FZF_DEFAULT_COMMAND", "fzf")
+    cmd += " --no-multi"
     return cmd.split()
 
 
