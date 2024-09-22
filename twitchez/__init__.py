@@ -28,6 +28,7 @@ try:
     STDSCR.keypad(False)
     curses.echo()
     curses.nocbreak()
+    STDSCR.refresh()  # fix: endwin() requires intervening screen update (new libncurses)
     curses.endwin()
 except Exception:
     try:

@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from shutil import which
+from twitchez import STDSCR
 from twitchez import command
 from twitchez import conf
 from twitchez import thumbnails
+
+from shutil import which
+
 import curses
 import subprocess
+
 
 select_cmd = conf.setting("select_cmd")
 executable = command.first_cmd_word(select_cmd)
@@ -61,20 +65,16 @@ def iselect(multilinestr: str, fallback):
     cmd = get_select_cmd()
     # for fzf and similar console selectors working directly in terminal
     if cmd[0] != "dmenu" and cmd[0] != "rofi":
-        # fix: hide application to be able to see selector after calling subprocess
-        curses.endwin()
-        # hide thumbnails, they will be redrawn in the next redraw() call.
-        thumbnails.draw_stop()
-    #  p = subprocess.run(cmd, input=text, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #  ^ FIXME: Why with stderr=subprocess.PIPE - we cannot see fzf?
-    #  => How to get stderr then? (bug or what?)
-    p = subprocess.run(cmd, input=text, text=True, stdout=subprocess.PIPE)
+        STDSCR.refresh()  # fix: endwin() requires intervening screen update (new libncurses)
+        curses.endwin()   # fix: hide application to be able to see selector after calling subprocess
+        thumbnails.draw_stop()  # hide thumbnails, they will be redrawn in the next redraw() call.
+    p = subprocess.run(cmd, input=text, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     sel = str(p.stdout).strip()
     if p.returncode == 1 or p.returncode == 130:
         # dmenu(1), fzf(130) => command was canceled (Esc)
         return 130
     elif p.returncode != 0:
-        raise Exception(f"select cmd ERROR({p.returncode})\n{p.stderr}")
+        raise Exception(f"select cmd ERROR({p.returncode})\n{p.stderr}\n")
     # return fallback if input is not a substring of multilinestr
     if sel not in multilinestr:
         return fallback
