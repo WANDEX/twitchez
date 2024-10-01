@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from itertools import islice
-from threading import Thread
-from typing import TypeVar
 from twitchez import HEADER_H
 from twitchez import STDSCR
 from twitchez import conf
@@ -15,6 +12,10 @@ from twitchez import utils
 from twitchez.clip import clip
 from twitchez.tabs import tab_names_ordered
 from twitchez.thumbnails import container_size
+
+from itertools import islice
+from threading import Thread
+from typing import TypeVar
 import curses
 
 
@@ -254,8 +255,8 @@ class Grid:
 class Page:
     """Page which renders everything."""
 
-    def __init__(self, page_dict):
-        self.pages_class = pages.Pages(page_dict)
+    def __init__(self, page_dict, force_redownload=False):
+        self.pages_class = pages.Pages(page_dict, force_redownload)
         self.page_name = self.pages_class.page_name
         self.grid_func = self.pages_class.grid_func
         self.loaded = False

@@ -50,6 +50,7 @@ tab_keys = {
 other_keys = {
     "quit": ck("quit"),
     "redraw": ck("redraw"),
+    "redownload": ck("redownload"),
     "full_title": ck("full_title"),
     "keys_help": ck("keys_help"),
     "yank_urls": ck("yank_urls"),

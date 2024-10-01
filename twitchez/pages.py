@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from pathlib import Path
 from twitchez import HEADER_H
 from twitchez import data
 from twitchez import render
@@ -10,13 +9,16 @@ from twitchez import utils
 from twitchez.utils import strws
 from twitchez.tabs import tab_upd
 
+from pathlib import Path
+
 
 class Pages:
 
-    def __init__(self, page_dict: dict):
+    def __init__(self, page_dict: dict, force_redownload=False):
         self.page_dict = page_dict
         self.page_name = page_dict["page_name"]
         self.cache_file_name = f"{strws(self.page_name)}.json"
+        self.force_redownload: bool = force_redownload
         tab_upd(self.page_name, self.page_dict)  # => update tabs
 
     def cache_subdirs(self):
@@ -45,7 +47,10 @@ class Pages:
         """Return True if path mtime > 5 mins from now.
         (default twitch API update time).
         """
-        fnf = not Path(self.cache_path()).is_file()
+        if self.force_redownload:
+            self.force_redownload = False  # switch off to not redownload on each redraw call
+            return True
+        fnf = not Path(self.cache_path()).is_file()  # abbrev: file not found
         if fnf or utils.secs_since_mtime(self.cache_path()) > 300:
             return True
         else:

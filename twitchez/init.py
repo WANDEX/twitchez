@@ -103,6 +103,10 @@ def run(stdscr):
             page = render.Page(page_dict)
             redraw()
             continue
+        if ch == k.get("redownload"):
+            page = render.Page(page_dict, force_redownload=True)
+            redraw()
+            continue
         if ch == k.get("keys_help") or ci == curses.KEY_F1:
             keys_help.help()
             redraw()

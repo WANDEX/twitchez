@@ -6,6 +6,7 @@ from twitchez import STDSCR
 from twitchez import __version__
 from twitchez import keys
 from twitchez import thumbnails
+
 import curses
 import re
 
