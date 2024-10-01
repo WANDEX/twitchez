@@ -1,23 +1,34 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from multiprocessing.pool import AsyncResult, ThreadPool
-from os import listdir, sep
-from os.path import basename, splitext
-from pathlib import Path
-from sys import version_info
-from time import sleep
 from twitchez import conf
 from twitchez import fs
 from twitchez import utils
+
+from pathlib import Path
+from shutil import which
+from sys import version_info, stdout
+from threading import Timer
+
 import aiohttp
 import asyncio
-try:
-    import ueberzug.lib.v0 as ueberzug
-except ImportError:
-    has_ueberzug = False
-else:
+import json
+import os                       # listdir, sep, devnull, basename, splitext
+import subprocess
+
+
+if which("ueberzug"):
     has_ueberzug = True
+    ue_output = ""
+    if which("ueberzugpp"):
+        ue_output = conf.setting("ue_output")
+        if ue_output != "undefined":
+            # --output option exists only in ueberzugpp!
+            ue_output = f"--output {ue_output}"
+        else:
+            ue_output = ""
+else:
+    has_ueberzug = False
 
 
 def text_mode() -> int:
@@ -25,10 +36,6 @@ def text_mode() -> int:
     [1-3] => do not do anything with thumbnails do not even download them!
     The higher the value, the more rows of cells there will be in the grid.
     """
-    # TODO: if not X11 (Wayland) -> return 1 (only X11 supported by ueberzug)
-    # DOUBTS: i actually do not know - maybe Wayland has some special X11 compatibility mode or smth.
-    # Maybe it is actually possible to use ueberzug under Wayland somehow,
-    # if you know, or you actually see thumbnails on Wayland machine -> let me know via gh Issue, thx.
     tm = int(conf.setting("text_mode"))
     if tm < 0:
         tm = 0
@@ -67,7 +74,8 @@ def container_size(thumbnail=False) -> tuple[int, int]:
         2: (90, 24),
     }
     # use fallback key if div key not found
-    w, h = tuple(table.get(rdiv(), table.get(6)))
+    _def_fix: tuple = (40, 11)  # fix: None is not assignable
+    w, h = tuple(table.get(rdiv(), table.get(6, _def_fix)))
     # width/height modifier for perfect placement of thumbnails in the grid (very font dependent)
     w += int(conf.setting("wmod"))
     h += int(conf.setting("hmod"))
@@ -99,7 +107,8 @@ def thumbnail_resolution() -> tuple[int, int]:
         2: (720, 405),  # actual (960, 540) is overkill!
     }
     # use fallback key if div key not found
-    return table.get(rdiv(), table.get(6))
+    _def_fix: tuple = (320, 180)  # fix: None is not assignable
+    return table.get(rdiv(), table.get(6, _def_fix))
 
 
 def get_thumbnail_urls(rawurls) -> list:
@@ -185,17 +194,17 @@ def find_thumbnails(ids: list, *subdirs) -> dict:
     tmpd = fs.get_tmp_dir("thumbnails", *subdirs)
     blank_thumbnail = Path(conf.glob_conf_dir, "blank.jpg")
 
-    tnames = utils.replace_pattern_in_all(listdir(tmpd), ".jpg", "")
+    tnames = utils.replace_pattern_in_all(os.listdir(tmpd), ".jpg", "")
     differ = list(set(tnames).difference(set(ids)))
     fnames = utils.add_str_to_list(differ, ".jpg")  # add file extension back
     for fname in fnames:
         # remove thumbnail files/symlinks which id not in ids list
         Path(tmpd, fname).unlink(missing_ok=True)
 
-    thumbnail_list = utils.insert_to_all(listdir(tmpd), tmpd, opt_sep=sep)
+    thumbnail_list = utils.insert_to_all(os.listdir(tmpd), tmpd, opt_sep=os.sep)
     thumbnail_paths = {}
     for path in thumbnail_list:
-        tid = basename(splitext(path)[0])  # file basename without .ext
+        tid = os.path.basename(os.path.splitext(path)[0])  # file basename without .ext
         thumbnail_paths[tid] = path
     # fix: if thumbnail_paths does not have id from ids
     # this usually happens if text mode without thumbnails was previously set
@@ -203,95 +212,6 @@ def find_thumbnails(ids: list, *subdirs) -> dict:
         if tid not in thumbnail_paths.keys():
             thumbnail_paths[tid] = str(blank_thumbnail)
     return thumbnail_paths
-
-
-def Ares() -> tuple[AsyncResult, ThreadPool]:
-    """Function mostly needed to set variables to the right return type.
-    Olympian case style naming:
-        - Ares is the Greek god of war, bloodlust, and courage.
-    """
-    def _dummyf():
-        return 0
-    pool = ThreadPool(processes=1)
-    r = pool.apply_async(_dummyf)
-    r.wait()
-    return r, pool
-
-
-class Thumbnails:
-    uepl = []
-    tm = text_mode()
-
-    FINISH = False
-
-    r, pool = Ares()  # -> AsyncResult type
-    self_set = set()  # set of self instances of the class
-
-    def _check_wait(self) -> bool:
-        """Check FINISH condition every sleep interval N loops.
-        NOTE: this is to make the thumbnails blink less frequently,
-        but also at the same time be able to quickly stop drawing at any time.
-        formula: loops_num * sleep_time = blink interval in sec
-        (time after which thumbnails will blink once - will be redrawn)
-        """
-        loops_num = 1200
-        sleep_time = .25
-        for _ in range(loops_num):
-            sleep(sleep_time)
-            if self.FINISH:
-                return True
-        return False
-
-    def _canvas(self) -> bool:
-        """Draw images on the canvas."""
-        with ueberzug.Canvas() as c:
-            with c.lazy_drawing:
-                for thumbnail in self.uepl:
-                    c.create_placement(**thumbnail)
-            return self._check_wait()  # NOTE: indentation matters!
-
-    def _loop(self):
-        self.self_set.add(self)
-        self.FINISH = False
-        while not self._canvas():
-            continue
-        # since we left drawing loop => ueberzug file descriptors were closed properly
-        self.self_set.remove(self)  # remove no longer needed self instance
-
-    def start(self):
-        """Start drawing images asynchronously in the background."""
-        if self.tm:
-            return
-
-        self.r = self.pool.apply_async(self._loop)
-
-    def finish(self, safe=False):
-        """Finish drawing of all images.
-        Makes sure that all ueberzug file descriptors was closed."""
-        if self.tm:
-            return
-
-        # NOTE: currently it does not work directly -> without iterating over self set instances
-        # set property value which finishes drawing in all class instances
-        for t in self.self_set:
-            t.FINISH = True
-
-        # it is under optional flag since it introduces delay which is not appropriate during fast scrolling
-        if safe:
-            ssc = self.self_set.copy()  # to not get RuntimeError: Set changed size during iteration
-            for t in ssc:
-                t.FINISH = True
-            # wait() with timeout to balance between: absolutely sure vs we waited enough - just kill it already!
-            # to be more sure that all ueberzug file descriptors were closed
-            for t in ssc:
-                try:
-                    t.r.wait(.6)
-                except KeyboardInterrupt:  # Ctrl+c etc.
-                    self.pool.terminate()
-                    raise KeyboardInterrupt
-
-        # clear list of the thumbnails parameters in the view
-        self.uepl.clear()
 
 
 class Thumbnail:
@@ -305,32 +225,127 @@ class Thumbnail:
         self.y = y
         self.ue_params = self._ue_params()
 
-    def _ue_params(self) -> dict:
+    def _ue_params(self) -> dict[str, str]:
         """Return dict for thumbnail with all parameters required by ueberzug.
         Append parameters of the Thumbnail to the list of Thumbnails parameters.
         """
         uep = {
+            "action": "add",
+            "scaler": "fit_contain",
             "identifier": self.identifier,
+            "path": self.img_path,
             "height": self.h,
             "width": self.w,
             "y": self.y,
             "x": self.x,
-            "scaler": ueberzug.ScalerOption.FIT_CONTAIN.value,
-            "path": self.img_path,
-            "visibility": ueberzug.Visibility.VISIBLE,
+            #  "visibility": ueberzug.Visibility.VISIBLE,
         }
         if not text_mode():
             Thumbnails.uepl.append(uep)
         return uep
 
 
+class Thumbnails:
+    uepl: list[dict[str, str]] = []  # ueberzug list of thumbnail parameters
+    tm = text_mode()
+
+    is_initialized = False
+    working_dir = fs.get_tmp_dir()
+
+    @staticmethod
+    def json_schema_thumbnails(uepl: list) -> str:
+        """New Line Delimited JSON, one ueberzug thumbnail parameters data per line."""
+        nl_json = ""
+        for th_params in uepl:
+            nl_json += json.dumps(th_params) + '\n'
+        return nl_json
+
+    @staticmethod
+    def PopenType() -> subprocess.Popen:
+        return subprocess.Popen(["echo"], stdin=subprocess.PIPE)
+
+    def __init__(self):
+        self.sub_proc = self.PopenType()
+
+    def init_check(self) -> bool:
+        return self.is_initialized and self.sub_proc.poll() is None
+
+    def init(self):
+        """start ueberzug subprocess."""
+        assert (self.sub_proc.stdin is not None)  # "None" [reportOptionalMemberAccess]
+        if (self.init_check()):
+            return
+        cmd = f"ueberzug layer --no-cache --silent {ue_output}".split()
+        # we do not want to close subprocess because that stops the drawing.
+        with open(os.devnull, "wb", 0) as devnull:
+            self.sub_proc = subprocess.Popen(
+                cmd,
+                cwd=self.working_dir,
+                stderr=devnull,
+                stdout=stdout.buffer,
+                stdin=subprocess.PIPE,
+                universal_newlines=True,
+            )
+        self.is_initialized = True
+
+    def execute(self, **kwargs):
+        """execute ueberzug action/cmd."""
+        self.init()
+        assert (self.sub_proc.stdin is not None)  # "None" [reportOptionalMemberAccess]
+        # NOTE: direct interaction with the stdin as we do not want to close subprocess.
+        if kwargs:
+            # NOTE: mainly for the cleanup (remove action)
+            self.sub_proc.stdin.write(json.dumps(kwargs) + '\n')
+        else:
+            self.sub_proc.stdin.write(self.json_schema_thumbnails(self.uepl))
+        self.sub_proc.stdin.flush()
+
+    def clear(self):
+        """cleanup."""
+        assert (self.sub_proc.stdin is not None)  # "None" [reportOptionalMemberAccess]
+        if self.sub_proc and not self.sub_proc.stdin.closed:
+            for th_params in self.uepl:
+                # remove previously added but no longer needed thumbnails
+                self.execute(action="remove", identifier=th_params["identifier"])
+        # clear list of the thumbnails parameters
+        self.uepl.clear()
+
+    def quit(self):
+        """wrapper for the fast & safe termination of subprocess."""
+        if self.init_check():
+            timer_kill = Timer(1, self.sub_proc.kill, [])
+            try:
+                self.sub_proc.terminate()
+                timer_kill.start()
+                self.sub_proc.communicate()
+            finally:
+                timer_kill.cancel()
+
+    def start(self):
+        """Start drawing images via subprocess."""
+        if self.tm:
+            return
+        self.execute()
+
+    def finish(self, safe=False):
+        """Finish drawing images and optionally terminate subprocess."""
+        if self.tm:
+            return
+        self.clear()
+        if safe:
+            self.quit()
+
+
+THUMBNAILS: Thumbnails = Thumbnails()
+
+
 def draw_start():
     if not has_ueberzug:
         return
-    Thumbnails().start()
+    THUMBNAILS.start()
 
 
 def draw_stop(safe=False):
     if not has_ueberzug:
         return
-    Thumbnails().finish(safe)
+    THUMBNAILS.finish(safe)
