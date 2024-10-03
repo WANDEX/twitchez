@@ -3,14 +3,16 @@
 
 from twitchez import command
 from twitchez import conf
+
 import subprocess
+import os
+
 try:
     import webbrowser
 except ImportError:
     has_webbrowser = False
 else:
     has_webbrowser = True
-    import os
 
 
 chat_cmd = conf.setting("open_chat_cmd")
