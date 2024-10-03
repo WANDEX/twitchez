@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+from twitchez import command
 from twitchez import conf
 from twitchez import fs
 from twitchez import utils
@@ -17,18 +18,43 @@ import os                       # listdir, sep, devnull, basename, splitext
 import subprocess
 
 
-if which("ueberzug"):
-    has_ueberzug = True
-    ue_output = ""
-    if which("ueberzugpp"):
-        ue_output = conf.setting("ue_output")
-        if ue_output != "undefined":
-            # --output option exists only in ueberzugpp!
-            ue_output = f"--output {ue_output}"
-        else:
-            ue_output = ""
-else:
-    has_ueberzug = False
+# check if executables at PATH
+HAS_UEBERZUG = bool(which("ueberzugpp")) | bool(which("ueberzug"))
+# also check user cmd in case executable provided via full path
+HAS_UEBERZUG |= command.conf_cmd_check("ueberzug_cmd")[0]
+
+
+def raise_user_note():
+    """raise exception for regular user without traceback."""
+    raise Exception(
+        "\n\n"
+        "Neither ueberzugpp nor ueberzug were found at PATH. While text_mode is not enabled.\n"
+        "You can install 'ueberzugpp' and it will be working by default.\n"
+        "It supports more output options and platforms than old version of ueberzug written in python.\n"
+        "Also you can set your own program cmd via 'ueberzug_cmd = your cmd' in config.\n"
+        "This will allow you to override default ueberzugpp layer --output for you machine, etc.\n"
+        "If you want to use this program without thumbnails,\n"
+        "simply paste next line in your config:\n"
+        "text_mode = 3\n"
+    )
+
+
+def get_ueberzug_cmd() -> list:
+    """Check & return cmd if executable is on PATH."""
+    cmd = ""
+    user_cmd_ok, ueberzug_cmd = command.conf_cmd_check("ueberzug_cmd")
+    if user_cmd_ok:
+        # prefer ueberzug_cmd if set in config and found at PATH or if full path provided
+        cmd = ueberzug_cmd
+    elif which("ueberzugpp"):
+        # NOTE: --no-cache is important, without it ueberzugpp will show old cached thumbnails!
+        cmd = "ueberzugpp layer --no-cache --silent"
+    elif which("ueberzug"):
+        # seems like python version of ueberzug have no layer specific options
+        cmd = "ueberzug layer"
+    else:
+        raise_user_note()
+    return cmd.split()
 
 
 def text_mode() -> int:
@@ -42,7 +68,7 @@ def text_mode() -> int:
     elif tm > 3:
         tm = 3
     # explicit text mode if ueberzug not found (optional dependency)
-    if not has_ueberzug and tm < 1:
+    if not HAS_UEBERZUG and tm < 1:
         tm = 1
     return tm
 
@@ -238,7 +264,6 @@ class Thumbnail:
             "width": self.w,
             "y": self.y,
             "x": self.x,
-            #  "visibility": ueberzug.Visibility.VISIBLE,
         }
         if not text_mode():
             Thumbnails.uepl.append(uep)
@@ -262,7 +287,10 @@ class Thumbnails:
 
     @staticmethod
     def PopenType() -> subprocess.Popen:
-        return subprocess.Popen(["echo"], stdin=subprocess.PIPE)
+        """Get proper type and object properties at initialization.
+        By executing common/smallest/fastest program existing in nearly every OS.
+        """
+        return subprocess.Popen(["echo"], stdin=subprocess.PIPE, stdout=subprocess.DEVNULL)
 
     def __init__(self):
         self.sub_proc = self.PopenType()
@@ -275,7 +303,7 @@ class Thumbnails:
         assert (self.sub_proc.stdin is not None)  # "None" [reportOptionalMemberAccess]
         if (self.init_check()):
             return
-        cmd = f"ueberzug layer --no-cache --silent {ue_output}".split()
+        cmd: list = get_ueberzug_cmd()
         # we do not want to close subprocess because that stops the drawing.
         with open(os.devnull, "wb", 0) as devnull:
             self.sub_proc = subprocess.Popen(
@@ -301,7 +329,7 @@ class Thumbnails:
         self.sub_proc.stdin.flush()
 
     def clear(self):
-        """cleanup."""
+        """cleanup from the old thumbnails data."""
         assert (self.sub_proc.stdin is not None)  # "None" [reportOptionalMemberAccess]
         if self.sub_proc and not self.sub_proc.stdin.closed:
             for th_params in self.uepl:
@@ -340,12 +368,12 @@ THUMBNAILS: Thumbnails = Thumbnails()
 
 
 def draw_start():
-    if not has_ueberzug:
+    if not HAS_UEBERZUG:
         return
     THUMBNAILS.start()
 
 
 def draw_stop(safe=False):
-    if not has_ueberzug:
+    if not HAS_UEBERZUG:
         return
     THUMBNAILS.finish(safe)
