@@ -29,7 +29,8 @@ def dunstify_cmd() -> list:
 
 def notify_send_cmd() -> list:
     t = expire_time()
-    cmd = f"notify-send -t {t} -u low"
+    DST = "string:x-dunst-stack-tag"
+    cmd = f"notify-send -t {t} -u low -h {DST}:twitchez -h {DST}:hi"
     return cmd.split()
 
 
@@ -83,4 +84,5 @@ def notify(body="", summary="", error=False, show_note=True):
         cmd.append("8000")
     cmd.append(s)
     cmd.append(b)
-    subprocess.Popen(cmd, text=True, encoding=ENCODING)
+    p = subprocess.Popen(cmd, text=True, encoding=ENCODING)
+    p.wait()  # wait for process to finish
