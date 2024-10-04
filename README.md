@@ -1,14 +1,17 @@
 # twitchez
 
+<a href="https://betterttv.com/emotes/shared/search?query=hackermans">
 <img src="https://cdn.betterttv.net/emote/5b490e73cf46791f8491f6f4/3x"
 align="right" title="HACKERMANS" alt="The famous HACKERMANS twitch.tv emote"
 style="width: 112px; height: 112px">
+</a>
 
 ![PyPI - Status](https://img.shields.io/pypi/status/twitchez?style=flat-square)
 ![PyPI](https://img.shields.io/pypi/v/twitchez?style=flat-square)
 ![PyPI - License](https://img.shields.io/pypi/l/twitchez?style=flat-square)
-![GitHub last commit](https://img.shields.io/github/last-commit/WANDEX/twitchez?style=flat-square)
+<a href="https://pypistats.org/packages/twitchez">
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/twitchez?style=flat-square)
+</a>
 
 twitchez - TUI client for twitch.tv with thumbnails support that works right in your terminal.
 
