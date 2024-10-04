@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from shutil import which
 from twitchez import command
 from twitchez import conf
 from twitchez.notify import notify
+
+from shutil import which
+
 import subprocess
 
 
@@ -38,7 +40,7 @@ def streamlink_cmd(url) -> list:
         title = '{author} - {category} -- {title}'
         cmd.append("--title")
         cmd.append(title)
-    cmd_args = f"{url} {quality}".split()
+    cmd_args: list = f"{url} {quality}".split()
     cmd.extend(cmd_args)
     return cmd
 

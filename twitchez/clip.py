@@ -71,4 +71,4 @@ def clip(content: str, show_note=True):
         notify(text, "C:", show_note=show_note)
     else:
         notify(f"ERROR({p.returncode}): probably malformed cmd!",
-                "NOT copied:", error=True, show_note=show_note)
+               "NOT copied:", error=True, show_note=show_note)
