@@ -1,26 +1,32 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from setuptools import find_packages, setup
-import re
 import twitchez
 
+from setuptools import find_packages, setup
 
-def remove_gif(text: str):
+import re
+
+
+def remove_gif(text: str) -> str:
     return re.sub(r"\n^<img src=.*>$\n\n", "", text, flags=re.DOTALL | re.MULTILINE)
 
 
-def remove_video(text: str):
+def remove_video(text: str) -> str:
     return re.sub(r"http.*\.mp4\n\n", "", text)
 
 
-def clean_md(text: str):
+def replace_gh_video_via_mdlink(text: str) -> str:
+    return re.sub(r"(http.*\.mp4)\n\n", r"### [CLICK TO WATCH DEMO VIDEO](\1)\n\n", text)
+
+
+def clean_md(text: str) -> str:
     """Clean the markdown text for pypi.org.
-    Embedded github videos is not supported by pypi.org,
+    Embedded github videos are not supported by pypi.org,
     html subset is probably either.
     """
     text = remove_gif(text)
-    text = remove_video(text)
+    text = replace_gh_video_via_mdlink(text)
     return text
 
 
@@ -44,7 +50,7 @@ setup(
     python_requires=">=3.6",
     install_requires=requirements,
     extras_require={
-        "thumbnails": ["ueberzug"],  # (X11 only)
+        "thumbnails": ["ueberzugpp", "ueberzug"],
     },
     package_data={
         "twitchez": ["config/*.conf", "config/blank.jpg"],
@@ -58,9 +64,9 @@ setup(
         "Environment :: Console :: Curses",
         "Operating System :: POSIX",
         "Operating System :: Unix",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
     ],
-    keywords="twitch TUI terminal ui curses client thumbnail image twitch.tv",
+    keywords="twitch TUI terminal curses ui client thumbnail image twitch.tv",
     project_urls={
         "Bug Reports": twitchez.__url_bug_reports__,
         "Source": twitchez.__url_repository__,
