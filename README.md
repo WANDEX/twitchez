@@ -7,22 +7,21 @@ style="width: 112px; height: 112px">
 ![PyPI - Status](https://img.shields.io/pypi/status/twitchez?style=flat-square)
 ![PyPI](https://img.shields.io/pypi/v/twitchez?style=flat-square)
 ![PyPI - License](https://img.shields.io/pypi/l/twitchez?style=flat-square)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/twitchez?style=flat-square)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/WANDEX/twitchez?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/WANDEX/twitchez?style=flat-square)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/twitchez?style=flat-square)
 
 twitchez - TUI client for twitch.tv with thumbnails support that works right in your terminal.
 
-Support of rendering images by the terminal is not required, ueberzug will handle that.\
+Support of rendering images by the terminal is not required, ueberzugpp will handle that.\
 You may ask -- **"Is this magic?"** -- Well **YES**, the black magic! Welcome to the club!
 
-https://user-images.githubusercontent.com/15724752/152787467-dc2a8871-43e5-4530-94b1-e14383c8b18e.mp4
+Since **v0.0.7** twitchez supports **ueberzugpp** -- this expands list of supported platforms:\
+**linux / macOS / windows / freeBSD / X11 / Wayland /** any terminal with **SIXEL** support e.g.
+[WezTerm](https://github.com/wez/wezterm)
 
-#### [alpha] WIP NOTICE: project development stage
-This project is still in the early stage of development,
-you may, and probably will, experience corrupted terminal state,
-so run this client in a separate terminal window
-so you don't get frustrated if the client accidentally crashes.
+### Leave a star to show interest in further development of the project ⭐️
+
+https://user-images.githubusercontent.com/15724752/152787467-dc2a8871-43e5-4530-94b1-e14383c8b18e.mp4
 
 ## Features
 * Explore twitch without leaving your terminal
@@ -46,11 +45,7 @@ or any other program via custom cmd)
     * Three independent user cmd and keys to open url as (stream, video, extra)
     * Copy url to clipboard
     * Open chat url in default browser or via custom cmd
-* Thumbnails are drawn by [ueberzug](https://github.com/seebye/ueberzug) (**X11 only**)
-(ueberzug is an **optional dependency**)
-    * If ueberzug is not installed **text mode without thumbnails** will be used
-
-###### *If you do not know what X11 is - for you this means thumbnails will be drawn on Linux only (not exactly)*
+* Thumbnails are drawn by the [ueberzugpp](https://github.com/jstkdng/ueberzugpp) (optional dependency)
 
 ## Configuration
 Look inside `twitchez/config/` dir to see all available settings, those are defaults.\
@@ -71,12 +66,21 @@ or system-wide environment:
 ```
 To update, add the `--upgrade` or `-U` option.
 
-### Install ueberzug (Optional)
-#### ueberzug must be additionally installed to display thumbnails!
-If [ueberzug](https://github.com/seebye/ueberzug#installation)
-is not installed or not supported by your platform  **text mode without thumbnails** will be used.
+#### Install ueberzugpp to display thumbnails (Optional)
+If [ueberzugpp](https://github.com/jstkdng/ueberzugpp?tab=readme-ov-file#install)
+is not installed **text mode without thumbnails** will be used.
+
+You also can [build from source](https://github.com/jstkdng/ueberzugpp?tab=readme-ov-file#build-from-source)
+and install **build dir** e.g. `# sudo cmake --install build`
 
 ## Troubleshooting
+##### If you installed ueberzugpp but still not see thumbnails:
+* override default ueberzugpp output **via twitchez user config** *(check **default.conf** it has example)*
+* check available **output** options in **ueberzugpp** via `$ ueberzugpp layer --help`
+* x11 and/or wayland (may not be available if disabled in compilation) -- build ueberzugpp from source
+* if you want to draw via e.g. sixel, make sure that your terminal have such capability
+* [WezTerm](https://github.com/wez/wezterm) has sixel support, try to launch twitchez in it
+
 ##### If thumbnails partially overlap underlying text (it is very font dependent):
 * set width/height modifier in user config
 * adjust your terminal font size by +1 etc
