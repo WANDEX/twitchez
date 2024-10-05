@@ -22,10 +22,9 @@ def replace_gh_video_via_mdlink(text: str) -> str:
 
 def clean_md(text: str) -> str:
     """Clean the markdown text for pypi.org.
-    Embedded github videos are not supported by pypi.org,
-    html subset is probably either.
+    directly embedded github videos are not supported by pypi.org.
     """
-    text = remove_gif(text)
+    #  text = remove_gif(text)
     text = replace_gh_video_via_mdlink(text)
     return text
 
