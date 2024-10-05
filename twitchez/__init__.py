@@ -4,7 +4,7 @@
 from pathlib import Path
 import curses
 
-__version__ = "0.0.7rc1"
+__version__ = "0.1.0"
 __license__ = "GPLv3"
 __description__ = "twitchez - TUI client for twitch.tv with thumbnails support that works right in your terminal"
 __url_repository__ = "https://github.com/WANDEX/twitchez"
